@@ -26,11 +26,14 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import java.awt.Desktop.Action;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import sun.font.TrueTypeFont;
 /**
  *
  * @author douglas.atkinson
@@ -68,13 +71,6 @@ public class MainMenuScreen extends BaseScreen {
             musicPlaying = true;
             
         }   
-        
-        //BaseActor ocean = new BaseActor(0,0, mainStage);
-        //ocean.loadTexture( "sky.png" );
-        //ocean.setSize(800,600);
-        
-        //Sky s1 = new Sky(0, 0, mainStage);
-        //new Sky(s1.getWidth(), 0, mainStage);
         
         BaseActor title = new BaseActor(0,0, mainStage);
         title.loadTexture( "plane-dodger.png" );
