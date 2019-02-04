@@ -149,8 +149,8 @@ public class Player extends BaseActor{
            setAnimation(Avatars.load(Avatars.DefaultPlayerUP, 1, 4, .2f, true));
        }
        
-        System.out.println("X: " + (Math.abs(MouseWorldX - getX())));
-        System.out.println("Y: " + (Math.abs(MouseWorldY - getY())));
+        //System.out.println("X: " + (Math.abs(MouseWorldX - getX())));
+        //System.out.println("Y: " + (Math.abs(MouseWorldY - getY())));
         //System.out.println("PlayerY: " + getY());
         //System.out.println("PlayerX: " +  getX());
         //System.out.println("MouseY: " + MouseWorldY);

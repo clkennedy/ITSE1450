@@ -31,6 +31,9 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     protected Stage mainStage;
     protected Stage uiStage;
     protected Table uiTable;
+    protected boolean playing;
+    
+    protected EscapeMenu esmenu;
     
     private boolean paused = false;
     
@@ -46,6 +49,8 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         uiTable = new Table();
         uiTable.setFillParent(true);
         uiStage.addActor(uiTable);
+        playing = false;
+        //esmenu = new EscapeMenu(uiStage);
         initialize();
     }
     
@@ -69,8 +74,26 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     * calls update in child classes
     */
     public void render(float dt) {
-        
         uiStage.act(dt);
+        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        
+        if(playing && Gdx.input.isKeyJustPressed(Keys.ESCAPE)){
+            Pause();
+            if(paused){
+                esmenu = new EscapeMenu(uiStage);
+            }
+            else{
+                esmenu.remove();
+            }
+        }
+        if(paused){
+            mainStage.draw();
+            uiStage.draw();
+            return;
+        }
+            
+        
         mainStage.act(dt);
         update(dt);
         Gdx.gl.glClearColor(0,0,0,1);

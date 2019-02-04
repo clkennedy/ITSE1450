@@ -63,7 +63,7 @@ public class LevelScreen extends BaseScreen {
         
         // Instantiate Plane and set world bounds
         
-        
+        playing = true;
     }
 	
     public void update(float dt) {

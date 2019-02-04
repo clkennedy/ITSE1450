@@ -12,10 +12,12 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -39,6 +41,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import sun.font.TrueTypeFont;
+import com.badlogic.gdx.utils.Align;
 /**
  *
  * @author douglas.atkinson
@@ -97,11 +100,17 @@ public class MainMenuScreen extends BaseScreen {
         
         mainStage.addActor(l);
         //s.font.getData().setScale(.8f);
+        //TextButtonStyle textButtonStyle = new TextButtonStyle(, scoreDrawable, scoreDrawable, font );
+
+        //TextButton tb = new TextButton("Play", );
+        
         Label play = new Label("Play", menu);
         play.setSize((play.getWidth() * 1.2f) * Options.aspectRatio, (play.getHeight() *1.2f) * Options.aspectRatio);
         play.setOriginX(play.getWidth() / 2);
         play.setOriginY(play.getHeight()/ 2);
         play.setPosition((mainStage.getWidth()/ 2) - (play.getWidth()/2), (l.getY() - l.getHeight()/2) - 100);
+        play.setOrigin(play.getWidth()/2, play.getHeight()/2);
+        play.setAlignment(Align.center);
         play.addListener(new Hover(){
             
             @Override
@@ -117,6 +126,7 @@ public class MainMenuScreen extends BaseScreen {
         quit.setOriginX(quit.getWidth() / 2);
         quit.setOriginY(quit.getHeight()/ 2);
         quit.setPosition((mainStage.getWidth()/ 2) - (quit.getWidth()/2), (play.getY() - play.getHeight()));
+        quit.setAlignment(Align.center);
         quit.addListener(new Hover(){
             
             @Override

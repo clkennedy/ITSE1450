@@ -6,12 +6,17 @@
 package com.dslayer.content.Player.Menu;
 
 import com.atkinson.game.engine.BaseActor;
+import com.atkinson.game.engine.BaseGame;
+import com.atkinson.game.engine.Hover;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Align;
+import com.dslayer.content.screens.MainMenuScreen;
 
 /**
  *
@@ -43,18 +48,24 @@ public class EscapeMenu extends BaseActor{
         Label.LabelStyle mm = new Label.LabelStyle(fontmm, Color.BROWN);
         
         Label mainMenu = new Label("MainMenu", mm);
-        mainMenu.setPosition(200, 200);
+        mainMenu.setAlignment(Align.center);
+        mainMenu.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                mainMenu();
+            }
+        
+        });
+        mainMenu.setPosition(-(mainMenu.getWidth()/2),0);
+        
+        setPosition((s.getCamera().viewportWidth /2) - (getWidth()/2),(s.getCamera().viewportHeight /2)- (getHeight()/2));
         this.addActor(mainMenu);
-        s.addActor(this);
-        
-        this.setVisible(false);
-        
+        setZIndex(1000);
+        //s.addActor(this);
     }
     
-    public void Show(){
-        this.setVisible(true);
-    }
-    public void Hide(){
-        this.setVisible(false);
+    private void mainMenu(){
+        BaseGame.setActiveScreen(new MainMenuScreen());
     }
 }
