@@ -64,9 +64,9 @@ public class DungeonRoom extends Room{
                     temp[i][j] = Key.LowerLeft.ordinal();
                 if(i == height - 1 && j == width - 1)
                     temp[i][j] = Key.LowerRight.ordinal();
-                System.out.print(temp[i][j] + ",");
+                //System.out.print(temp[i][j] + ",");
             }
-            System.out.println();
+            //System.out.println();
         }
         this.roomWidth = width * DungeonPanels.defaultSize;
         this.roomHeight = height * DungeonPanels.defaultSize;

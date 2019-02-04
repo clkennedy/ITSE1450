@@ -54,7 +54,7 @@ public class LevelScreen extends BaseScreen {
         Difficulty.worldWidth = dr.getRoomWidth();
         Difficulty.newGame();
         
-        System.out.println(Gdx.graphics.getHeight());
+        //System.out.println(Gdx.graphics.getHeight());
         
         dr.Draw(mainStage);
         
@@ -68,9 +68,19 @@ public class LevelScreen extends BaseScreen {
 	
     public void update(float dt) {
         
-        if(Gdx.input.isKeyJustPressed(Keys.ESCAPE)){
-            //BaseGame.setActiveScreen( new MainMenuScreen());
+        if(player.isDead())
+        {
+            gameOver = true;
+            return;
         }
+        if(Gdx.input.isKeyJustPressed(Keys.F)){
+            player.takeDamage(20);
+        }
+        if(Gdx.input.isKeyJustPressed(Keys.R)){
+            player.recover(10);
+        }
+        
+        
         
     }
 }
