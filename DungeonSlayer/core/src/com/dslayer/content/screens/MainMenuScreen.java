@@ -32,7 +32,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.dslayer.content.Rooms.DungeonPanels;
 import com.dslayer.content.Rooms.DungeonRoom;
-import com.dslayer.content.objects.Room;
+import com.dslayer.content.Rooms.Room;
 import java.awt.Desktop.Action;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
@@ -76,9 +76,6 @@ public class MainMenuScreen extends BaseScreen {
             //musicPlaying = true;
         }   
         
-        Room dr = new DungeonRoom();
-        dr.generateRoom();
-        dr.Draw(mainStage);
         
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("HumbleFonts/compass/CompassPro.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
@@ -163,9 +160,9 @@ public class MainMenuScreen extends BaseScreen {
     }
     public void startGame(){
         removeButtons();
-        backgroundMusic.stop();
-        musicPlaying = false;
-        //BaseGame.setActiveScreen( new LevelScreen() );    
+        //backgroundMusic.stop();
+        //musicPlaying = false;
+        BaseGame.setActiveScreen( new LevelScreen() );    
     }
     public void quitGame(){
         removeButtons();

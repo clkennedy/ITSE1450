@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dslayer.content.objects;
+package com.dslayer.content.Rooms;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -15,6 +15,9 @@ public abstract class Room {
     
     private Room _room;
     protected int[][] _layout;
+    
+    protected int roomWidth;
+    protected int roomHeight;
     
     protected int defaultSize = 75;
     

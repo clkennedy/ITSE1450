@@ -9,7 +9,6 @@ import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.dslayer.content.objects.Room;
 
 /**
  *
@@ -17,13 +16,14 @@ import com.dslayer.content.objects.Room;
  */
 public class DungeonRoom extends Room{
 
-    private enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight}
+    private enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight, URIWall, ULIWall, LRIWall, LLIWall}
     
     @Override
     public Room generateRoom() {
         this._layout = new int[][]{{1,2,2,2,2,2,2,2,3},
                                  {4,0,0,0,0,0,0,0,5},
-                                {4,0,0,0,0,0,0,0,5},
+                                {4,0,0,10,9,0,0,0,5},
+                                {4,0,0,12,11,0,0,0,5},
                                 {4,0,0,0,0,0,0,0,5},
                                 {6,7,7,7,7,7,7,7,8},};
         return null;
@@ -41,11 +41,12 @@ public class DungeonRoom extends Room{
 
     @Override
     public void Draw(Stage mainStage) {
-        BaseActor temp = new BaseActor();
+        BaseActor temp = new DungeonPanels();
         for(int i = 0; i < this._layout.length; i++){
             for(int j = 0; j < this._layout[i].length; j++){
                 temp = Map(Key.values()[this._layout[i][j]]);
                 temp.setPosition(j * defaultSize, Gdx.graphics.getHeight()/1.5f - (i * defaultSize));
+                temp.getBoundaryPolygon();
                 mainStage.addActor(temp);
             }
         }
@@ -71,6 +72,14 @@ public class DungeonRoom extends Room{
             return DungeonPanels.LowerWall(); 
             case LowerLeft:
             return DungeonPanels.LowerLeftWall();
+            case URIWall:
+            return DungeonPanels.UpperRightInvertedWall();
+            case ULIWall:
+            return DungeonPanels.UpperLeftInvertedWall();
+            case LRIWall:
+            return DungeonPanels.LowerRightInvertedWall();
+            case LLIWall:
+            return DungeonPanels.LowerLeftInvertedWall();
             default:
                 throw new AssertionError();
         }

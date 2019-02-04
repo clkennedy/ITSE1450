@@ -38,7 +38,7 @@ public class BaseActor extends Group {
     protected static boolean debug = false;
     protected ShapeRenderer sRend;
     // Animation support
-    private Animation<TextureRegion> animation;
+    protected Animation<TextureRegion> animation;
     private float elapsedTime;
     private boolean animationPaused;
     
@@ -52,7 +52,7 @@ public class BaseActor extends Group {
     private float deceleration;
     
     // Collision support
-    private Polygon boundaryPolygon;
+    public Polygon boundaryPolygon;
     
     private static Stage mainStage = null;
     
@@ -188,7 +188,7 @@ public class BaseActor extends Group {
     */
     public void setAnimation(Animation<TextureRegion> anim) {
         animation = anim;
-        elapsedTime = 0;
+        //elapsedTime = 0;
         if(animation != null){
             TextureRegion tr = animation.getKeyFrame(0);
             float w = tr.getRegionWidth();
@@ -231,7 +231,7 @@ public class BaseActor extends Group {
             if(debug){
                batch.end();
                 sRend.setProjectionMatrix(this.getStage().getCamera().combined);
-                sRend.setColor(Color.BLACK);
+                sRend.setColor(Color.WHITE);
                 sRend.begin(ShapeRenderer.ShapeType.Line);
                 //this.getBoundaryPolygon();
                 sRend.polygon(boundaryPolygon.getTransformedVertices());

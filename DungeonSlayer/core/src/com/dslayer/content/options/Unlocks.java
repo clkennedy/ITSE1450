@@ -26,23 +26,20 @@ public class Unlocks extends BaseScreen{
     static int currentMenuIndex = 0;
     static int currentMenu = 0;
     
-    private static Object[] PlayerUnlocks = {Avatars.greenPlaneAvatar, Avatars.blueBirdAvatar, Avatars.ufoAvatar, Avatars.dragonAvatar, Avatars.nyancatAvatar};
-    public static boolean[] PlayerUnlocked = {true, false, false, false, false};
+    private static Object[] PlayerUnlocks = {};
+    public static boolean[] PlayerUnlocked = {};
     
-    private static Object[] EnemyUnlocks = {Avatars.redPlaneAvatar, Avatars.redBeeAvatar, Avatars.crowAvatar, Avatars.fireskullAvatar, Avatars.demonAvatar};
-    public static boolean[] EnemyUnlocked = {true, false, false, false, false};
+    private static Object[] EnemyUnlocks = {};
+    public static boolean[] EnemyUnlocked = {};
     
-    private static Object[] CollectableUnlocks = {Avatars.starAvatar, Avatars.bronzecoinAvatar, Avatars.bluegemAvatar, Avatars.goldcoinAvatar
-            ,Avatars.goldringAvatar,Avatars.orangegemAvatar};
-    public static boolean[] CollectableUnlocked = {true, false, false, false, false, false};
+    private static Object[] CollectableUnlocks = {};
+    public static boolean[] CollectableUnlocked = {};
     
-    private static Object[] BulletUnlocks = {Avatars.shortBulletAvatar,Avatars.swordAvatar, Avatars.rocketAvatar, Avatars.axespinAvatar, Avatars.fireballAvatar};
-    public static boolean[] BulletUnlocked = {true, false, false, false, false};
+    private static Object[] BulletUnlocks = {};
+    public static boolean[] BulletUnlocked = {};
     
-    private static Object[] AllUnlocks = {Avatars.swordAvatar, Avatars.bronzecoinAvatar, Avatars.blueBirdAvatar, Avatars.redBeeAvatar,
-        Avatars.rocketAvatar, Avatars.bluegemAvatar, Avatars.ufoAvatar, Avatars.crowAvatar, Avatars.axespinAvatar, Avatars.goldcoinAvatar,
-        Avatars.fireskullAvatar,Avatars.goldringAvatar, Avatars.dragonAvatar, Avatars.fireballAvatar, Avatars.orangegemAvatar, Avatars.demonAvatar, Avatars.nyancatAvatar};
-    public static int[] scoreToUnlock = {20, 35, 50, 75, 100, 130, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400};
+    private static Object[] AllUnlocks = {};
+    public static int[] scoreToUnlock = {};
     
     public static Avatar currentAvatar = (Avatar)PlayerUnlocks[0];
     public static Avatar currentEnemyAvatar = (Avatar)EnemyUnlocks[0];

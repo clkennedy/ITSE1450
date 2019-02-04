@@ -29,22 +29,16 @@ public class Difficulty {
     
     public static void NORMAL(){
         DIFFICULTY = "Normal";
-        STAR_INTERVAL = 4;
-        ENEMY_INTERVAL = 3;
 
         worldWidth = 800;
         worldHeight = 600;
     }
     
     public static void newGame(){
-        lScreen.enemySpawnInterval = ENEMY_INTERVAL  * (int)Options.aspectRatio;
-        lScreen.enemySpeed = ENEMY_SPEED  * (int)Options.aspectRatio;
         
     }
     
     public static void Reset(){
-        lScreen.enemySpawnInterval = ENEMY_INTERVAL  * (int)Options.aspectRatio;
-        lScreen.enemySpeed = ENEMY_SPEED  * (int)Options.aspectRatio;
     }
     
     public static void passInLevelScreen(LevelScreen l){
