@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.dslayer.content.options.*;
@@ -68,12 +69,14 @@ public class Player extends BaseActor{
        // setAnimation(Unlocks.currentAvatar.getAnim());
         setAnimation(Avatars.load(Avatars.DefaultPlayerRight, 1, 4, .1f, true));
         setMaxSpeed(800);
-        
+        setScale(1.5f);
        // setSize(Unlocks.currentAvatar.getWidth() * Options.aspectRatio, Unlocks.currentAvatar.getHeight() * Options.aspectRatio);
         setBoundaryPolygon(8);
         setOrigin(getWidth() /2, getHeight() / 2);
         setMaxSpeed(100);
         setDeceleration(250);
+        
+        
         s.addActor(this);
     }
     
@@ -121,31 +124,38 @@ public class Player extends BaseActor{
         this.getBoundaryPolygon();
        isMoving = false;
        setAcceleration(0 * Options.aspectRatio);
-        
+       
+       float MouseWorldY = this.getStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0)).y;
+       float MouseWorldX = this.getStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0)).x;
         //animation control
-       if(getX() < Gdx.input.getX() && 
-               (Math.abs((Gdx.input.getX() - getX())) > Math.abs(Gdx.input.getY() - ((Gdx.graphics.getHeight() - getY()))))
-               ){
+       if(getX() < MouseWorldX && 
+               (Math.abs((MouseWorldX - getX())) > Math.abs(MouseWorldY - getY())))
+               {
            setAnimation(Avatars.load(Avatars.DefaultPlayerRight, 1, 4, .2f, true));
        }
-       if(getX() > Gdx.input.getX() && 
-               (Math.abs((Gdx.input.getX() - getX())) > Math.abs(Gdx.input.getY() - ((Gdx.graphics.getHeight() - getY())))) 
-               ){
+       if(getX() > MouseWorldX && 
+               (Math.abs((MouseWorldX - getX())) > Math.abs(MouseWorldY - getY()))) 
+               {
            setAnimation(Avatars.load(Avatars.DefaultPlayerLeft, 1, 4, .2f, true));
        }
-       if((Gdx.graphics.getHeight() - getY()) < Gdx.input.getY() &&
-               (Math.abs((Gdx.input.getX() - getX())) < Math.abs(Gdx.input.getY() - ((Gdx.graphics.getHeight() - getY()))))
-               ){
+       if((getY()) > MouseWorldY &&
+               (Math.abs((MouseWorldX - getX())) < Math.abs(MouseWorldY - getY())))
+               {
            setAnimation(Avatars.load(Avatars.DefaultPlayerDown, 1, 4, .2f, true));
        }
-       if((Gdx.graphics.getHeight() - getY()) > Gdx.input.getY() &&
-               (Math.abs((Gdx.input.getX() - getX())) < Math.abs(Gdx.input.getY() - ((Gdx.graphics.getHeight() - getY()))))
-               ){
+       if((getY()) < MouseWorldY &&
+               (Math.abs((MouseWorldX - getX())) < Math.abs(MouseWorldY - getY())))
+               {
            setAnimation(Avatars.load(Avatars.DefaultPlayerUP, 1, 4, .2f, true));
        }
        
-        System.out.println("Player Y: " + (Gdx.graphics.getHeight() - getY()));
-       System.out.println("Mouse Y: " + Gdx.input.getY());
+        System.out.println("X: " + (Math.abs(MouseWorldX - getX())));
+        System.out.println("Y: " + (Math.abs(MouseWorldY - getY())));
+        //System.out.println("PlayerY: " + getY());
+        //System.out.println("PlayerX: " +  getX());
+        //System.out.println("MouseY: " + MouseWorldY);
+        //System.out.println("MouseX: " + MouseWorldX);
+       
        //movement control
        if(_playerControls.isPressed("Right")){
            setAcceleration(accel * Options.aspectRatio);
@@ -174,11 +184,9 @@ public class Player extends BaseActor{
        }else{
            setAnimationPaused(false);
        }
-       
-        if(getY() + getHeight() > getWorldBounds().height * Options.aspectRatio){
-            setSpeed(0);
-            boundToWorld();
-        }
+        boundToWorld();
+        alignCamera();
+        
         int count = 0;
         ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels");
         for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){

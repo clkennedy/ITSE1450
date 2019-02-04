@@ -49,19 +49,21 @@ public class LevelScreen extends BaseScreen {
         
         Room dr = new DungeonRoom();
         dr.generateRoom();
-        dr.Draw(mainStage);
         
+        Difficulty.worldHeight = dr.getRoomHeight();
+        Difficulty.worldWidth = dr.getRoomWidth();
+        Difficulty.newGame();
+        
+        System.out.println(Gdx.graphics.getHeight());
+        
+        dr.Draw(mainStage);
         
         player = new Player(400,300, mainStage);
         //stage setup
         
         // Instantiate Plane and set world bounds
         
-        BaseActor.setWorldBounds(800, 600);
         
-        
-        
-        Difficulty.newGame();
     }
 	
     public void update(float dt) {

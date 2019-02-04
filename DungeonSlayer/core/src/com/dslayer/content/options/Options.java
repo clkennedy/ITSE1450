@@ -354,7 +354,7 @@ public class Options extends BaseScreen{
           }
           else if(Gdx.graphics.supportsDisplayModeChange() && displayType == DisplayType.WINDOWED){
               Gdx.graphics.setUndecorated(false);
-              if(Gdx.graphics.setWindowedMode(Difficulty.worldWidth, Difficulty.worldHeight)){
+              if(Gdx.graphics.setWindowedMode((int)Difficulty.worldWidth, (int)Difficulty.worldHeight)){
                 //System.setProperty("org.lwjgl.opengl.Window.undecorated", "false");
                 //Gdx.graphics.setUndecorated(true);
                   aspectRatio = Gdx.graphics.getHeight() /(float)Difficulty.worldHeight;

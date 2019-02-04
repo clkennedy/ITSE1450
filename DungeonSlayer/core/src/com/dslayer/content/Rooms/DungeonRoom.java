@@ -9,6 +9,7 @@ import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.options.Difficulty;
 
 /**
  *
@@ -20,12 +21,19 @@ public class DungeonRoom extends Room{
     
     @Override
     public Room generateRoom() {
-        this._layout = new int[][]{{1,2,2,2,2,2,2,2,3},
-                                 {4,0,0,0,0,0,0,0,5},
-                                {4,0,0,10,9,0,0,0,5},
-                                {4,0,0,12,11,0,0,0,5},
-                                {4,0,0,0,0,0,0,0,5},
-                                {6,7,7,7,7,7,7,7,8},};
+        this._layout = new int[][]{{1,2,2,2,2,2,2,2,2,2,2,2,2,3},
+                                 {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
+                                {4,0,0,10,9,0,0,0,0,0,0,0,0,5},
+                                {4,0,0,12,11,0,0,0,0,0,0,0,0,5},
+                                {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
+                                {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
+                                {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
+                                {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
+                                {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
+                                {6,7,7,7,7,7,7,7,7,7,7,7,7,8}};
+        
+        this.roomWidth = 14 * defaultSize;
+        this.roomHeight = 10 * defaultSize;
         return null;
     }
 
@@ -45,7 +53,7 @@ public class DungeonRoom extends Room{
         for(int i = 0; i < this._layout.length; i++){
             for(int j = 0; j < this._layout[i].length; j++){
                 temp = Map(Key.values()[this._layout[i][j]]);
-                temp.setPosition(j * defaultSize, Gdx.graphics.getHeight()/1.5f - (i * defaultSize));
+                temp.setPosition(j * defaultSize,Difficulty.worldHeight - defaultSize - (i * defaultSize));
                 temp.getBoundaryPolygon();
                 mainStage.addActor(temp);
             }

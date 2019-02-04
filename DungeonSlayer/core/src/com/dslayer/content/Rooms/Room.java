@@ -16,8 +16,8 @@ public abstract class Room {
     private Room _room;
     protected int[][] _layout;
     
-    protected int roomWidth;
-    protected int roomHeight;
+    protected float roomWidth;
+    protected float roomHeight;
     
     protected int defaultSize = 75;
     
@@ -28,6 +28,13 @@ public abstract class Room {
     public abstract Room generateRoom(int length, int height);
     
     public abstract void Draw(Stage mainStage);
+    
+    public float getRoomWidth(){
+        return roomWidth;
+    }
+    public float getRoomHeight(){
+        return roomHeight;
+    }
     
     public Room getRoom(){
         return _room;

@@ -5,6 +5,7 @@
  */
 package com.dslayer.content.options;
 
+import com.atkinson.game.engine.BaseActor;
 import com.dslayer.content.screens.LevelScreen;
 
 /**
@@ -22,8 +23,8 @@ public class Difficulty {
     
     public static LevelScreen lScreen = null;
     
-    public static int worldWidth = 800;
-    public static int worldHeight = 600;
+    public static float worldWidth = 800;
+    public static float worldHeight = 600;
     
     public static String DIFFICULTY = "Default";
     
@@ -35,7 +36,7 @@ public class Difficulty {
     }
     
     public static void newGame(){
-        
+        BaseActor.setWorldBounds(worldWidth, worldHeight);
     }
     
     public static void Reset(){

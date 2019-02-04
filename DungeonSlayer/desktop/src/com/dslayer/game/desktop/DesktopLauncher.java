@@ -14,8 +14,8 @@ public class DesktopLauncher {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 
     cfg.title = "Dungeon Slayer";
-    cfg.width = Difficulty.worldWidth;
-    cfg.height = Difficulty.worldHeight;
+    cfg.width = (int)Difficulty.worldWidth;
+    cfg.height = (int)Difficulty.worldHeight;
     //cfg.fullscreen = true;
     //cfg.vSyncEnabled = true;
     

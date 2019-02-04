@@ -166,8 +166,8 @@ public class MainMenuScreen extends BaseScreen {
     }
     public void quitGame(){
         removeButtons();
-        backgroundMusic.stop();
-        musicPlaying = false;
+        //backgroundMusic.stop();
+        //musicPlaying = false;
         Progress.Save();
         Gdx.app.exit();
         System.exit(0);
