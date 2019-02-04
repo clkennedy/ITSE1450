@@ -35,7 +35,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class BaseActor extends Group {
     
     //debugging stuff (custom)
-    protected static boolean debug = false;
+    protected static boolean debug = true;
     protected ShapeRenderer sRend;
     // Animation support
     protected Animation<TextureRegion> animation;
@@ -200,7 +200,20 @@ public class BaseActor extends Group {
             setBoundaryRectangle();
         }
     }
-    
+     public void setAnimationWithReset(Animation<TextureRegion> anim) {
+        animation = anim;
+        elapsedTime = 0;
+        if(animation != null){
+            TextureRegion tr = animation.getKeyFrame(0);
+            float w = tr.getRegionWidth();
+            float h = tr.getRegionHeight();
+            setSize(w, h);
+            setOrigin(w/2, h/2);
+            
+            if(boundaryPolygon == null)
+            setBoundaryRectangle();
+        }
+    }
     /**
     * Pauses and un-pauses the Animation
     * 

@@ -17,6 +17,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.dslayer.content.Enemy.BaseEnemy;
+import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
@@ -29,6 +31,8 @@ public class LevelScreen extends BaseScreen {
     private boolean gameOver;
     BaseActor gameOverMessage;
     
+    
+    private BaseEnemy debugEnemy;
     Music backgroundMusic;
     
     
@@ -60,7 +64,7 @@ public class LevelScreen extends BaseScreen {
         
         player = new Player(400,300, mainStage);
         //stage setup
-        
+        debugEnemy = new SkeletonWarrior(100, 600, mainStage);
         // Instantiate Plane and set world bounds
         
         playing = true;
@@ -74,7 +78,7 @@ public class LevelScreen extends BaseScreen {
             return;
         }
         if(Gdx.input.isKeyJustPressed(Keys.F)){
-            player.takeDamage(20);
+            debugEnemy.takeDamage(20);
         }
         if(Gdx.input.isKeyJustPressed(Keys.R)){
             player.recover(10);

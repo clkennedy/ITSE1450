@@ -79,7 +79,6 @@ public class Player extends BaseActor{
         
         resetCoords = new Vector2(x, y);
         
-        this.setOrigin(this.getWidth() / 2, this.getHeight() /2);
         
        // setAnimation(Unlocks.currentAvatar.getAnim());
         setAnimation(Avatars.load(Avatars.DefaultPlayerRight, 1, 4, .1f, true));
@@ -103,9 +102,6 @@ public class Player extends BaseActor{
         else if(health - damageTaken - damage > 0){
             this.damageTaken += damage;
         }
-            
-        
-        //reset();
     }
     
     public void recover(int recover){
@@ -124,7 +120,6 @@ public class Player extends BaseActor{
     public void draw(Batch batch, float parentAlpha){
         
         super.draw(batch, parentAlpha);
-        
         if(isVisible()) {
            batch.end();
            sRend.setColor(Color.BLACK);
@@ -168,7 +163,6 @@ public class Player extends BaseActor{
         else{
              healthLowerWaitTime = 0;
         }
-        System.out.println(healthRecoverWaitTime);
         if(recoverAmount > 0){
             if(healthRecoverWaitTime > healthWaitBeforeRecover){
                 health += healthRecoverRate;
@@ -186,7 +180,7 @@ public class Player extends BaseActor{
     @Override
     public void act(float dt){
         super.act(dt);
-        
+        this.setOrigin(this.getWidth() / 2,this.getHeight() /2);
         calculateHealth(dt);
         if(isDead()){
             return;
@@ -252,6 +246,8 @@ public class Player extends BaseActor{
         alignCamera();
         
         int count = 0;
+        
+        //wall Collison
         ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels");
         for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
             if(wall.boundaryPolygon == null)

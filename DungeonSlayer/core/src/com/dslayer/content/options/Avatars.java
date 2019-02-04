@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -51,6 +53,34 @@ public class Avatars {
         
         return anim;        
     }
+    
+    public static List<Animation<TextureRegion>> loadMulti(String fileName, int rows, int cols, float frameDuration, boolean loop) {
+        Texture texture = new Texture(Gdx.files.internal(fileName), true);
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        int frameWidth = texture.getWidth() / cols;
+        int frameHeight = texture.getHeight() / rows;
+        TextureRegion[][] temp = TextureRegion.split(texture, frameWidth, frameHeight);
+        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+        
+        List<Animation<TextureRegion>> animList = new ArrayList<Animation<TextureRegion>>();
+        Animation<TextureRegion> anim = null;
+        for(int r = 0; r < rows; r++) {
+            textureArray.clear();
+            for(int c = 0; c < cols; c++) {
+                textureArray.add(temp[r][c]);
+                anim = new Animation<TextureRegion>(frameDuration, textureArray);
+                if(loop) {
+                    anim.setPlayMode(Animation.PlayMode.LOOP);
+                }
+                else {
+                    anim.setPlayMode(Animation.PlayMode.NORMAL);
+                }
+            }
+            animList.add(anim);
+        }
+        return animList;        
+    }
+    
     public static Animation<TextureRegion> load(String[] fileNames, float frameDuration, boolean loop) {
         int fileCount = fileNames.length;
         Array<TextureRegion> textureArray = new Array<TextureRegion>();
