@@ -276,7 +276,24 @@ public class BaseActor extends Group {
         
         return anim;
     }
-    
+    public Animation<TextureRegion> loadAnimationFromTexture(TextureRegion texture, float frameDuration, boolean loop) {
+       
+        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+        textureArray.add(texture);
+        
+        Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);
+        if(loop) {
+            anim.setPlayMode(Animation.PlayMode.LOOP);
+        }
+        else {
+            anim.setPlayMode(Animation.PlayMode.NORMAL);
+        }
+        if(animation == null) {
+            setAnimation(anim);
+        }
+        
+        return anim;
+    }
     /**
     * Converts a sprite sheet to an animation that the base actor can use.
     * 
@@ -331,6 +348,12 @@ public class BaseActor extends Group {
         String[] fileNames = new String[1];
         fileNames[0] = fileName;
         return loadAnimationFromFiles(fileNames, 1, true);
+    }
+    
+     public Animation<TextureRegion> loadTexture(TextureRegion texture) {
+        //String[] fileNames = new String[1];
+        //fileNames[0] = texture;
+        return loadAnimationFromTexture(texture, 1, true);
     }
     
     /**

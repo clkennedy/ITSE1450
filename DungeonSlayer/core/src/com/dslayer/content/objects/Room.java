@@ -5,6 +5,8 @@
  */
 package com.dslayer.content.objects;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
+
 /**
  *
  * @author cameron.kennedy
@@ -12,10 +14,17 @@ package com.dslayer.content.objects;
 public abstract class Room {
     
     private Room _room;
-    private int[][] _layout;
+    protected int[][] _layout;
+    
+    protected int defaultSize = 75;
+    
+    public enum Size{Small, Medium, Large};
     
     public abstract Room generateRoom();
+    public abstract Room generateRoom(Size size);
+    public abstract Room generateRoom(int length, int height);
     
+    public abstract void Draw(Stage mainStage);
     
     public Room getRoom(){
         return _room;

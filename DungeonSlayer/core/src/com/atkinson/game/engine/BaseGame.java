@@ -54,11 +54,11 @@ public abstract class BaseGame extends Game {
        
         
         // Text button style configuration
-        textButtonStyle = new TextButtonStyle();
-        Texture   buttonTex   = new Texture( Gdx.files.internal("button.png") );
-        NinePatch buttonPatch = new NinePatch(buttonTex, 24,24,24,24);
-        textButtonStyle.up    = new NinePatchDrawable( buttonPatch );
-        textButtonStyle.fontColor = Color.GRAY;
+        //textButtonStyle = new TextButtonStyle();
+        //Texture   buttonTex   = new Texture( Gdx.files.internal("button.png") );
+        //NinePatch buttonPatch = new NinePatch(buttonTex, 24,24,24,24);
+        //textButtonStyle.up    = new NinePatchDrawable( buttonPatch );
+        //textButtonStyle.fontColor = Color.GRAY;
     }
     
     /**

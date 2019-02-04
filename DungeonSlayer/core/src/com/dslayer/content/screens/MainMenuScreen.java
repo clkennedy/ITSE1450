@@ -27,7 +27,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.dslayer.content.Rooms.DungeonPanels;
+import com.dslayer.content.Rooms.DungeonRoom;
+import com.dslayer.content.objects.Room;
 import java.awt.Desktop.Action;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
@@ -64,32 +69,43 @@ public class MainMenuScreen extends BaseScreen {
         BaseActor.setMainStage(mainStage);
         
         if(!musicPlaying){
-            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Shatter Me.mp3"));
-            backgroundMusic.setLooping(true);
-            backgroundMusic.setVolume(Options.musicVolume);
-            backgroundMusic.play();
-            musicPlaying = true;
-            
+            //backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Shatter Me.mp3"));
+            //backgroundMusic.setLooping(true);
+            //backgroundMusic.setVolume(Options.musicVolume);
+            //backgroundMusic.play();
+            //musicPlaying = true;
         }   
         
-        BaseActor title = new BaseActor(0,0, mainStage);
-        title.loadTexture( "plane-dodger.png" );
-        title.setSize(title.getWidth()  * Options.aspectRatio, title.getHeight() * Options.aspectRatio);
-        title.setScale(1.3f);
-        title.centerAtPosition(Gdx.graphics.getWidth() / 2,400 * Options.aspectRatio);
-        title.moveBy(0,100);
+        Room dr = new DungeonRoom();
+        dr.generateRoom();
+        dr.Draw(mainStage);
         
-       // Hover hListener = new Hover();
-        Texture text = new Texture(Gdx.files.internal("play.png"));
-        playButton = new BaseActor(0, 0, mainStage);
-        playButton.loadTexture("play.png");
-        playButton.setSize(text.getWidth() * Options.aspectRatio, text.getHeight() * Options.aspectRatio);
-        playButton.setOriginX(playButton.getWidth() / 2);
-        playButton.setOriginY(playButton.getHeight()/ 2);
-        playButton.setBoundaryRectangle();
-        playButton.getBoundaryPolygon();
-        playButton.centerAtPosition(Gdx.graphics.getWidth() / 2,350 * Options.aspectRatio);
-        playButton.addListener(new Hover(){
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("HumbleFonts/compass/CompassPro.ttf"));
+        FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+        parameter.size = 100;
+        parameter.borderColor = Color.WHITE;
+        parameter.borderWidth = 1f;
+        BitmapFont fontTitle = generator.generateFont(parameter); // font size 12 pixels
+        
+        parameter.size = 80;
+        BitmapFont fontMenu = generator.generateFont(parameter);
+        generator.dispose();
+        
+        LabelStyle title = new LabelStyle(fontTitle, Color.BROWN);
+        LabelStyle menu = new LabelStyle(fontMenu, Color.BROWN);
+        
+        
+        Label l = new Label("Dungeon Slayer", title);
+        l.setPosition((mainStage.getWidth()/ 2) - (l.getWidth()/2), mainStage.getHeight() - 100);
+        
+        mainStage.addActor(l);
+        //s.font.getData().setScale(.8f);
+        Label play = new Label("Play", menu);
+        play.setSize((play.getWidth() * 1.2f) * Options.aspectRatio, (play.getHeight() *1.2f) * Options.aspectRatio);
+        play.setOriginX(play.getWidth() / 2);
+        play.setOriginY(play.getHeight()/ 2);
+        play.setPosition((mainStage.getWidth()/ 2) - (play.getWidth()/2), (l.getY() - l.getHeight()/2) - 100);
+        play.addListener(new Hover(){
             
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -97,100 +113,14 @@ public class MainMenuScreen extends BaseScreen {
             }
         
         });
+        mainStage.addActor(play);
         
-        optionButton = new BaseActor(0, 0, mainStage);
-        optionButton.loadTexture("options.png");
-        optionButton.setSize((optionButton.getWidth() / 1.5f)  * Options.aspectRatio, (optionButton.getHeight() /1.5f)  * Options.aspectRatio);
-        optionButton.setOriginX(optionButton.getWidth() / 2);
-        optionButton.setOriginY(optionButton.getHeight()/ 2);
-        optionButton.setBoundaryRectangle();
-        optionButton.getBoundaryPolygon();
-        optionButton.centerAtPosition(Gdx.graphics.getWidth() / 2,275 * Options.aspectRatio);
-        optionButton.addListener(new Hover(){
-            
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                optionScreen();
-            }
-        
-        });
-        
-        highscore = new BaseActor(0, 0, mainStage);
-        highscore.loadTexture("highscore.png");
-        highscore.setSize((highscore.getWidth() / 2)  * Options.aspectRatio, (highscore.getHeight() /2)  * Options.aspectRatio);
-        highscore.setOriginX(highscore.getWidth() / 2);
-        highscore.setOriginY(highscore.getHeight()/ 2);
-        highscore.setBoundaryRectangle();
-        highscore.getBoundaryPolygon();
-        highscore.centerAtPosition(Gdx.graphics.getWidth() / 8,250 * Options.aspectRatio);
-        
-        //Label score = new Label(Integer.toString( Unlocks.getHighScore()), BaseGame.labelStyle);
-        //score.setFontScale(.7f * Options.aspectRatio);
-        //score.setSize(score.getWidth() / 2, score.getHeight() /2);
-        //score.setPosition(highscore.getX() + highscore.getWidth(), highscore.getY());
-        //mainStage.addActor(score);
-        
-        newGame = new BaseActor(0, 0, mainStage);
-        newGame.loadTexture("newgame.png");
-        newGame.setSize((newGame.getWidth() / 3)  * Options.aspectRatio, (newGame.getHeight() /3)  * Options.aspectRatio);
-        newGame.setOriginX(newGame.getWidth() / 2);
-        newGame.setOriginY(newGame.getHeight()/ 2);
-        newGame.setBoundaryRectangle();
-        newGame.getBoundaryPolygon();
-        newGame.centerAtPosition(Gdx.graphics.getWidth() / 8,200 * Options.aspectRatio);
-        newGame.addListener(new Hover(){
-            
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                newGame();
-            }
-        
-        });
-        
-        text = new Texture(Gdx.files.internal("instructions.png"));
-        instructionButton = new BaseActor(0, 0, mainStage);
-        instructionButton.loadTexture("instructions.png");
-        instructionButton.setSize((text.getWidth() / 1.5f)  * Options.aspectRatio, (text.getHeight() /1.5f)  * Options.aspectRatio);
-        instructionButton.setOriginX(instructionButton.getWidth() / 2);
-        instructionButton.setOriginY(instructionButton.getHeight()/ 2);
-        instructionButton.setBoundaryRectangle();
-        instructionButton.getBoundaryPolygon();
-        instructionButton.centerAtPosition(Gdx.graphics.getWidth() / 2,200 * Options.aspectRatio);
-        instructionButton.addListener(new Hover(){
-            
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                instructionScreen();
-            }
-        
-        });
-        
-        unlocksButton = new BaseActor(0, 0, mainStage);
-        unlocksButton.loadTexture("unlocks.png");
-        unlocksButton.setSize((unlocksButton.getWidth() / 1.5f) * Options.aspectRatio, (unlocksButton.getHeight() /1.5f) * Options.aspectRatio);
-        unlocksButton.setOriginX(unlocksButton.getWidth() / 2);
-        unlocksButton.setOriginY(unlocksButton.getHeight()/ 2);
-        unlocksButton.setBoundaryRectangle();
-        unlocksButton.getBoundaryPolygon();
-        unlocksButton.centerAtPosition(Gdx.graphics.getWidth() / 2,125 * Options.aspectRatio);
-        unlocksButton.addListener(new Hover(){
-            
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                unlocksScreen();
-            }
-        
-        });
-        
-        quitButton = new BaseActor(0, 0, mainStage);
-        quitButton.loadTexture("quit.png");
-        quitButton.setSize((quitButton.getWidth() * 1.2f) * Options.aspectRatio, (quitButton.getHeight() *1.2f) * Options.aspectRatio);
-        quitButton.setOriginX(quitButton.getWidth() / 2);
-        quitButton.setOriginY(quitButton.getHeight()/ 2);
-        quitButton.setBoundaryRectangle();
-        quitButton.getBoundaryPolygon();
-        quitButton.centerAtPosition(Gdx.graphics.getWidth() / 2,50 * Options.aspectRatio);
-        quitButton.addListener(new Hover(){
+        Label quit = new Label("Quit", menu);
+        quit.setSize((quit.getWidth() * 1.2f) * Options.aspectRatio, (quit.getHeight() *1.2f) * Options.aspectRatio);
+        quit.setOriginX(quit.getWidth() / 2);
+        quit.setOriginY(quit.getHeight()/ 2);
+        quit.setPosition((mainStage.getWidth()/ 2) - (quit.getWidth()/2), (play.getY() - play.getHeight()));
+        quit.addListener(new Hover(){
             
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -198,11 +128,8 @@ public class MainMenuScreen extends BaseScreen {
             }
         
         });
-        
-        //BaseActor start = new BaseActor(0,0, mainStage);
-       // start.loadTexture( "message-start.png" );
-        //start.centerAtPosition(400,300);
-       // start.moveBy(0,-100);
+        mainStage.addActor(quit);
+       
        currentMenuIndex = -1;
        this.show();
         
@@ -232,11 +159,7 @@ public class MainMenuScreen extends BaseScreen {
         //BaseGame.setActiveScreen( new Unlocks());
     }
     public void removeButtons(){
-        playButton.remove();
-        instructionButton.remove();
-        unlocksButton.remove();
-        newGame.remove();
-        optionButton.remove();
+        
     }
     public void startGame(){
         removeButtons();
