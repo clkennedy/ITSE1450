@@ -19,7 +19,7 @@ public abstract class Room {
     protected float roomWidth;
     protected float roomHeight;
     
-    protected int defaultSize = 75;
+    //protected int defaultSize = 75;
     
     public enum Size{Small, Medium, Large};
     

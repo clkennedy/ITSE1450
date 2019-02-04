@@ -17,7 +17,7 @@ import com.dslayer.content.options.Difficulty;
  */
 public class DungeonRoom extends Room{
 
-    private enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight, URIWall, ULIWall, LRIWall, LLIWall}
+    private enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight, URIWall, ULIWall, LRIWall, LLIWall, Empty}
     
     @Override
     public Room generateRoom() {
@@ -32,8 +32,8 @@ public class DungeonRoom extends Room{
                                 {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
                                 {6,7,7,7,7,7,7,7,7,7,7,7,7,8}};
         
-        this.roomWidth = 14 * defaultSize;
-        this.roomHeight = 10 * defaultSize;
+        this.roomWidth = 14 * DungeonPanels.defaultSize;
+        this.roomHeight = 10 * DungeonPanels.defaultSize;
         return null;
     }
 
@@ -43,8 +43,35 @@ public class DungeonRoom extends Room{
     }
 
     @Override
-    public Room generateRoom(int length, int height) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Room generateRoom(int width, int height) {
+        int[][] temp = new int[height][width];
+        for(int i = 0; i < height; i ++){
+            for (int j = 0; j < width; j ++){
+                temp[i][j] = Key.Floor.ordinal();
+                if(i == 0)
+                    temp[i][j] = Key.Upper.ordinal();
+                if(i == height - 1)
+                    temp[i][j] = Key.Lower.ordinal();
+                if(j == 0)
+                    temp[i][j] = Key.Left.ordinal();
+                if(j == width - 1)
+                    temp[i][j] = Key.Right.ordinal();
+                if(i == 0 && j == 0)
+                    temp[i][j] = Key.UpperLeft.ordinal();
+                if(i == 0 && j == width - 1)
+                    temp[i][j] = Key.UpperRight.ordinal();
+                if(i == height - 1 && j == 0)
+                    temp[i][j] = Key.LowerLeft.ordinal();
+                if(i == height - 1 && j == width - 1)
+                    temp[i][j] = Key.LowerRight.ordinal();
+                System.out.print(temp[i][j] + ",");
+            }
+            System.out.println();
+        }
+        this.roomWidth = width * DungeonPanels.defaultSize;
+        this.roomHeight = height * DungeonPanels.defaultSize;
+        this._layout = temp;
+        return null;
     }
 
     @Override
@@ -53,7 +80,9 @@ public class DungeonRoom extends Room{
         for(int i = 0; i < this._layout.length; i++){
             for(int j = 0; j < this._layout[i].length; j++){
                 temp = Map(Key.values()[this._layout[i][j]]);
-                temp.setPosition(j * defaultSize,Difficulty.worldHeight - defaultSize - (i * defaultSize));
+                //if(temp == null)
+                    //continue;
+                temp.setPosition(j * DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize - (i * DungeonPanels.defaultSize));
                 temp.getBoundaryPolygon();
                 mainStage.addActor(temp);
             }
@@ -89,7 +118,7 @@ public class DungeonRoom extends Room{
             case LLIWall:
             return DungeonPanels.LowerLeftInvertedWall();
             default:
-                throw new AssertionError();
+                return null;
         }
     }
 }

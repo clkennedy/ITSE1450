@@ -48,7 +48,7 @@ public class LevelScreen extends BaseScreen {
         
         
         Room dr = new DungeonRoom();
-        dr.generateRoom();
+        dr.generateRoom(30,40);
         
         Difficulty.worldHeight = dr.getRoomHeight();
         Difficulty.worldWidth = dr.getRoomWidth();
