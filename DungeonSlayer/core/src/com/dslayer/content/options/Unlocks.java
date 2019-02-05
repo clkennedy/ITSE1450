@@ -252,8 +252,6 @@ public class Unlocks extends BaseScreen{
             bulletAvatars.add(bulletAvatar);
         }
         
-        
-        
         mainmenu = new BaseActor(0, 0, mainStage);
         mainmenu.loadTexture("mainmenu.png");
         mainmenu.setSize((mainmenu.getWidth() / 3)*Options.aspectRatio, (mainmenu.getHeight() /3)*Options.aspectRatio);

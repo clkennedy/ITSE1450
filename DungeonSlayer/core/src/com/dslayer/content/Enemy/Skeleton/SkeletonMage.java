@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.math.MathUtils;
 import com.dslayer.content.options.Difficulty;
 import com.badlogic.gdx.math.Circle;
-import com.dslayer.content.Objects.Spells.ProjectileSpell;
+import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.Player.Player;
 
 /**

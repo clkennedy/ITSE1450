@@ -22,7 +22,10 @@ import com.badlogic.gdx.utils.Array;
 import com.dslayer.content.options.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import java.util.ArrayList;
+import com.dslayer.content.Hero.*;
+import com.dslayer.content.screens.HeroSelectionScreen;
 
 /**
  *
@@ -30,6 +33,10 @@ import java.util.ArrayList;
  */
 public class Player extends BaseActor{
     
+    protected float attackCooldown = 2f;
+    protected float attackCooldownTime = 0f;
+    protected boolean attacking;
+    protected boolean canAttack = true;
     
     private float rotationSpeed = 15f;
     private PlayerControls _playerControls;
@@ -57,6 +64,7 @@ public class Player extends BaseActor{
     private boolean recovering = false;
     private int recoverAmount = 0;
     
+    Hero hero;
     
     private boolean isMoving = false;
     private Vector2 resetCoords;
@@ -81,7 +89,8 @@ public class Player extends BaseActor{
         
         
        // setAnimation(Unlocks.currentAvatar.getAnim());
-        setAnimation(Avatars.load(Avatars.DefaultPlayerRight, 1, 4, .1f, true));
+        hero = HeroSelectionScreen.currentSelection;
+        setAnimation(hero.playRight());
         setMaxSpeed(800);
         setScale(1.5f);
        // setSize(Unlocks.currentAvatar.getWidth() * Options.aspectRatio, Unlocks.currentAvatar.getHeight() * Options.aspectRatio);
@@ -91,6 +100,8 @@ public class Player extends BaseActor{
         setDeceleration(250);
         
         healthBar = new Rectangle(this.getStage().getCamera().viewportWidth - maxHealth - 20, 10, maxHealth, 20);
+        
+        
         
         s.addActor(this);
     }
@@ -188,7 +199,7 @@ public class Player extends BaseActor{
         if(isDead()){
             return;
         }
-        
+        hero.checkAttack(dt);
         this.getBoundaryPolygon();
         isMoving = false;
         setAcceleration(0 * Options.aspectRatio);
@@ -199,25 +210,28 @@ public class Player extends BaseActor{
         if(getX() < MouseWorldX && 
                (Math.abs((MouseWorldX - getX())) > Math.abs(MouseWorldY - getY())))
                {
-            setAnimation(Avatars.load(Avatars.DefaultPlayerRight, 1, 4, .2f, true));
+            setAnimation(hero.playRight());
         }
        if(getX() > MouseWorldX && 
                (Math.abs((MouseWorldX - getX())) > Math.abs(MouseWorldY - getY()))) 
                {
-           setAnimation(Avatars.load(Avatars.DefaultPlayerLeft, 1, 4, .2f, true));
+           setAnimation(hero.playLeft());
        }
        if((getY()) > MouseWorldY &&
                (Math.abs((MouseWorldX - getX())) < Math.abs(MouseWorldY - getY())))
                {
-           setAnimation(Avatars.load(Avatars.DefaultPlayerDown, 1, 4, .2f, true));
+           setAnimation(hero.playDown());
        }
        if((getY()) < MouseWorldY &&
                (Math.abs((MouseWorldX - getX())) < Math.abs(MouseWorldY - getY())))
                {
-           setAnimation(Avatars.load(Avatars.DefaultPlayerUP, 1, 4, .2f, true));
+           setAnimation(hero.playUp());
        }
        
        //movement control
+       if(_playerControls.isPressed("Fire") && hero.canAttack()){
+           hero.attack(MouseWorldX, MouseWorldY, this);
+       }
        if(_playerControls.isPressed("Right")){
            setAcceleration(accel * Options.aspectRatio);
            isMoving = true;

@@ -142,6 +142,9 @@ public class MainMenuScreen extends BaseScreen {
         
     }
     
+    public void hero(){
+        BaseGame.setActiveScreen(new HeroSelectionScreen());
+    }
     
     public void update(float dt) {
         //mainStage.act(dt);
@@ -172,7 +175,7 @@ public class MainMenuScreen extends BaseScreen {
         removeButtons();
         //backgroundMusic.stop();
         //musicPlaying = false;
-        BaseGame.setActiveScreen( new LevelScreen() );    
+        BaseGame.setActiveScreen(new HeroSelectionScreen());   
     }
     public void quitGame(){
         removeButtons();

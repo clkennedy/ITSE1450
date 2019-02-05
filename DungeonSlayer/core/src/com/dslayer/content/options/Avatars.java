@@ -19,13 +19,6 @@ import java.util.List;
  */
 public class Avatars {
     
-    //player avatars
-    final static public String DefaultPlayerUP = "Player\\Deafult Player\\Character_Up.png";
-    final static public String DefaultPlayerDown = "Player\\Deafult Player\\Character_Down.png";
-    final static public String DefaultPlayerLeft = "Player\\Deafult Player\\Character_Left.png";
-    final static public String DefaultPlayerRight = "Player\\Deafult Player\\Character_Right.png";
-    
-    
     public static Animation<TextureRegion> load(String fileName) {
         String[] fileNames = new String[1];
         fileNames[0] = fileName;
@@ -52,6 +45,16 @@ public class Avatars {
         }
         
         return anim;        
+    }
+    
+    public static TextureRegion[][] loadTextures(String fileName, int rows, int cols) {
+        Texture texture = new Texture(Gdx.files.internal(fileName), true);
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        int frameWidth = texture.getWidth() / cols;
+        int frameHeight = texture.getHeight() / rows;
+        TextureRegion[][] temp = TextureRegion.split(texture, frameWidth, frameHeight);
+        
+        return temp;        
     }
     
     public static List<Animation<TextureRegion>> loadMulti(String fileName, int rows, int cols, float frameDuration, boolean loop) {

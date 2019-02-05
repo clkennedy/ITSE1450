@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dslayer.content.Objects.Spells;
+package com.dslayer.content.projectiles.Spells;
 
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Player.Player;
 
 /**
@@ -72,6 +73,22 @@ public class ProjectileSpell extends BaseActor{
                     ((Player)player).takeDamage((int)damage);
                     remove();
                 }
+            }
+        }
+        if(from == From.Player){
+            for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
+                if(overlaps(enemy)){
+                    ((BaseEnemy)enemy).takeDamage((int)damage);
+                    remove();
+                }
+            }
+        }
+        
+        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
+            if(wall.boundaryPolygon == null)
+                continue;
+            if(overlaps(wall)){
+                remove();
             }
         }
      }

@@ -25,6 +25,8 @@ import com.dslayer.content.Rooms.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Options;
+import com.dslayer.gamemodes.GameMode;
+import com.dslayer.gamemodes.SurvivalGameMode;
 
 public class LevelScreen extends BaseScreen {
     
@@ -32,6 +34,7 @@ public class LevelScreen extends BaseScreen {
     private boolean gameOver;
     BaseActor gameOverMessage;
     
+    GameMode gm;
     
     private BaseEnemy debugEnemy;
     Music backgroundMusic;
@@ -47,54 +50,17 @@ public class LevelScreen extends BaseScreen {
         
         BaseActor.setMainStage(mainStage);
         Difficulty.passInLevelScreen(this);
-        float w = 0;
-        float gw = 0;
+
         
-        
-        
-        Room dr = new DungeonRoom();
-        dr.generateRoom(30,40);
-        
-        Difficulty.worldHeight = dr.getRoomHeight();
-        Difficulty.worldWidth = dr.getRoomWidth();
-        Difficulty.newGame();
-        
-        //System.out.println(Gdx.graphics.getHeight());
-        
-        dr.Draw(mainStage);
-        
-        player = new Player(400,300, mainStage);
         //stage setup
-        
-        for(int i = 0; i < 20; i ++){
-            if(MathUtils.randomBoolean()){
-                new SkeletonMage(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
-            }
-            else{
-                 new SkeletonWarrior(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
-            }
-        }
-        
+        gm = new SurvivalGameMode(mainStage);
+        player = gm.getPlayer();
         // Instantiate Plane and set world bounds
         
         playing = true;
     }
 	
     public void update(float dt) {
-        
-        if(player.isDead())
-        {
-            gameOver = true;
-            return;
-        }
-        if(Gdx.input.isKeyJustPressed(Keys.F)){
-            debugEnemy.takeDamage(20);
-        }
-        if(Gdx.input.isKeyJustPressed(Keys.R)){
-            player.recover(10);
-        }
-        
-        
-        
+        gm.update(dt);
     }
 }
