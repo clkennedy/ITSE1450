@@ -19,20 +19,35 @@ import com.dslayer.content.projectiles.Spells.Projectiles;
  *
  * @author ARustedKnight
  */
-public class FireBall extends Skill{
+public class IceNova extends Skill{
     
-    private String ico = "Icons/FireBall.png";
-    private String icoCD = "Icons/FireBallCooldown.png";
+    private String ico = "Icons/IceNova.png";
+    private String icoCD = "Icons/IceNovaCD.png";
     
+    private float duration = 15;
+    private float durationTimer = 0;
     
-    public FireBall(){
+    private float tick = 1f;
+    private float ticktimer = 0;
+    
+    private float radius = 15;
+    
+    private BaseActor caster;
+    
+    public IceNova(){
         super();
+        skillCooldown = 32f;
         setup();
     }
     
-    public FireBall(float x, float y, Stage s){
+    public IceNova(float x, float y, Stage s){
         super(x,y,s);
+        skillCooldown = 32f;
         setup();
+    }
+    
+    public void setCaster(BaseActor caster){
+        this.caster = caster;
     }
     
     private void setup(){
@@ -53,58 +68,52 @@ public class FireBall extends Skill{
         super.act(dt);
         if(!isAction)
             return;
+        this.centerAtActor(caster);
         getBoundaryPolygon();
-        accelerateAtAngle(direction);
-        applyPhysics(dt);
         
-        if(from == Skill.From.Enemy){
-            for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
-                if(overlaps(player)){
-                    ((Player)player).takeDamage((int)damage);
-                    remove();
+        ticktimer += dt;
+        if(ticktimer > tick){
+            if(from == Skill.From.Enemy){
+                for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
+                    if(overlaps(player)){
+                        ((Player)player).takeDamage((int)damage);
+                    }
                 }
             }
-        }
-        if(from == Skill.From.Player){
-            for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
-                if(overlaps(enemy)){
-                    ((BaseEnemy)enemy).takeDamage((int)damage);
-                    remove();
+            if(from == Skill.From.Player){
+                for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
+                    if(overlaps(enemy)){
+                        ((BaseEnemy)enemy).takeDamage((int)damage);
+                    }
                 }
             }
+            ticktimer = 0;
+        }
+        durationTimer += dt;
+        if(durationTimer > duration){
+            remove();
         }
         
-        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
-            if(wall.boundaryPolygon == null)
-                continue;
-            if(overlaps(wall)){
-                remove();
-            }
-        }
      }
-
+    
     @Override
     public void cast(BaseActor caster, Vector2 target, Skill.From from) {
-        float degrees = (float)(MathUtils.atan2((target.y - (caster.getY() + caster.getHeight()) )
-                , target.x - (caster.getX() + caster.getWidth())) * 180.0d / Math.PI);
-        
-        BaseActor b = new FireBall(caster.getX() - caster.getWidth(),caster.getY() - caster.getHeight() , 
-                BaseActor.getMainStage()).isProjectile()
-                .setProjectileSpeed(300).
-                setProjectileRotation(degrees).
-                setDirection(degrees)
-                .setFrom(from);
+        //float degrees = (float)(MathUtils.atan2((target.y - caster.y ), target.x - caster.x) * 180.0d / Math.PI);
+                Skill b = new IceNova(caster.getX() ,caster.getY() , BaseActor.getMainStage()).isProjectile()
+                        .setFrom(from);
+                  ((IceNova)b).setCaster(caster);
                 canCast = false;
-    }
+        }
     
-    public FireBall isProjectile(){
+    public IceNova isProjectile(){
         isAction = true;
-        setAnimation(Projectiles.getFireBallAnim());
+        setAnimation(Projectiles.getIceNovaAnim());
+        setSize(300,300);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
-        setBoundaryPolygonHalfLong(12);
+        setBoundaryPolygon(12);
         setRotation(90);
-        damage = 50;
+        damage = 20;
         return this;
     }
     
@@ -120,5 +129,5 @@ public class FireBall extends Skill{
         baIcon.setAnimation(Avatars.load(ico));
         baIcon.setSize(iconSize, iconSize);
     }
-
+        
 }

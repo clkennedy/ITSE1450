@@ -47,6 +47,36 @@ public class Avatars {
         return anim;        
     }
     
+    public static Animation<TextureRegion> loadWithTrim(String fileName, int rows, int cols, float frameDuration, boolean loop, int trim) {
+        int totalframes = (rows * cols) - trim;
+        int countFrames = 0;
+        Texture texture = new Texture(Gdx.files.internal(fileName), true);
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        int frameWidth = texture.getWidth() / cols;
+        int frameHeight = texture.getHeight() / rows;
+        TextureRegion[][] temp = TextureRegion.split(texture, frameWidth, frameHeight);
+        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < cols; c++) {
+                textureArray.add(temp[r][c]);
+                countFrames++;
+                if(countFrames == totalframes)
+                    break;
+            }
+            if(countFrames == totalframes)
+                    break;
+        }
+        Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);        
+        if(loop) {
+            anim.setPlayMode(Animation.PlayMode.LOOP);
+        }
+        else {
+            anim.setPlayMode(Animation.PlayMode.NORMAL);
+        }
+        
+        return anim;        
+    }
+    
     public static TextureRegion[][] loadTextures(String fileName, int rows, int cols) {
         Texture texture = new Texture(Gdx.files.internal(fileName), true);
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);

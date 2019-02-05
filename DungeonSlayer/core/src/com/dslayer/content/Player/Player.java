@@ -5,6 +5,7 @@
  */
 package com.dslayer.content.Player;
 
+import com.atkinson.game.engine.ActionMapping;
 import com.atkinson.game.engine.BaseActor;
 import static com.atkinson.game.engine.BaseActor.getWorldBounds;
 import com.atkinson.game.engine.PlayerControls;
@@ -84,6 +85,10 @@ public class Player extends BaseActor{
         
         _playerControls.get("fire").addKeyboardMapping(Input.Keys.F);
         _playerControls.get("fire").addKeyboardMapping(Input.Keys.SHIFT_RIGHT);
+        
+        ActionMapping altFire = new ActionMapping("Alt Fire");
+        altFire.addMouseMapping(1);
+        _playerControls.addMapping(altFire);
         
         resetCoords = new Vector2(x, y);
         
@@ -232,6 +237,9 @@ public class Player extends BaseActor{
        //movement control
        if(_playerControls.isPressed("Fire") && hero.canAttack()){
            hero.attack(MouseWorldX, MouseWorldY, this);
+       }
+       if(_playerControls.isPressed("Alt Fire") && hero.canAttack()){
+           hero.altAttack(MouseWorldX, MouseWorldY, this);
        }
        if(_playerControls.isPressed("Right")){
            setAcceleration(accel * Options.aspectRatio);

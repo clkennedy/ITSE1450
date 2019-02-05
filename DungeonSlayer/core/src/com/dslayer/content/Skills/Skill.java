@@ -36,6 +36,8 @@ public abstract class Skill extends BaseActor{
     protected boolean casting;
     protected boolean canCast = true;
     
+    protected boolean isAction = false;
+    
     public Skill(){
         super();
     }
@@ -56,6 +58,12 @@ public abstract class Skill extends BaseActor{
     
     public void setupIcon(float x, float y){
         baIcon  = new BaseActor(x,y,BaseActor.getUiStage());
+    }
+    
+    public float getIconWidth(){
+        if(baIcon == null)
+            return 0;
+        return baIcon.getWidth();
     }
     
     public Skill setProjectileRotation(float degrees){
@@ -89,8 +97,10 @@ public abstract class Skill extends BaseActor{
     
     @Override
     public void act(float dt){
+        super.act(dt);
+        if(isAction)
+            return;
         checkAttack(dt);
-        
         if(!canCast){
             loadCDTexture();
             if(cdl == null){
@@ -118,5 +128,5 @@ public abstract class Skill extends BaseActor{
     
     protected abstract void loadCDTexture();
     protected abstract void loadCastTexture();
-    public abstract void cast(Vector2 caster, Vector2 target, ProjectileSpell.From from);
+    public abstract void cast(BaseActor caster, Vector2 target, Skill.From from);
 }

@@ -14,6 +14,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.FireBall;
+import com.dslayer.content.Skills.IceNova;
+import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 
@@ -45,27 +47,30 @@ public class ClassicHero extends Hero{
 
     @Override
     public void attack(float MouseWorldX,float MouseWorldY, Player player ) {
-        /*float degrees = (float)Math.toDegrees( MathUtils.atan2((MouseWorldY - player.getY()), MouseWorldX - player.getX()));
-                new ProjectileSpell(player.getX() - player.getWidth() ,player.getY() - player.getHeight() , BaseActor.getMainStage())
-                        .fireBall()
-                        .setProjectileSpeed(300).
-                        setProjectileRotation(degrees).
-                        setDirection(degrees)
-                        .setFrom(ProjectileSpell.From.Player);
-                canAttack = false;*/
         if(basicSkill.canCast()){
             Vector3 mousePos = BaseActor.getMainStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
-            basicSkill.cast(new Vector2(player.getX() - player.getWidth() , player.getY() - player.getHeight()), 
-                new Vector2(mousePos.x, mousePos.y), ProjectileSpell.From.Player);
+            basicSkill.cast(player, new Vector2(mousePos.x, mousePos.y), Skill.From.Player);
         }
         
+    }
+    @Override
+    public void altAttack(float MouseWorldX,float MouseWorldY, Player player ) {
+        if(altSkill.canCast()){
+            Vector3 mousePos = BaseActor.getMainStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
+            altSkill.cast(player, new Vector2(mousePos.x, mousePos.y), Skill.From.Player);
         }
+        
+    }
 
     @Override
     public void setup() {
         basicSkill = new FireBall();
-        basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2),(20));
+        basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30),(20));
         basicSkill.setIconSize(40);
+        
+        altSkill = new IceNova();
+        altSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 + 30),(20));
+        altSkill.setIconSize(40);
         //basicSkill.setIconPosition((int)(BaseActor.getUiStage().getCamera().viewportWidth /2),(int)(BaseActor.getUiStage().getCamera().viewportHeight /2));
     
     }

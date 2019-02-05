@@ -54,6 +54,7 @@ public abstract class Hero extends Avatar{
     }
     
     public abstract void attack(float MouseWorldX,float MouseWorldY, Player player );
+    public abstract void altAttack(float MouseWorldX,float MouseWorldY, Player player );
     public abstract void setup();
     
     public boolean canAttack(){

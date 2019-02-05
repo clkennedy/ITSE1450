@@ -16,8 +16,14 @@ import com.dslayer.content.options.Avatars;
 public class Projectiles {
     
     private static final String FireBall = "particles/11_fire_spritesheet.png";
+    private static final String IceNova = "particles/19_freezing_spritesheet.png";
     public static Animation<TextureRegion> getFireBallAnim(){
         Animation<TextureRegion> anim = Avatars.load(FireBall, 8, 8, .05f, true);
+        return anim;
+    }
+    
+    public static Animation<TextureRegion> getIceNovaAnim(){
+        Animation<TextureRegion> anim = Avatars.loadWithTrim(IceNova, 10, 10, .05f, true, 14);
         return anim;
     }
     
