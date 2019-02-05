@@ -55,6 +55,7 @@ public class BaseActor extends Group {
     public Polygon boundaryPolygon;
     
     private static Stage mainStage = null;
+    private static Stage uiStage = null;
     
     private static Rectangle worldBounds;
     
@@ -104,6 +105,13 @@ public class BaseActor extends Group {
     
     public static void setMainStage(Stage s){
         BaseActor.mainStage = s;
+    }
+    public static void setUIStage(Stage s){
+        BaseActor.uiStage = s;
+    }
+    
+    public static Stage getUiStage(){
+        return BaseActor.uiStage;
     }
     
     public BaseActor(){
@@ -551,6 +559,21 @@ public class BaseActor extends Group {
             float angle = i * MathUtils.PI2 / numSides;
             // x-coordinate
             vertices[2*i] = w / 2 * MathUtils.cos(angle) + w / 2;
+            // y-coordinate
+            vertices[2*i+1] = h / 2 * MathUtils.sin(angle) + h / 2;
+        }
+        boundaryPolygon = new Polygon(vertices);
+    }
+    
+    public void setBoundaryPolygonHalfWidth(int numSides) {
+        float w = getWidth() / 2;
+        float h = getHeight();
+        float[] vertices = new float[2*numSides];
+        
+        for(int i = 0; i < numSides; i++) {
+            float angle = i * MathUtils.PI2 / numSides;
+            // x-coordinate
+            vertices[2*i] = w / 2 * MathUtils.cos(angle) + w / 2 + (getWidth()/4);
             // y-coordinate
             vertices[2*i+1] = h / 2 * MathUtils.sin(angle) + h / 2;
         }

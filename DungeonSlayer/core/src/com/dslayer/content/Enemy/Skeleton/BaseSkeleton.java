@@ -28,17 +28,31 @@ import java.util.List;
 public class BaseSkeleton extends BaseEnemy{
     
     private final String SkeletonBody = "Enemy/Skeleton/BODY_skeleton.png";
+    private final String SkeletonBodySlash = "Enemy/Skeleton/BODY_skeletonSlash.png";
+    private final String SkeletonBodyCast = "Enemy/Skeleton/BODY_skeletonCast.png";
     private final String DieAnimPath = "Enemy/Skeleton/BODY_skeletonDeath.png";
     protected List<Animation<TextureRegion>> walkAnimList;
+    protected List<Animation<TextureRegion>> slashAnimList;
+    protected List<Animation<TextureRegion>> castAnimList;
     
     protected enum WalkDirection{up,left,down,right};
+    protected WalkDirection currentDirection;
+    
+    protected float attackDamage;
     
     protected BaseActor target = null;
     protected Circle AttackRange;
     protected Circle TargetRange;
     
+    protected float attackCooldown = 5f;
+    protected float attackCooldownTime = 0f;
+    protected boolean attacking;
+    protected boolean canAttack = true;
+    
     protected Vector2 moveTo;
     protected Circle moveToRange;
+    
+    
     
     public BaseSkeleton() {
         
@@ -48,10 +62,11 @@ public class BaseSkeleton extends BaseEnemy{
         super(x,y,s);
         
         walkAnimList = Avatars.loadMulti(SkeletonBody, 4, 9, .1f, true);
+        slashAnimList = Avatars.loadMulti(SkeletonBodySlash, 4, 6, .1f, false);
+        castAnimList = Avatars.loadMulti(SkeletonBodyCast, 4, 7, .1f, false);
         
         AttackRange = new Circle(x, y, 100);
         TargetRange = new Circle(x, y, 100);
-        
         
         moveTo = new Vector2();
         moveTo.x = MathUtils.random(Difficulty.worldWidth);
@@ -86,6 +101,7 @@ public class BaseSkeleton extends BaseEnemy{
     public void act(float dt){
         super.act(dt);
         updateRanges();
+        canAttack(dt);
     }
     private void updateRanges(){
         TargetRange.setPosition(new Vector2(getX() + (getWidth()/2), getY()+(getHeight()/2)));
@@ -98,5 +114,15 @@ public class BaseSkeleton extends BaseEnemy{
         setAnimationWithReset(Avatars.load(DieAnimPath, 1, 6, .2f, false));
         setSize(size, size);
         isDying = true;
+    }
+    
+    private void canAttack(float dt){
+        if(attackCooldownTime >= attackCooldown){
+            canAttack = true;
+            attackCooldownTime = 0;
+        }
+        if(!canAttack){
+            attackCooldownTime += dt;
+        }
     }
 }

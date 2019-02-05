@@ -90,7 +90,7 @@ public class Player extends BaseActor{
         setMaxSpeed(100);
         setDeceleration(250);
         
-        healthBar = new Rectangle(Gdx.graphics.getWidth() - maxHealth - 20, 10, maxHealth, 20);
+        healthBar = new Rectangle(this.getStage().getCamera().viewportWidth - maxHealth - 20, 10, maxHealth, 20);
         
         s.addActor(this);
     }
@@ -122,6 +122,8 @@ public class Player extends BaseActor{
         super.draw(batch, parentAlpha);
         if(isVisible()) {
            batch.end();
+           sRend.setProjectionMatrix(this.getStage().getCamera().combined);
+           sRend.getProjectionMatrix().setToOrtho2D(0,  0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
            sRend.setColor(Color.BLACK);
            sRend.begin(ShapeRenderer.ShapeType.Line);
            sRend.rect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
@@ -180,6 +182,7 @@ public class Player extends BaseActor{
     @Override
     public void act(float dt){
         super.act(dt);
+        
         this.setOrigin(this.getWidth() / 2,this.getHeight() /2);
         calculateHealth(dt);
         if(isDead()){

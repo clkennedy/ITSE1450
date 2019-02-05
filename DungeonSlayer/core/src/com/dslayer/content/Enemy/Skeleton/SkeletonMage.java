@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.math.MathUtils;
 import com.dslayer.content.options.Difficulty;
 import com.badlogic.gdx.math.Circle;
+import com.dslayer.content.Objects.Spells.ProjectileSpell;
 import com.dslayer.content.Player.Player;
 
 /**
@@ -19,9 +20,9 @@ import com.dslayer.content.Player.Player;
  * @author ARustedKnight
  */
 
-public class SkeletonWarrior extends BaseSkeleton{
+public class SkeletonMage extends BaseSkeleton{
     
-    public SkeletonWarrior(float x, float y, Stage s){
+    public SkeletonMage(float x, float y, Stage s){
         
         super(x,y,s);
         maxHealth = 100;
@@ -31,11 +32,11 @@ public class SkeletonWarrior extends BaseSkeleton{
         setSize(size,size);
         setBoundaryRectangle();
         setMaxSpeed(50);
-        
+        setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 30;
 
-        AttackRange = new Circle(x, y, 25);
-        TargetRange = new Circle(x, y, 300);
+        AttackRange = new Circle(x, y, 300);
+        TargetRange = new Circle(x, y, 500);
     }
     
     @Override
@@ -47,7 +48,13 @@ public class SkeletonWarrior extends BaseSkeleton{
         if(attacking){
             if(isAnimationFinished()){
                 attacking = false;
-                ((Player)target).takeDamage((int)attackDamage);
+                float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
+                new ProjectileSpell(getX() - getWidth()/2 ,getY() - getHeight() /2, getStage())
+                        .fireBall()
+                        .setProjectileSpeed(300).
+                        setProjectileRotation(degrees).
+                        setDirection(degrees)
+                        .setFrom(ProjectileSpell.From.Enemy);
                 canAttack = false;
             }
             return;
@@ -94,7 +101,7 @@ public class SkeletonWarrior extends BaseSkeleton{
             if(Intersector.overlaps(AttackRange, target.getBoundaryPolygon().getBoundingRectangle())){
                 attacking = true;
                 setSpeed(0);
-                setAnimationWithReset(slashAnimList.get(currentDirection.ordinal()));
+                setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
                 setSize(size, size);
             }
         }

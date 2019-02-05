@@ -104,7 +104,7 @@ public class MainMenuScreen extends BaseScreen {
 
         //TextButton tb = new TextButton("Play", );
         
-        Label play = new Label("Play", menu);
+        Label play = new Label("Survival", menu);
         play.setSize((play.getWidth() * 1.2f) * Options.aspectRatio, (play.getHeight() *1.2f) * Options.aspectRatio);
         play.setOriginX(play.getWidth() / 2);
         play.setOriginY(play.getHeight()/ 2);
