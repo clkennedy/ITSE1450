@@ -568,7 +568,7 @@ public class BaseActor extends Group {
         boundaryPolygon = new Polygon(vertices);
     }
     
-    public void setBoundaryPolygonHalfWidth(int numSides) {
+    public void setBoundaryPolygonLong(int numSides) {
         float w = getWidth() / 2;
         float h = getHeight();
         float[] vertices = new float[2*numSides];
@@ -579,6 +579,49 @@ public class BaseActor extends Group {
             vertices[2*i] = w / 2 * MathUtils.cos(angle) + w / 2 + (getWidth()/4);
             // y-coordinate
             vertices[2*i+1] = h / 2 * MathUtils.sin(angle) + h / 2;
+        }
+        boundaryPolygon = new Polygon(vertices);
+    }
+    public void setBoundaryPolygonWide(int numSides) {
+        float w = getWidth();
+        float h = getHeight() / 2;
+        float[] vertices = new float[2*numSides];
+        
+        for(int i = 0; i < numSides; i++) {
+            float angle = i * MathUtils.PI2 / numSides;
+            // x-coordinate
+            vertices[2*i] = w / 2 * MathUtils.cos(angle) + w / 2;
+            // y-coordinate
+            vertices[2*i+1] = h / 2 * MathUtils.sin(angle) + h / 2 + (getHeight()/4);
+        }
+        boundaryPolygon = new Polygon(vertices);
+    }
+    public void setBoundaryPolygonHalf(int numSides) {
+        float w = getWidth() / 2;
+        float h = getHeight()/ 2;
+        float[] vertices = new float[2*numSides];
+        
+        for(int i = 0; i < numSides; i++) {
+            float angle = i * MathUtils.PI2 / numSides;
+            // x-coordinate
+            vertices[2*i] = w / 2 * MathUtils.cos(angle) + w / 2 + (getWidth()/4);
+            // y-coordinate
+            vertices[2*i+1] = h / 2 * MathUtils.sin(angle) + h / 2+ (getHeight()/4);
+        }
+        boundaryPolygon = new Polygon(vertices);
+    }
+    
+    public void setBoundaryPolygonHalfLong(int numSides) {
+        float w = getWidth() / 4;
+        float h = getHeight()/ 2;
+        float[] vertices = new float[2*numSides];
+        
+        for(int i = 0; i < numSides; i++) {
+            float angle = i * MathUtils.PI2 / numSides;
+            // x-coordinate
+            vertices[2*i] = w / 4 * MathUtils.cos(angle) + w / 4 + (getWidth()/2);
+            // y-coordinate
+            vertices[2*i+1] = h / 2 * MathUtils.sin(angle) + h / 2+ (getHeight()/4);
         }
         boundaryPolygon = new Polygon(vertices);
     }

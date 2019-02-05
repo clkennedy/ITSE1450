@@ -55,6 +55,7 @@ public class HeroSelectionScreen extends BaseScreen {
     public void initialize() {
         
         BaseActor.setMainStage(mainStage);
+        BaseActor.setUIStage(uiStage);
         heroSelections = new ArrayList<BaseActor>();
         //private Player player;
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("HumbleFonts/compass/CompassPro.ttf"));

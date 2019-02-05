@@ -6,10 +6,14 @@
 package com.dslayer.content.Hero;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.Skills.FireBall;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 
@@ -36,20 +40,35 @@ public class ClassicHero extends Hero{
         setAnimation(Right);
         setBoundaryRectangle();
         heroName = "Classic Hero";
+        
     }
 
     @Override
     public void attack(float MouseWorldX,float MouseWorldY, Player player ) {
-        System.out.println("Boo");
-        float degrees = (float)Math.toDegrees( MathUtils.atan2((MouseWorldY - player.getY()), MouseWorldX - player.getX()));
+        /*float degrees = (float)Math.toDegrees( MathUtils.atan2((MouseWorldY - player.getY()), MouseWorldX - player.getX()));
                 new ProjectileSpell(player.getX() - player.getWidth() ,player.getY() - player.getHeight() , BaseActor.getMainStage())
                         .fireBall()
                         .setProjectileSpeed(300).
                         setProjectileRotation(degrees).
                         setDirection(degrees)
                         .setFrom(ProjectileSpell.From.Player);
-                canAttack = false;
+                canAttack = false;*/
+        if(basicSkill.canCast()){
+            Vector3 mousePos = BaseActor.getMainStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
+            basicSkill.cast(new Vector2(player.getX() - player.getWidth() , player.getY() - player.getHeight()), 
+                new Vector2(mousePos.x, mousePos.y), ProjectileSpell.From.Player);
         }
+        
+        }
+
+    @Override
+    public void setup() {
+        basicSkill = new FireBall();
+        basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2),(20));
+        basicSkill.setIconSize(40);
+        //basicSkill.setIconPosition((int)(BaseActor.getUiStage().getCamera().viewportWidth /2),(int)(BaseActor.getUiStage().getCamera().viewportHeight /2));
+    
+    }
     
     
 }

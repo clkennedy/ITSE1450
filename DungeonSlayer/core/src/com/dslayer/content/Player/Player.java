@@ -90,6 +90,7 @@ public class Player extends BaseActor{
         
        // setAnimation(Unlocks.currentAvatar.getAnim());
         hero = HeroSelectionScreen.currentSelection;
+        hero.setup();
         setAnimation(hero.playRight());
         setMaxSpeed(800);
         setScale(1.5f);

@@ -49,6 +49,7 @@ public class LevelScreen extends BaseScreen {
     public void initialize() {
         
         BaseActor.setMainStage(mainStage);
+        BaseActor.setUIStage(uiStage);
         Difficulty.passInLevelScreen(this);
 
         //stage setup

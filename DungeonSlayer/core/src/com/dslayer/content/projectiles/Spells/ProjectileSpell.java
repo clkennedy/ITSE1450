@@ -31,7 +31,7 @@ public class ProjectileSpell extends BaseActor{
         setAnimation(Projectiles.getFireBallAnim());
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
-        setBoundaryPolygonHalfWidth(12);
+        setBoundaryPolygonHalfLong(12);
         setRotation(90);
         damage = 50;
         return this;

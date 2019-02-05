@@ -30,6 +30,14 @@ public class SurvivalGameMode extends GameMode{
     private float potionRespawnTimer = 0;
     private float maxPotionsOnFeild = 6;
     
+    private float maxNumOfEnemies = 6;
+    private float spawnedEnemies = 0;
+    private float spawnTimer = 3f;
+    private float spawnTime = 0;
+    
+    private float increaseEnemyTimer = 10f;
+    private float increaseEnemyTime = 0f;
+    
     public SurvivalGameMode(Stage s){
         super(s);
         //System.out.println(Gdx.graphics.getHeight());
@@ -73,7 +81,7 @@ public class SurvivalGameMode extends GameMode{
         }
         
         potionRespawnTimer += dt;
-        List<BaseActor> hPots = BaseActor.getList(mainStage, "com.dslayer.content.objects.Potions.HealthPotion");
+        List<BaseActor> hPots = BaseActor.getList(mainStage, "com.dslayer.content.Objects.Potions.HealthPotion");
             
         if(hPots.size() < maxPotionsOnFeild){
             if(potionRespawnTimer > potionRespawnInterval){
@@ -82,6 +90,30 @@ public class SurvivalGameMode extends GameMode{
                         MathUtils.random(Difficulty.worldHeight - (DungeonPanels.defaultSize * 2))+ DungeonPanels.defaultSize, 
                         mainStage).enableDespawnTimer(30);
             }
+        }
+        
+        List<BaseActor> enemies = BaseActor.getList(mainStage, "com.dslayer.content.Enemy.BaseEnemy");
+        
+        spawnTime += dt;
+        if(spawnTime > spawnTimer && enemies.size() < maxNumOfEnemies ){
+            BaseActor b;
+            if(MathUtils.randomBoolean()){
+                b = new SkeletonMage(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
+           }
+            else{
+                b = new SkeletonWarrior(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
+            }
+            spawnTime= 0;
+            if(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
+                   b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
+                b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
+            }
+        }
+        
+        increaseEnemyTime += dt;
+        if(increaseEnemyTime > increaseEnemyTimer){
+            maxNumOfEnemies += 2;
+            increaseEnemyTime= 0;
         }
         
     }

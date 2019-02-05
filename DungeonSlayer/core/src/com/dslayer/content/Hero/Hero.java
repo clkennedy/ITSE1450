@@ -8,6 +8,7 @@ package com.dslayer.content.Hero;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatar;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,9 @@ public abstract class Hero extends Avatar{
     protected float attackCooldownTime = 0f;
     protected boolean attacking;
     protected boolean canAttack = true;
+    
+    protected Skill basicSkill;
+    protected Skill altSkill;
     
     public static Hero[] heros = {new ClassicHero()};
     protected String heroName;
@@ -50,6 +54,7 @@ public abstract class Hero extends Avatar{
     }
     
     public abstract void attack(float MouseWorldX,float MouseWorldY, Player player );
+    public abstract void setup();
     
     public boolean canAttack(){
         return canAttack;
