@@ -81,8 +81,8 @@ public class SkeletonWarrior extends BaseSkeleton{
             hitWall = false;
         }
         else if(target != null){
-            moveTo.x = target.getX();
-            moveTo.y = target.getY();
+            moveTo.x = target.getX() + (target.getWidth()/2);
+            moveTo.y = target.getY() + (target.getHeight()/2);
         }
         
     }
