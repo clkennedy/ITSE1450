@@ -5,9 +5,11 @@
  */
 package com.dslayer.content.Objects.Potions;
 
+import com.dslayer.content.Objects.Potion;
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.dslayer.content.Objects.Spells.ProjectileSpell;
+import com.dslayer.content.projectiles.Spells.ProjectileSpell;
+import com.dslayer.content.Player.Player;
 import com.dslayer.content.Player.Player;
 
 /**
@@ -18,9 +20,12 @@ public class HealthPotion extends Potion{
     
     protected float recoverAmount;
     
+    
     public HealthPotion(float x, float y, Stage s) {
         super(x, y, s);
         recoverAmount = 50;
+        loadTexture(potionSprites[0][9]);
+        setSize(20,20);
     }
     
     @Override
@@ -32,6 +37,12 @@ public class HealthPotion extends Potion{
                 ((Player)player).recover((int)recoverAmount);
                 remove();
             }
+        }
+        
+        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
+            if(wall.boundaryPolygon == null)
+                continue;
+            preventOverlap(wall);
         }
         
     }

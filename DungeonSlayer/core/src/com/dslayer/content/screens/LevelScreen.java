@@ -34,7 +34,7 @@ public class LevelScreen extends BaseScreen {
     private boolean gameOver;
     BaseActor gameOverMessage;
     
-    GameMode gm;
+    private static GameMode currentGamemode;
     
     private BaseEnemy debugEnemy;
     Music backgroundMusic;
@@ -42,25 +42,25 @@ public class LevelScreen extends BaseScreen {
     
     private boolean returnToMainScreen = false;
     
-    
+    public static void setGameMode(GameMode gm){
+        currentGamemode = gm;
+    }
 
     public void initialize() {
-        
-        //private Player player;
         
         BaseActor.setMainStage(mainStage);
         Difficulty.passInLevelScreen(this);
 
-        
         //stage setup
-        gm = new SurvivalGameMode(mainStage);
-        player = gm.getPlayer();
+        currentGamemode.updateMainStage();
+        currentGamemode.setup();
+        player = currentGamemode.getPlayer();
         // Instantiate Plane and set world bounds
         
         playing = true;
     }
 	
     public void update(float dt) {
-        gm.update(dt);
+        currentGamemode.update(dt);
     }
 }

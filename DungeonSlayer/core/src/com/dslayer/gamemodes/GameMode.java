@@ -5,6 +5,7 @@
  */
 package com.dslayer.gamemodes;
 
+import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Player.Player;
 
@@ -22,10 +23,21 @@ public abstract class GameMode {
     public GameMode(Stage s){
         mainStage = s;
     }
+    public GameMode(){
+        mainStage = BaseActor.getMainStage();
+    }
     
     public Player getPlayer(){
         return player;
     }
     
+    public void updateMainStage(Stage s){
+        mainStage = s;
+    }
+    public void updateMainStage(){
+        mainStage = BaseActor.getMainStage();
+    }
+    
+    public abstract void setup();
     public abstract void update(float dt);
 }

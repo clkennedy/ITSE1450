@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.Array;
 public class DungeonPanels extends BaseActor{
     
     public static TextureRegion[][] Panels = load("Rooms/Dungeon/DungeonStarter.png",17,6);
-    public static int defaultSize = 50;
+    public static final int defaultSize = 50;
             
     private static TextureRegion[][] load(String fileName, int rows, int cols) {
         Texture texture = new Texture(Gdx.files.internal(fileName), true);

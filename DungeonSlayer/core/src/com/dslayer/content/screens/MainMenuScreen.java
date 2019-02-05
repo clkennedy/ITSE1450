@@ -42,6 +42,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import sun.font.TrueTypeFont;
 import com.badlogic.gdx.utils.Align;
+import com.dslayer.gamemodes.SurvivalGameMode;
 /**
  *
  * @author douglas.atkinson
@@ -175,6 +176,7 @@ public class MainMenuScreen extends BaseScreen {
         removeButtons();
         //backgroundMusic.stop();
         //musicPlaying = false;
+        LevelScreen.setGameMode(new SurvivalGameMode());
         BaseGame.setActiveScreen(new HeroSelectionScreen());   
     }
     public void quitGame(){
