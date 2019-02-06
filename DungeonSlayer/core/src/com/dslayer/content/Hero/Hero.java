@@ -8,6 +8,7 @@ package com.dslayer.content.Hero;
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatar;
@@ -31,7 +32,9 @@ public abstract class Hero extends Avatar{
     protected Skill altSkill;
     
     protected boolean waitToCast = false;
-    //protected Runnable<BaseActor,string, string> skillWaitedToCast = null;
+    protected Skill skillWaitedToCast;
+    protected BaseActor caster;
+    protected Vector2 target;
     
     protected float size = 32;
     
@@ -41,10 +44,13 @@ public abstract class Hero extends Avatar{
     protected List<Animation<TextureRegion>> walkAnimList;
     protected List<Animation<TextureRegion>> slashAnimList;
     protected List<Animation<TextureRegion>> castAnimList;
+    protected List<Animation<TextureRegion>> castBasicAnimList;
+    protected List<Animation<TextureRegion>> castAltAnimList;
     protected Animation<TextureRegion> dieAnim;
     
     protected boolean isDying;
     protected boolean isAttacking;
+    
     
     public Hero(Animation<TextureRegion> animation) {
         super(animation);
@@ -139,6 +145,21 @@ public abstract class Hero extends Avatar{
         }
         if(!canAttack){
             attackCooldownTime += dt;
+        }
+    }
+    
+    @Override
+    public void act(float dt){
+       super.act(dt);
+       //System.out.println("Boo");
+       if(waitToCast){
+           if(caster.isAnimationFinished()){
+               skillWaitedToCast.cast(caster, target, Skill.From.Player);
+               caster = null;
+               target = null;
+               skillWaitedToCast = null;
+               waitToCast = false;
+           }
         }
     }
 }

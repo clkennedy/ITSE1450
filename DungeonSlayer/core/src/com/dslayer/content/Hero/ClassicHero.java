@@ -45,26 +45,27 @@ public class ClassicHero extends Hero{
         heroName = "William";
         
         walkAnimList = LPC.LoadGroupFromFullSheet(ClassicHero, LPC.LPCGroupAnims.walk);
-        castAnimList = LPC.LoadGroupFromFullSheet(ClassicHero, LPC.LPCGroupAnims.cast);
+        castBasicAnimList = LPC.LoadGroupFromFullSheet(ClassicHero, LPC.LPCGroupAnims.slash, .05f);
+        castAltAnimList = LPC.LoadGroupFromFullSheet(ClassicHero, LPC.LPCGroupAnims.cast, .15f);
         dieAnim = LPC.LoadGroupFromFullSheet(ClassicHero, LPC.LPCGroupAnims.die).get(0);
     }
 
     @Override
     public void act(float dt){
         super.act(dt);
-        
-        if(waitToCast){
-            //skillWaitedToCast.cast(this, Vector2.Zero, Skill.From.Player);
-        }
     }
     
     @Override
     public void attack(float MouseWorldX,float MouseWorldY, Player player ) {
         if(basicSkill.canCast()){
             player.setCanMove(false);
-            Vector3 mousePos = BaseActor.getMainStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
-            basicSkill.cast(player, new Vector2(mousePos.x, mousePos.y), Skill.From.Player);
+            //basicSkill.cast(player, new Vector2(MouseWorldX, MouseWorldY), Skill.From.Player);
+            castAnimList = castBasicAnimList;
             isAttacking = true;
+            waitToCast = true;
+            skillWaitedToCast = basicSkill;
+            this.caster = player;
+            this.target = new Vector2(MouseWorldX,MouseWorldY);
         }
         
     }
@@ -72,9 +73,12 @@ public class ClassicHero extends Hero{
     public void altAttack(float MouseWorldX,float MouseWorldY, Player player ) {
         if(altSkill.canCast()){
             player.setCanMove(false);
-            Vector3 mousePos = BaseActor.getMainStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
-            altSkill.cast(player, new Vector2(mousePos.x, mousePos.y), Skill.From.Player);
+            castAnimList = castAltAnimList;
             isAttacking = true;
+            waitToCast = true;
+            skillWaitedToCast = altSkill;
+            this.caster = player;
+            this.target = new Vector2(MouseWorldX,MouseWorldY);
         }
     }
 

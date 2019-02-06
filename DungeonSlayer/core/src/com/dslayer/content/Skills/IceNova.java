@@ -24,7 +24,7 @@ public class IceNova extends Skill{
     private String ico = "Icons/IceNova.png";
     private String icoCD = "Icons/IceNovaCD.png";
     
-    private float duration = 15;
+    private float duration = 16;
     private float durationTimer = 0;
     
     private float tick = 1f;
@@ -36,7 +36,7 @@ public class IceNova extends Skill{
     
     public IceNova(){
         super();
-        skillCooldown = 32f;
+        skillCooldown = 27f;
         setup();
     }
     
@@ -70,7 +70,7 @@ public class IceNova extends Skill{
             return;
         this.centerAtActor(caster);
         getBoundaryPolygon();
-        
+        setRotation( (getRotation() + 1 > 350)? 0 : getRotation() + 1);
         ticktimer += dt;
         if(ticktimer > tick){
             if(from == Skill.From.Enemy){
@@ -109,11 +109,12 @@ public class IceNova extends Skill{
     public IceNova isProjectile(){
         isAction = true;
         setAnimation(Projectiles.getIceNovaAnim());
-        setSize(300,300);
+        setSize(400,400);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setBoundaryPolygon(12);
-        setRotation(90);
+        setRotation(MathUtils.random(360));
+        setZIndex(1500);
         damage = 20;
         return this;
     }

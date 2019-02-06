@@ -201,7 +201,7 @@ public class Player extends BaseActor{
     @Override
     public void act(float dt){
         super.act(dt);
-        
+        hero.act(dt);
         
         calculateHealth(dt);
         if(isDead()){
