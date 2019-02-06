@@ -28,7 +28,7 @@ public class IceNova extends Skill{
     private float durationTimer = 0;
     
     private float tick = 1f;
-    private float ticktimer = 0;
+    private float ticktimer = 2;
     
     private float radius = 15;
     

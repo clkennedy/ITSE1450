@@ -25,12 +25,12 @@ public class SkeletonMage extends BaseSkeleton{
     public SkeletonMage(float x, float y, Stage s){
         
         super(x,y,s);
-        maxHealth = 100;
+        maxHealth = 75;
         health = maxHealth;
         currentDirection = WalkDirection.down;
         setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
         setSize(size,size);
-        setBoundaryRectangle();
+        setBoundaryPolygon(8);
         setMaxSpeed(50);
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 30;

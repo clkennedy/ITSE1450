@@ -66,6 +66,7 @@ public class ClassicHero extends Hero{
     public void setup() {
         basicSkill = new FireBall();
         basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30),(20));
+        basicSkill.setCoolDown(1);
         basicSkill.setIconSize(40);
         
         altSkill = new IceNova();

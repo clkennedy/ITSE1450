@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.Align;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
@@ -125,6 +126,8 @@ public class HeroSelectionScreen extends BaseScreen {
         
         Label ready = new Label("Ready", menu);
         ready.setPosition((mainStage.getWidth()/ 2) - (ready.getWidth()/2), ready.getHeight() + 10);
+        ready.setOrigin(ready.getWidth()/2, ready.getHeight()/2);
+        ready.setAlignment(Align.center);
         ready.addListener(new Hover(){
                     @Override
                     public void clicked(InputEvent event, float x, float y) {

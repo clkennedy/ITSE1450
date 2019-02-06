@@ -24,12 +24,12 @@ public class SkeletonWarrior extends BaseSkeleton{
     public SkeletonWarrior(float x, float y, Stage s){
         
         super(x,y,s);
-        maxHealth = 100;
+        maxHealth = 50;
         health = maxHealth;
         currentDirection = WalkDirection.down;
         setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
         setSize(size,size);
-        setBoundaryRectangle();
+        setBoundaryPolygon(8);
         setMaxSpeed(50);
         
         attackDamage = 30;

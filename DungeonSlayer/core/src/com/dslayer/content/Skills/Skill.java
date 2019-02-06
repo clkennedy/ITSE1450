@@ -60,6 +60,11 @@ public abstract class Skill extends BaseActor{
         baIcon  = new BaseActor(x,y,BaseActor.getUiStage());
     }
     
+    public void setCoolDown(float cd){
+        skillCooldown = cd;
+    }
+    
+    
     public float getIconWidth(){
         if(baIcon == null)
             return 0;
