@@ -103,6 +103,7 @@ public class IceNova extends Skill{
                         .setFrom(from);
                   ((IceNova)b).setCaster(caster);
                 canCast = false;
+                ((IceNova)b).caster = caster;
         }
     
     public IceNova isProjectile(){

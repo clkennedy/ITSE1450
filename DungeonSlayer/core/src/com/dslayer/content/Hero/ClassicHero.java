@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.*;
 import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.LPC;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 
 /**
@@ -26,6 +27,8 @@ public class ClassicHero extends Hero{
     final static public String DefaultPlayerDown = "Player\\Deafult Player\\Character_Down.png";
     final static public String DefaultPlayerLeft = "Player\\Deafult Player\\Character_Left.png";
     final static public String DefaultPlayerRight = "Player\\Deafult Player\\Character_Right.png";
+    
+    final static public String ClassicHero = "Player/Classic Hero/William.png";
 
     public ClassicHero(Animation<TextureRegion> animation) {
         super(animation);
@@ -41,23 +44,38 @@ public class ClassicHero extends Hero{
         setBoundaryRectangle();
         heroName = "William";
         
+        walkAnimList = LPC.LoadGroupFromFullSheet(ClassicHero, LPC.LPCGroupAnims.walk);
+        castAnimList = LPC.LoadGroupFromFullSheet(ClassicHero, LPC.LPCGroupAnims.cast);
+        dieAnim = LPC.LoadGroupFromFullSheet(ClassicHero, LPC.LPCGroupAnims.die).get(0);
     }
 
     @Override
+    public void act(float dt){
+        super.act(dt);
+        
+        if(waitToCast){
+            //skillWaitedToCast.cast(this, Vector2.Zero, Skill.From.Player);
+        }
+    }
+    
+    @Override
     public void attack(float MouseWorldX,float MouseWorldY, Player player ) {
         if(basicSkill.canCast()){
+            player.setCanMove(false);
             Vector3 mousePos = BaseActor.getMainStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
             basicSkill.cast(player, new Vector2(mousePos.x, mousePos.y), Skill.From.Player);
+            isAttacking = true;
         }
         
     }
     @Override
     public void altAttack(float MouseWorldX,float MouseWorldY, Player player ) {
         if(altSkill.canCast()){
+            player.setCanMove(false);
             Vector3 mousePos = BaseActor.getMainStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
             altSkill.cast(player, new Vector2(mousePos.x, mousePos.y), Skill.From.Player);
+            isAttacking = true;
         }
-        
     }
 
     @Override

@@ -38,6 +38,9 @@ public abstract class GameMode {
         mainStage = BaseActor.getMainStage();
     }
     
+    public boolean isGameOver(){
+        return gameOver;
+    }
     public abstract void setup();
     public abstract void update(float dt);
 }

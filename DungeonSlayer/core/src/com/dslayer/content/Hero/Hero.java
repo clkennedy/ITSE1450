@@ -5,6 +5,7 @@
  */
 package com.dslayer.content.Hero;
 
+import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.dslayer.content.Player.Player;
@@ -12,6 +13,8 @@ import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatar;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  *
@@ -27,30 +30,98 @@ public abstract class Hero extends Avatar{
     protected Skill basicSkill;
     protected Skill altSkill;
     
+    protected boolean waitToCast = false;
+    //protected Runnable<BaseActor,string, string> skillWaitedToCast = null;
+    
+    protected float size = 32;
+    
     public static Hero[] heros = {new ClassicHero(), new VikingHero()};
     protected String heroName;
+    
+    protected List<Animation<TextureRegion>> walkAnimList;
+    protected List<Animation<TextureRegion>> slashAnimList;
+    protected List<Animation<TextureRegion>> castAnimList;
+    protected Animation<TextureRegion> dieAnim;
+    
+    protected boolean isDying;
+    protected boolean isAttacking;
     
     public Hero(Animation<TextureRegion> animation) {
         super(animation);
     }
     public Hero() {
         super();
+        setOrigin(getWidth() /2, getHeight() / 2);
+    }
+    
+    public float getDSize(){
+        return this.size;
     }
     
     public String getName(){
         return heroName;
     }
     public Animation<TextureRegion> playRight(){
+        
+        if(walkAnimList != null && walkAnimList.size() > 0){
+            if(isAttacking){
+                isAttacking = false;
+                return castAnimList.get(3);
+            }
+            else
+                return walkAnimList.get(3);  
+        }
+            
         return this.Right;
     }
     public Animation<TextureRegion> playLeft(){
+        if(walkAnimList != null && walkAnimList.size() > 0){
+            if(isAttacking){
+                isAttacking = false;
+                return castAnimList.get(1);
+            }
+            else
+                return walkAnimList.get(1);  
+        }
         return this.Left;
     }
     public Animation<TextureRegion> playUp(){
+        if(walkAnimList != null && walkAnimList.size() > 0){
+            if(isAttacking){
+                isAttacking = false;
+                return castAnimList.get(0);
+            }
+            else
+                return walkAnimList.get(0);  
+        }
         return this.Up;
     }
     public Animation<TextureRegion> playDown(){
+        if(walkAnimList != null && walkAnimList.size() > 0){
+            if(isAttacking){
+                isAttacking = false;
+                return castAnimList.get(2);
+            }
+            else
+                return walkAnimList.get(2);  
+        }
         return this.Down;
+    }
+    
+    public Animation<TextureRegion> playDie(){
+        if(dieAnim != null)
+            return dieAnim;
+        return null;
+    }
+    
+    public boolean isDying(){
+        return isDying;
+    }
+    public boolean isAttacking(){
+        return isAttacking;
+    }
+    public void isDying(boolean b){
+        isDying = b;
     }
     
     public abstract void attack(float MouseWorldX,float MouseWorldY, Player player );
@@ -71,3 +142,4 @@ public abstract class Hero extends Avatar{
         }
     }
 }
+    

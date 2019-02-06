@@ -11,6 +11,7 @@ import static com.atkinson.game.engine.BaseActor.getWorldBounds;
 import com.atkinson.game.engine.PlayerControls;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -98,9 +99,12 @@ public class Player extends BaseActor{
         hero.setup();
         setAnimation(hero.playRight());
         setScale(1.5f);
+        setSize(hero.getDSize(), hero.getDSize());
+        setOrigin(getWidth() /2, getHeight() / 2);
+        
        // setSize(Unlocks.currentAvatar.getWidth() * Options.aspectRatio, Unlocks.currentAvatar.getHeight() * Options.aspectRatio);
         setBoundaryPolygon(8);
-        setOrigin(getWidth() /2, getHeight() / 2);
+        
         setMaxSpeed(100);
         setDeceleration(250);
         
@@ -198,15 +202,29 @@ public class Player extends BaseActor{
     public void act(float dt){
         super.act(dt);
         
-        this.setOrigin(this.getWidth() / 2,this.getHeight() /2);
+        
         calculateHealth(dt);
         if(isDead()){
-            return;
+            
+            if(!hero.isDying())
+            {
+                System.out.println(getY());
+                setAnimationWithReset(hero.playDie());
+                setAnimationPaused(false);
+                setSize(hero.getDSize(), hero.getDSize());
+                hero.isDying(true);
+                System.out.println(getY());
+            }
+            if(hero.isDying())
+                return;
+        }
+        if(isAnimationFinished()){
+            setCanMove(true);
         }
         hero.checkAttack(dt);
-        this.getBoundaryPolygon();
+        //this.getBoundaryPolygon();
         isMoving = false;
-        setAcceleration(0 * Options.aspectRatio);
+        //setAcceleration(0 * Options.aspectRatio);
        
         float MouseWorldY = this.getStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0)).y;
         float MouseWorldX = this.getStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0)).x;
@@ -214,26 +232,52 @@ public class Player extends BaseActor{
         if(getX() < MouseWorldX && 
                (Math.abs((MouseWorldX - getX())) > Math.abs(MouseWorldY - getY())))
                {
-            setAnimation(hero.playRight());
+            if(hero.isAttacking()){
+                setAnimationWithReset(hero.playRight());
+            }
+            if(canMove)
+                setAnimation(hero.playRight());
+            setSize(hero.getDSize(), hero.getDSize());
         }
        if(getX() > MouseWorldX && 
                (Math.abs((MouseWorldX - getX())) > Math.abs(MouseWorldY - getY()))) 
                {
-           setAnimation(hero.playLeft());
+                    if(hero.isAttacking()){
+                        setAnimationWithReset(hero.playLeft());
+                    }
+                    if(canMove)
+                        setAnimation(hero.playLeft());
+           
+           setSize(hero.getDSize(), hero.getDSize());
        }
        if((getY()) > MouseWorldY &&
                (Math.abs((MouseWorldX - getX())) < Math.abs(MouseWorldY - getY())))
                {
-           setAnimation(hero.playDown());
+                   if(hero.isAttacking()){
+                        setAnimationWithReset(hero.playDown());
+                    }
+                    if(canMove)
+                        setAnimation(hero.playDown());
+           
+           setSize(hero.getDSize(), hero.getDSize());
        }
        if((getY()) < MouseWorldY &&
                (Math.abs((MouseWorldX - getX())) < Math.abs(MouseWorldY - getY())))
                {
-           setAnimation(hero.playUp());
+                   if(hero.isAttacking()){
+                        setAnimationWithReset(hero.playUp());
+                    }
+                    if(canMove)
+                        setAnimation(hero.playUp());
+           
+           setSize(hero.getDSize(), hero.getDSize());
        }
        
        //movement control
        if(canMove){
+            if(Gdx.input.isKeyJustPressed(Keys.Y)){
+                setAnimationWithReset(hero.playLeft());
+            }
             if(_playerControls.isPressed("Fire") && hero.canAttack()){
                 hero.attack(MouseWorldX, MouseWorldY, this);
             }
@@ -263,12 +307,12 @@ public class Player extends BaseActor{
        }
        
        applyPhysics(dt);
-        //System.out.println();
-       if(!isMoving()){
+       if(!isMoving() && canMove){
            setAnimationPaused(true);
        }else{
            setAnimationPaused(false);
        }
+       setOrigin(getWidth() / 2,getHeight() /2);
         boundToWorld();
         alignCamera();
         
@@ -281,8 +325,6 @@ public class Player extends BaseActor{
                 continue;
             preventOverlap(wall);
         }
-        
-        //System.out.println(getSpeed());
         
     }
     

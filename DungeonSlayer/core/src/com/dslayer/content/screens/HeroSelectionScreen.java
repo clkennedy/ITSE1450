@@ -63,7 +63,7 @@ public class HeroSelectionScreen extends BaseScreen {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 100;
         parameter.borderColor = Color.WHITE;
-        parameter.borderWidth = 1f;
+        parameter.borderWidth = 0f;
         BitmapFont fontTitle = generator.generateFont(parameter); // font size 12 pixels
         
         parameter.size = 20;
@@ -102,7 +102,8 @@ public class HeroSelectionScreen extends BaseScreen {
             b.setOrigin(b.getWidth() / 2, b.getHeight() / 2);
             b.centerAtPosition((Gdx.graphics.getWidth() /2) - halfW + (b.getWidth() /2) + (count * 50) , l.getY() - l.getHeight());
             
-            name.setPosition((b.getX()),b.getY() + b.getHeight() );
+            name.setPosition((b.getX() + ((b.getWidth()/2)-(name.getWidth() /2))),b.getY() + b.getHeight() );
+            name.setAlignment(Align.center);
             mainStage.addActor(name);
             if(currentSelection == Hero.heros[count]){
                 selectionBox = new BaseActor(0,0, mainStage);
@@ -135,6 +136,18 @@ public class HeroSelectionScreen extends BaseScreen {
                     }
                 });
         mainStage.addActor(ready);
+        
+        Label cancel = new Label("Cancel", menu);
+        cancel.setPosition((mainStage.getWidth()/ 2) - (cancel.getWidth()/2),  10);
+        cancel.setOrigin(cancel.getWidth()/2, cancel.getHeight()/2);
+        cancel.setAlignment(Align.center);
+        cancel.addListener(new Hover(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        cancelGame();
+                    }
+                });
+        mainStage.addActor(cancel);
     }
     
     public void updateSelected(InputEvent event, float x, float y){
@@ -149,6 +162,10 @@ public class HeroSelectionScreen extends BaseScreen {
     public void startGame(){
         BaseGame.setActiveScreen( new LevelScreen());
     }
+    public void cancelGame(){
+        BaseGame.setActiveScreen( new MainMenuScreen());
+    }
+    
     
     public void update(float dt) {
     }

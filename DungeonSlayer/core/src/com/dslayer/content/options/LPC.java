@@ -33,15 +33,18 @@ public class LPC {
     shoot,
     die
     };
-    
     public static List<Animation<TextureRegion>> LoadGroupFromFullSheet(String filename,LPCGroupAnims anim){
+        return LoadGroupFromFullSheet(filename, anim, .1f);
+    }
+    
+    public static List<Animation<TextureRegion>> LoadGroupFromFullSheet(String filename,LPCGroupAnims anim, float duration){
         //List<Animation<TextureRegion>> anims = Avatars.loadMulti(filename, 21, 13, .5f, true);
         List<Animation<TextureRegion>> rtnAnim = new ArrayList<Animation<TextureRegion>>();
         int trim=0;
         int start=0;
         int stop=0;
         int rows = 21, cols = 13;
-        float frameDuration = .2f;
+        float frameDuration = duration;
         boolean loop = false;
         switch (anim) {
             case cast:

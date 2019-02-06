@@ -48,10 +48,10 @@ public class BlueGolem extends BaseGolem{
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 60;
 
-        AttackRange = new Circle(x, y, 150);
+        AttackRange = new Circle(x, y, 100);
         TargetRange = new Circle(x, y, 500);
         
-        castAnimList = Avatars.loadMulti(GolemAttak, 4, 7, .3f, false);
+        castAnimList = Avatars.loadMulti(GolemAttak, 4, 7, .2f, false);
         walkAnimList = Avatars.loadMulti(GolemWalk, 4, 7, .5f, true);
         dieAnim = Avatars.loadMulti(GolemDie, 2, 7, .3f, false).get(1);
         

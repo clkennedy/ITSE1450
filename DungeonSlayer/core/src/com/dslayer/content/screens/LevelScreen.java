@@ -62,6 +62,11 @@ public class LevelScreen extends BaseScreen {
     }
 	
     public void update(float dt) {
+        
+        if(currentGamemode.isGameOver())
+        {
+            //Pause();
+        }
         currentGamemode.update(dt);
     }
 }

@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
+import com.dslayer.content.GameMessage.GameMessage;
 import com.dslayer.content.Objects.Potions.HealthPotion2;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.DungeonPanels;
@@ -36,11 +37,15 @@ public class SurvivalGameMode extends GameMode{
     private float spawnTimer = 3f;
     private float spawnTime = 0;
     
-    private float GolemSpawnTimer = 3f;
+    private float GolemSpawnTimer = 120f;
     private float GolemSpawnTime = 0;
     
     private float increaseEnemyTimer = 10f;
     private float increaseEnemyTime = 0f;
+    
+    private boolean goSent = false;
+    
+    private GameMessage gm;
     
     public SurvivalGameMode(Stage s){
         super(s);
@@ -64,17 +69,21 @@ public class SurvivalGameMode extends GameMode{
         
         player = new Player(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
         
-        new BlueGolem(player.getX() - 100, player.getY() - 100, mainStage);
+        gm = new GameMessage();
+        gm.AddMessage("Welcome");
     }
     @Override
     public void update(float dt) {
         if(player.isDead())
         {
-            gameOver = true;
+            if(!goSent){
+                gm.AddMessage("Game Over");
+                goSent = true;
+            }
+            if(player.isAnimationFinished()){
+                gameOver = true;
+            }
             return;
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
-            //debugEnemy.takeDamage(20);
         }
         
         potionRespawnTimer += dt;
@@ -107,6 +116,22 @@ public class SurvivalGameMode extends GameMode{
             }
         }
         
+        GolemSpawnTime += dt;
+        if(GolemSpawnTime > GolemSpawnTimer ){
+            BaseActor b = null;
+            if(MathUtils.randomBoolean(.8f)){
+                b = new BlueGolem(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
+           }
+            if(b != null){
+                gm.AddMessage("Blue Golem Appeared");
+                while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
+                        b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
+                     b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
+                }
+            }
+            GolemSpawnTime = 0;
+        }
+        
         increaseEnemyTime += dt;
         if(increaseEnemyTime > increaseEnemyTimer){
             maxNumOfEnemies += 2;
@@ -115,5 +140,6 @@ public class SurvivalGameMode extends GameMode{
         
     }
 
+    
     
 }

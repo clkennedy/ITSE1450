@@ -37,7 +37,7 @@ public class SkeletonWarrior extends BaseSkeleton{
         setSize(size,size);
         setBoundaryPolygon(8);
         setMaxSpeed(50);
-        
+        setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 30;
 
         AttackRange = new Circle(x, y, 40);

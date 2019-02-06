@@ -67,7 +67,6 @@ public class Slash extends Skill{
             for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
                 if(overlaps(player) && !alreadyHit.contains(player)){
                     ((Player)player).takeDamage((int)damage);
-                    System.out.println(damage);
                     alreadyHit.add(player);
                 }
             }

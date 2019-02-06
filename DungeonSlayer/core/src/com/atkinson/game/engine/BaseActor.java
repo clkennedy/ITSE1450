@@ -35,7 +35,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class BaseActor extends Group {
     
     //debugging stuff (custom)
-    protected static boolean debug = false;
+    protected static boolean debug = true;
     protected ShapeRenderer sRend;
     // Animation support
     protected Animation<TextureRegion> animation;

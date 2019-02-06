@@ -12,9 +12,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import static com.dslayer.content.Hero.ClassicHero.ClassicHero;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.*;
 import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.LPC;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 
 /**
@@ -26,6 +28,8 @@ public class VikingHero extends Hero{
     final static public String DefaultPlayerDown = "Player\\Deafult Player\\Character_Down.png";
     final static public String DefaultPlayerLeft = "Player\\Deafult Player\\Character_Left.png";
     final static public String DefaultPlayerRight = "Player\\Deafult Player\\Character_Right.png";
+    
+    final static public String vikingHero = "Player/Viking/Bjorn.png";
 
     public VikingHero(Animation<TextureRegion> animation) {
         super(animation);
@@ -41,13 +45,19 @@ public class VikingHero extends Hero{
         setBoundaryRectangle();
         heroName = "Björn";
         
+        walkAnimList = LPC.LoadGroupFromFullSheet(vikingHero, LPC.LPCGroupAnims.walk);
+        castAnimList = LPC.LoadGroupFromFullSheet(vikingHero, LPC.LPCGroupAnims.slash, .05f);
+        dieAnim = LPC.LoadGroupFromFullSheet(vikingHero, LPC.LPCGroupAnims.die).get(0);
+        
     }
 
     @Override
     public void attack(float MouseWorldX,float MouseWorldY, Player player ) {
         if(basicSkill.canCast()){
+            player.setCanMove(false);
             Vector3 mousePos = BaseActor.getMainStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
             basicSkill.cast(player, new Vector2(mousePos.x, mousePos.y), Skill.From.Player);
+            isAttacking = true;
         }
         
     }
