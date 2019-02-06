@@ -13,9 +13,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.dslayer.content.Player.Player;
-import com.dslayer.content.Skills.FireBall;
-import com.dslayer.content.Skills.IceNova;
-import com.dslayer.content.Skills.Skill;
+import com.dslayer.content.Skills.*;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 
@@ -64,7 +62,8 @@ public class ClassicHero extends Hero{
 
     @Override
     public void setup() {
-        basicSkill = new FireBall();
+        basicSkill = new Slash();
+        basicSkill.setDamage(35);
         basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30),(20));
         basicSkill.setCoolDown(1);
         basicSkill.setIconSize(40);

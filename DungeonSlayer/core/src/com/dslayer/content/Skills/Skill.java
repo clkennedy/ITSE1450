@@ -38,6 +38,8 @@ public abstract class Skill extends BaseActor{
     
     protected boolean isAction = false;
     
+    protected boolean isEnemy = false;
+    
     public Skill(){
         super();
     }
@@ -50,6 +52,11 @@ public abstract class Skill extends BaseActor{
         from = f;
         return this;
     }
+    public Skill isEnemy(boolean b){
+        isEnemy = b;
+        return this;
+    }
+    
     
     public Skill setProjectileSpeed(float speed){
         setAcceleration(speed);
@@ -63,7 +70,10 @@ public abstract class Skill extends BaseActor{
     public void setCoolDown(float cd){
         skillCooldown = cd;
     }
-    
+    public Skill setDamage(float damage){
+        this.damage = damage;
+        return this;
+    }
     
     public float getIconWidth(){
         if(baIcon == null)
@@ -106,7 +116,7 @@ public abstract class Skill extends BaseActor{
         if(isAction)
             return;
         checkAttack(dt);
-        if(!canCast){
+        if(!canCast && !isEnemy){
             loadCDTexture();
             if(cdl == null){
                 cdl = new Label(Integer.toString( (int)skillCooldown - (int)skillCooldownTime), BaseGame.labelStyle);
@@ -117,7 +127,7 @@ public abstract class Skill extends BaseActor{
                 cdl.setText(Integer.toString( (int)skillCooldown - (int)skillCooldownTime));
             
         }
-        else{
+        else if(!isEnemy) {
             loadCastTexture();
             if(cdl != null){
                 cdl.remove();

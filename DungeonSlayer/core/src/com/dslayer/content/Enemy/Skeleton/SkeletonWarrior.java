@@ -13,7 +13,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.dslayer.content.options.Difficulty;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.Skills.*;
 
 /**
  *
@@ -21,6 +23,8 @@ import com.dslayer.content.Player.Player;
  */
 
 public class SkeletonWarrior extends BaseSkeleton{
+    
+    Skill skill;
     
     public SkeletonWarrior(float x, float y, Stage s){
         
@@ -36,8 +40,12 @@ public class SkeletonWarrior extends BaseSkeleton{
         
         attackDamage = 30;
 
-        AttackRange = new Circle(x, y, 25);
+        AttackRange = new Circle(x, y, 40);
         TargetRange = new Circle(x, y, 300);
+        
+        skill = new Slash();
+        skill.setDamage(attackDamage);
+        skill.isEnemy(true);
     }
     
     @Override
@@ -49,7 +57,7 @@ public class SkeletonWarrior extends BaseSkeleton{
         if(attacking){
             if(isAnimationFinished()){
                 attacking = false;
-                ((Player)target).takeDamage((int)attackDamage);
+                skill.cast(this, new Vector2(target.getX(), target.getY()), Skill.From.Enemy);
                 canAttack = false;
             }
             return;

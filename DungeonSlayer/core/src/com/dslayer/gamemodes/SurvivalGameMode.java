@@ -97,7 +97,8 @@ public class SurvivalGameMode extends GameMode{
         spawnTime += dt;
         if(spawnTime > spawnTimer && enemies.size() < maxNumOfEnemies ){
             BaseActor b;
-            if(MathUtils.randomBoolean()){
+            if(//MathUtils.randomBoolean()
+                 false   ){
                 b = new SkeletonMage(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
            }
             else{
