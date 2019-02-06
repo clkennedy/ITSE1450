@@ -40,7 +40,7 @@ public abstract class BaseEnemy extends BaseActor{
     public BaseEnemy(float x, float y, Stage s){
         super(x,y,s);
         size = 50;
-        healthBar = new Rectangle(x, y, maxHealth/2 , 5);
+        healthBar = new Rectangle(x, y, maxHealth , 5);
         
     }
     
@@ -110,7 +110,7 @@ public abstract class BaseEnemy extends BaseActor{
         }
         if(isDying)
             return;
-        healthBar.x = getX() + healthBar.width - getWidth()/2;
+        healthBar.x = (getX()) + ((getWidth()/2) - (healthBar.width /2));
         healthBar.y = getY() + getHeight();
         //wall Collison
         ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels");

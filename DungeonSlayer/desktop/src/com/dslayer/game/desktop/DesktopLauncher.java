@@ -13,7 +13,7 @@ public class DesktopLauncher {
         
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 
-    cfg.title = "Dungeon Slayer";
+    cfg.title = "Ironside";
     cfg.width = (int)Difficulty.worldWidth;
     cfg.height = (int)Difficulty.worldHeight;
     //cfg.fullscreen = true;

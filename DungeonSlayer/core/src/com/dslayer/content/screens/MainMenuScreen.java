@@ -96,7 +96,7 @@ public class MainMenuScreen extends BaseScreen {
         LabelStyle menu = new LabelStyle(fontMenu, Color.BROWN);
         
         
-        Label l = new Label("Dungeon Slayer", title);
+        Label l = new Label("Ironside", title);
         l.setPosition((mainStage.getWidth()/ 2) - (l.getWidth()/2), mainStage.getHeight() - 100);
         
         mainStage.addActor(l);

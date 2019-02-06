@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.math.MathUtils;
 import com.dslayer.content.options.Difficulty;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
 import com.dslayer.content.Player.Player;
 
 /**
@@ -26,6 +27,7 @@ public class SkeletonWarrior extends BaseSkeleton{
         super(x,y,s);
         maxHealth = 50;
         health = maxHealth;
+        healthBar = new Rectangle(x, y, maxHealth , 5);
         currentDirection = WalkDirection.down;
         setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
         setSize(size,size);
