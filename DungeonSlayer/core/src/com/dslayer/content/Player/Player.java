@@ -170,7 +170,6 @@ public class Player extends BaseActor{
                 recovering = false;
                 recoverAmount = 0;
                 healthRecoverWaitTime = 0;
-                System.out.println("Clear Recover");
             }
             if(healthLowerWaitTime > healthWaitBeforeLower){
                 health -= healthLowerRate;
@@ -234,7 +233,6 @@ public class Player extends BaseActor{
        }
        
        //movement control
-        System.out.println(getMaxSpeed());
        if(canMove){
             if(_playerControls.isPressed("Fire") && hero.canAttack()){
                 hero.attack(MouseWorldX, MouseWorldY, this);

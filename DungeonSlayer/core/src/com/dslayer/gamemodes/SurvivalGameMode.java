@@ -10,6 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.Objects.Potions.HealthPotion2;
@@ -34,6 +35,9 @@ public class SurvivalGameMode extends GameMode{
     private float spawnedEnemies = 0;
     private float spawnTimer = 3f;
     private float spawnTime = 0;
+    
+    private float GolemSpawnTimer = 3f;
+    private float GolemSpawnTime = 0;
     
     private float increaseEnemyTimer = 10f;
     private float increaseEnemyTime = 0f;
@@ -60,14 +64,7 @@ public class SurvivalGameMode extends GameMode{
         
         player = new Player(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
         
-        //for(int i = 0; i < 20; i ++){
-        //    if(MathUtils.randomBoolean()){
-        //        new SkeletonMage(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
-        //    }
-        //    else{
-        //         new SkeletonWarrior(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
-        //    }
-        //}
+        new BlueGolem(player.getX() - 100, player.getY() - 100, mainStage);
     }
     @Override
     public void update(float dt) {
@@ -104,7 +101,7 @@ public class SurvivalGameMode extends GameMode{
                 b = new SkeletonWarrior(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
             }
             spawnTime= 0;
-            if(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
+            while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
                    b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
                 b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
             }

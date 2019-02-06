@@ -32,7 +32,7 @@ public class GroundSlam extends Skill{
     private float travelDuration = 1.5f;
     private float travelDurationTimer = 0;
     
-    private float tick = .1f;
+    private float tick = .01f;
     private float ticktimer = 0;
     
     private float radius = 15;
@@ -48,7 +48,8 @@ public class GroundSlam extends Skill{
     
     public GroundSlam(){
         super();
-        skillCooldown = 5f;
+        skillCooldown = 10f;
+        damage = 70;
         setup();
     }
     
@@ -104,7 +105,7 @@ public class GroundSlam extends Skill{
                     }
                 }
             }
-            ticktimer += dt;
+            ticktimer = 1;
             durationTimer += dt;
             if(durationTimer > duration){
                 remove();
@@ -139,6 +140,7 @@ public class GroundSlam extends Skill{
                 ((GroundSlam)b).oldMaxSpeed = caster.getMaxSpeed();
                 caster.setMaxSpeed(((GroundSlam)b).oldMaxSpeed  * 2);
                 ((GroundSlam)b).caster = caster;
+                ((GroundSlam)b).damage = this.damage;
                 canCast = false;
         }
     
@@ -151,8 +153,7 @@ public class GroundSlam extends Skill{
         setOriginY(getHeight() / 2);
         setBoundaryPolygon(12);
         setZIndex(1200);
-        //System.out.println(getZIndex());
-        damage = 150;
+        setRotation(MathUtils.random(0, 360));
         return this;
     }
     

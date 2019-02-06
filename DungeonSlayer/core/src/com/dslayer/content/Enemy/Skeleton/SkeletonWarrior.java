@@ -76,7 +76,6 @@ public class SkeletonWarrior extends BaseSkeleton{
             if(Intersector.overlaps(TargetRange,player.getBoundaryPolygon().getBoundingRectangle())){
                 if(target == null)
                     target = player;
-                //System.out.println("Target Aquired");
             }
             else{
                 target = null;

@@ -185,7 +185,6 @@ public class BaseActor extends Group {
     */
     public static void setWorldBounds(BaseActor ba) {
         setWorldBounds(ba.getWidth(), ba.getHeight());
-        //System.out.println(ba.getWidth() + " " +ba.getHeight() );
     }
     
     /**
@@ -783,8 +782,6 @@ public class BaseActor extends Group {
             setY(worldBounds.height);
         if(getY() > worldBounds.height)
             setY(-getHeight());
-        
-        //System.out.println(getHeight() + " " + getWidth());
     }
     
     /**

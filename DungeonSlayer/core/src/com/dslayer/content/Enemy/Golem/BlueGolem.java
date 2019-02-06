@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dslayer.content.Enemy.Skeleton;
+package com.dslayer.content.Enemy.Golem;
 
+import com.dslayer.content.Enemy.Skeleton.*;
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Intersector;
@@ -13,8 +14,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.dslayer.content.options.Difficulty;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.Skills.GroundSlam;
+import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.LPC;
 
@@ -23,30 +27,37 @@ import com.dslayer.content.options.LPC;
  * @author ARustedKnight
  */
 
-public class SkeletonMage extends BaseSkeleton{
+public class BlueGolem extends BaseGolem{
     
-    private final String skeleMage = "Enemy/Skeleton/SkeleMage.png";
+    private final String GolemAttak = "Enemy/Golem/golem-atk.png";
+    private final String GolemWalk = "Enemy/Golem/golem-walk.png";
+    private final String GolemDie = "Enemy/Golem/golem-die.png";
     
-    public SkeletonMage(float x, float y, Stage s){
+    public BlueGolem(float x, float y, Stage s){
         
         super(x,y,s);
-        maxHealth = 75;
+        maxHealth = 150;
         health = maxHealth;
         healthBar = new Rectangle(x, y, maxHealth , 5);
         currentDirection = WalkDirection.down;
         setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
+        size= 75;
         setSize(size,size);
         setBoundaryPolygon(8);
-        setMaxSpeed(50);
+        setMaxSpeed(25);
         setOrigin(getWidth() /2, getHeight() / 2);
-        attackDamage = 30;
+        attackDamage = 60;
 
-        AttackRange = new Circle(x, y, 300);
+        AttackRange = new Circle(x, y, 150);
         TargetRange = new Circle(x, y, 500);
         
-        castAnimList = LPC.LoadGroupFromFullSheet(skeleMage, LPC.LPCGroupAnims.cast);
-        walkAnimList = LPC.LoadGroupFromFullSheet(skeleMage, LPC.LPCGroupAnims.walk);
-        dieAnim = LPC.LoadGroupFromFullSheet(skeleMage, LPC.LPCGroupAnims.die).get(0);
+        castAnimList = Avatars.loadMulti(GolemAttak, 4, 7, .3f, false);
+        walkAnimList = Avatars.loadMulti(GolemWalk, 4, 7, .5f, true);
+        dieAnim = Avatars.loadMulti(GolemDie, 2, 7, .3f, false).get(1);
+        
+        skill = new GroundSlam();
+        skill.setDamage(attackDamage);
+        skill.isEnemy(true);
     }
     
     @Override
@@ -58,13 +69,7 @@ public class SkeletonMage extends BaseSkeleton{
         if(attacking){
             if(isAnimationFinished()){
                 attacking = false;
-                float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
-                new ProjectileSpell(getX() - getWidth()/2 ,getY() - getHeight() /2, getStage())
-                        .fireBall()
-                        .setProjectileSpeed(300).
-                        setProjectileRotation(degrees).
-                        setDirection(degrees)
-                        .setFrom(ProjectileSpell.From.Enemy);
+                skill.cast(this, new Vector2(this.getX(), this.getY()), Skill.From.Enemy);
                 canAttack = false;
             }
             return;
@@ -104,7 +109,7 @@ public class SkeletonMage extends BaseSkeleton{
     }
     
     private void lookForAttack(){
-        if(!canAttack)
+        if(!skill.canCast())
             return;
         if(target != null){
             if(Intersector.overlaps(AttackRange, target.getBoundaryPolygon().getBoundingRectangle())){
