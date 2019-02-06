@@ -34,6 +34,7 @@ public class BaseSkeleton extends BaseEnemy{
     protected List<Animation<TextureRegion>> walkAnimList;
     protected List<Animation<TextureRegion>> slashAnimList;
     protected List<Animation<TextureRegion>> castAnimList;
+    protected Animation<TextureRegion> dieAnim;
     
     protected enum WalkDirection{up,left,down,right};
     protected WalkDirection currentDirection;
@@ -64,6 +65,7 @@ public class BaseSkeleton extends BaseEnemy{
         walkAnimList = Avatars.loadMulti(SkeletonBody, 4, 9, .1f, true);
         slashAnimList = Avatars.loadMulti(SkeletonBodySlash, 4, 6, .1f, false);
         castAnimList = Avatars.loadMulti(SkeletonBodyCast, 4, 7, .1f, false);
+        dieAnim = Avatars.load(DieAnimPath, 1, 6, .2f, false);
         
         AttackRange = new Circle(x, y, 100);
         TargetRange = new Circle(x, y, 100);

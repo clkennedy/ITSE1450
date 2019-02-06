@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
-import com.dslayer.content.Objects.Potions.HealthPotion;
+import com.dslayer.content.Objects.Potions.HealthPotion2;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.DungeonPanels;
 import com.dslayer.content.Rooms.DungeonRoom;
@@ -81,12 +81,12 @@ public class SurvivalGameMode extends GameMode{
         }
         
         potionRespawnTimer += dt;
-        List<BaseActor> hPots = BaseActor.getList(mainStage, "com.dslayer.content.Objects.Potions.HealthPotion");
+        List<BaseActor> hPots = BaseActor.getList(mainStage, "com.dslayer.content.Objects.Potions.HealthPotion2");
             
         if(hPots.size() < maxPotionsOnFeild){
             if(potionRespawnTimer > potionRespawnInterval){
                 potionRespawnTimer = 0;
-                new HealthPotion(MathUtils.random(Difficulty.worldWidth - (DungeonPanels.defaultSize * 2)) + DungeonPanels.defaultSize, 
+                new HealthPotion2(MathUtils.random(Difficulty.worldWidth - (DungeonPanels.defaultSize * 2)) + DungeonPanels.defaultSize, 
                         MathUtils.random(Difficulty.worldHeight - (DungeonPanels.defaultSize * 2))+ DungeonPanels.defaultSize, 
                         mainStage).enableDespawnTimer(30);
             }
@@ -97,8 +97,7 @@ public class SurvivalGameMode extends GameMode{
         spawnTime += dt;
         if(spawnTime > spawnTimer && enemies.size() < maxNumOfEnemies ){
             BaseActor b;
-            if(//MathUtils.randomBoolean()
-                 false   ){
+            if(MathUtils.randomBoolean()){
                 b = new SkeletonMage(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
            }
             else{

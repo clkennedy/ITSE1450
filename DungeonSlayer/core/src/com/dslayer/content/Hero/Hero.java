@@ -27,7 +27,7 @@ public abstract class Hero extends Avatar{
     protected Skill basicSkill;
     protected Skill altSkill;
     
-    public static Hero[] heros = {new ClassicHero()};
+    public static Hero[] heros = {new ClassicHero(), new VikingHero()};
     protected String heroName;
     
     public Hero(Animation<TextureRegion> animation) {

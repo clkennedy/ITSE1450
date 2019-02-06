@@ -21,17 +21,17 @@ import com.dslayer.content.projectiles.Spells.ProjectileSpell;
  *
  * @author ARustedKnight
  */
-public class ClassicHero extends Hero{
+public class VikingHero extends Hero{
     final static public String DefaultPlayerUP = "Player\\Deafult Player\\Character_Up.png";
     final static public String DefaultPlayerDown = "Player\\Deafult Player\\Character_Down.png";
     final static public String DefaultPlayerLeft = "Player\\Deafult Player\\Character_Left.png";
     final static public String DefaultPlayerRight = "Player\\Deafult Player\\Character_Right.png";
 
-    public ClassicHero(Animation<TextureRegion> animation) {
+    public VikingHero(Animation<TextureRegion> animation) {
         super(animation);
     }
     
-    public ClassicHero(){
+    public VikingHero(){
         super();
         Down = Avatars.load(DefaultPlayerDown, 1, 4, .2f, true);
         Up = Avatars.load(DefaultPlayerUP, 1, 4, .2f, true);
@@ -39,7 +39,7 @@ public class ClassicHero extends Hero{
         Right = Avatars.load(DefaultPlayerRight, 1, 4, .2f, true);
         setAnimation(Right);
         setBoundaryRectangle();
-        heroName = "William";
+        heroName = "Björn";
         
     }
 
@@ -62,13 +62,13 @@ public class ClassicHero extends Hero{
 
     @Override
     public void setup() {
-        basicSkill = new FireBall();
+        basicSkill = new Slash();
         basicSkill.setDamage(35);
         basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30),(20));
         basicSkill.setCoolDown(1);
         basicSkill.setIconSize(40);
         
-        altSkill = new IceNova();
+        altSkill = new GroundSlam();
         altSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 + 30),(20));
         altSkill.setIconSize(40);
         //basicSkill.setIconPosition((int)(BaseActor.getUiStage().getCamera().viewportWidth /2),(int)(BaseActor.getUiStage().getCamera().viewportHeight /2));

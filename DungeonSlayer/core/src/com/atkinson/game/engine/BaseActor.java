@@ -35,7 +35,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class BaseActor extends Group {
     
     //debugging stuff (custom)
-    protected static boolean debug = true;
+    protected static boolean debug = false;
     protected ShapeRenderer sRend;
     // Animation support
     protected Animation<TextureRegion> animation;
@@ -58,6 +58,8 @@ public class BaseActor extends Group {
     private static Stage uiStage = null;
     
     private static Rectangle worldBounds;
+    
+    protected boolean canMove = true;
     
     /**
     * Constructor of the Base actor
@@ -115,6 +117,15 @@ public class BaseActor extends Group {
     }
     public static Stage getMainStage(){
         return BaseActor.mainStage;
+    }
+    
+    public void setCanMove(boolean b){
+        canMove = b;
+        
+    }
+    
+    public float getMaxSpeed(){
+       return maxSpeed;
     }
     
     public BaseActor(){

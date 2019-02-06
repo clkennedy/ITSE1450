@@ -5,23 +5,22 @@
  */
 package com.dslayer.content.Objects.Potions;
 
-import com.dslayer.content.Objects.Potion;
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.Objects.Potion;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
-import com.dslayer.content.Player.Player;
 import com.dslayer.content.Player.Player;
 
 /**
  *
  * @author cameron.kennedy
  */
-public class HealthPotion extends Potion{
+public class HealthPotion2 extends Potion{
     
     protected float recoverAmount;
     
     
-    public HealthPotion(float x, float y, Stage s) {
+    public HealthPotion2(float x, float y, Stage s) {
         super(x, y, s);
         recoverAmount = 50;
         loadTexture(potionSprites[0][9]);

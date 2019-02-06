@@ -18,6 +18,9 @@ public class Projectiles {
     private static final String FireBall = "particles/11_fire_spritesheet.png";
     private static final String IceNova = "particles/19_freezing_spritesheet.png";
     private static final String Slash = "particles/Slash.png";
+    private static final String[] Shatter = {"particles/Shatter/Shatter0.png","particles/Shatter/Shatter1.png", "particles/Shatter/Shatter2.png",
+    "particles/Shatter/Shatter3.png","particles/Shatter/Shatter4.png"};
+    
     public static Animation<TextureRegion> getFireBallAnim(){
         Animation<TextureRegion> anim = Avatars.load(FireBall, 8, 8, .05f, true);
         return anim;
@@ -30,6 +33,10 @@ public class Projectiles {
     
     public static Animation<TextureRegion> getSlashAnim(){
         Animation<TextureRegion> anim = Avatars.load(Slash);
+        return anim;
+    }
+    public static Animation<TextureRegion> getShatterAnim(){
+        Animation<TextureRegion> anim = Avatars.load(Shatter, .1f, false);
         return anim;
     }
     

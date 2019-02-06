@@ -15,6 +15,8 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.LPC;
 
 /**
  *
@@ -22,6 +24,8 @@ import com.dslayer.content.Player.Player;
  */
 
 public class SkeletonMage extends BaseSkeleton{
+    
+    private final String skeleMage = "Enemy/Skeleton/SkeleMage.png";
     
     public SkeletonMage(float x, float y, Stage s){
         
@@ -39,6 +43,10 @@ public class SkeletonMage extends BaseSkeleton{
 
         AttackRange = new Circle(x, y, 300);
         TargetRange = new Circle(x, y, 500);
+        
+        castAnimList = LPC.LoadGroupFromFullSheet(skeleMage, LPC.LPCGroupAnims.cast);
+        walkAnimList = LPC.LoadGroupFromFullSheet(skeleMage, LPC.LPCGroupAnims.walk);
+        dieAnim = LPC.LoadGroupFromFullSheet(skeleMage, LPC.LPCGroupAnims.die).get(0);
     }
     
     @Override
@@ -132,8 +140,14 @@ public class SkeletonMage extends BaseSkeleton{
         setAnimation(walkAnimList.get(currentDirection.ordinal()));
         setSize(size, size);
     }
-    
-     private void moveTowardTarget2(){
+    @Override
+    public void die() {
+        setSpeed(0);
+        setAnimationWithReset(dieAnim);
+        setSize(size, size);
+        isDying = true;
+    }
+    private void moveTowardTarget2(){
         
         setAcceleration(100);
         float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));

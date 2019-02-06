@@ -97,7 +97,6 @@ public class Player extends BaseActor{
         hero = HeroSelectionScreen.currentSelection;
         hero.setup();
         setAnimation(hero.playRight());
-        setMaxSpeed(800);
         setScale(1.5f);
        // setSize(Unlocks.currentAvatar.getWidth() * Options.aspectRatio, Unlocks.currentAvatar.getHeight() * Options.aspectRatio);
         setBoundaryPolygon(8);
@@ -235,33 +234,37 @@ public class Player extends BaseActor{
        }
        
        //movement control
-       if(_playerControls.isPressed("Fire") && hero.canAttack()){
-           hero.attack(MouseWorldX, MouseWorldY, this);
+        System.out.println(getMaxSpeed());
+       if(canMove){
+            if(_playerControls.isPressed("Fire") && hero.canAttack()){
+                hero.attack(MouseWorldX, MouseWorldY, this);
+            }
+            if(_playerControls.isPressed("Alt Fire") && hero.canAttack()){
+                hero.altAttack(MouseWorldX, MouseWorldY, this);
+            }
+            if(_playerControls.isPressed("Right")){
+                setAcceleration(accel * Options.aspectRatio);
+                isMoving = true;
+                accelerateAtAngle(0);
+            }
+            if(_playerControls.isPressed("Left")){
+                setAcceleration(accel * Options.aspectRatio);
+                isMoving = true;
+                accelerateAtAngle(180);
+            }
+            if(_playerControls.isPressed("Down")){
+                setAcceleration(accel * Options.aspectRatio);
+                isMoving = true;
+                accelerateAtAngle(270);
+            }
+            if(_playerControls.isPressed("Up")){
+                setAcceleration(accel * Options.aspectRatio);
+                isMoving = true;
+                accelerateAtAngle(90);
+            }
        }
-       if(_playerControls.isPressed("Alt Fire") && hero.canAttack()){
-           hero.altAttack(MouseWorldX, MouseWorldY, this);
-       }
-       if(_playerControls.isPressed("Right")){
-           setAcceleration(accel * Options.aspectRatio);
-           isMoving = true;
-           accelerateAtAngle(0);
-       }
-       if(_playerControls.isPressed("Left")){
-           setAcceleration(accel * Options.aspectRatio);
-           isMoving = true;
-           accelerateAtAngle(180);
-       }
-       if(_playerControls.isPressed("Down")){
-           setAcceleration(accel * Options.aspectRatio);
-           isMoving = true;
-           accelerateAtAngle(270);
-       }
-       if(_playerControls.isPressed("Up")){
-           setAcceleration(accel * Options.aspectRatio);
-           isMoving = true;
-           accelerateAtAngle(90);
-       }
-        applyPhysics(dt);
+       
+       applyPhysics(dt);
         //System.out.println();
        if(!isMoving()){
            setAnimationPaused(true);
