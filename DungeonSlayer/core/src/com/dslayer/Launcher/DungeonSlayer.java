@@ -8,12 +8,15 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dslayer.content.screens.LoadScreen;
+import com.dslayer.content.screens.MainMenuScreen;
+import com.dslayer.content.screens.MultipTest;
 
 public class DungeonSlayer extends BaseGame {
-	public void create()
+    
+    public void create()
     {
         super.create();
         //Progress.Load();
-        setActiveScreen( new LoadScreen() );
+        setActiveScreen( new MainMenuScreen() );
     }
 }

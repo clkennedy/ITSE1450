@@ -27,7 +27,7 @@ import com.dslayer.content.screens.MainMenuScreen;
  */
 public class EscapeMenu extends BaseActor{
     
-    private final String[] scroll = {"Scroll/scroll1.png", "Scroll/scroll2.png", "Scroll/scroll3.png", "Scroll/scroll4.png", "Scroll/scroll5.png"
+    public static final String[] scroll = {"Scroll/scroll1.png", "Scroll/scroll2.png", "Scroll/scroll3.png", "Scroll/scroll4.png", "Scroll/scroll5.png"
     , "Scroll/scroll6.png", "Scroll/scroll7.png", "Scroll/scroll8.png", "Scroll/scroll9.png", "Scroll/scroll10.png", "Scroll/scroll11.png", "Scroll/scroll12.png"};
     
     private EscapeMenu(){

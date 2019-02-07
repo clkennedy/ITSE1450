@@ -18,11 +18,11 @@ public class Progress {
     
     public static void Save(){
         prefs = Gdx.app.getPreferences("SavedData");
-        prefs.putInteger("HighScore", Unlocks.getHighScore());
-        prefs.putInteger("selectedAvatar", Unlocks.getCurrentAvatarIndex());
-        prefs.putInteger("selectedEnemy", Unlocks.getCurrentEnemyIndex());
-        prefs.putInteger("selectedCollectable", Unlocks.getCurrentCollectableIndex());
-        prefs.putInteger("selectedBullet", Unlocks.getCurrentBulletIndex());
+        //prefs.putInteger("HighScore", Unlocks.getHighScore());
+       // prefs.putInteger("selectedAvatar", Unlocks.getCurrentAvatarIndex());
+        //prefs.putInteger("selectedEnemy", Unlocks.getCurrentEnemyIndex());
+        //prefs.putInteger("selectedCollectable", Unlocks.getCurrentCollectableIndex());
+        //prefs.putInteger("selectedBullet", Unlocks.getCurrentBulletIndex());
         
         prefs.putFloat("musicVol", (Options.musicVolume * 10));
         prefs.putFloat("soundVol", (Options.soundVolume * 10));
@@ -34,12 +34,12 @@ public class Progress {
     
     public static void Load(){
         prefs = Gdx.app.getPreferences("SavedData");
-        int i = prefs.getInteger("HighScore", Unlocks.getHighScore());
-        Unlocks.Unlock(i);
-        Unlocks.setSelects(prefs.getInteger("selectedAvatar", Unlocks.getCurrentAvatarIndex()),
-                prefs.getInteger("selectedEnemy", Unlocks.getCurrentEnemyIndex()),
-                prefs.getInteger("selectedCollectable", Unlocks.getCurrentCollectableIndex()),
-                prefs.getInteger("selectedBullet", Unlocks.getCurrentBulletIndex()));
+        //int i = prefs.getInteger("HighScore", Unlocks.getHighScore());
+        //Unlocks.Unlock(i);
+        //Unlocks.setSelects(prefs.getInteger("selectedAvatar", Unlocks.getCurrentAvatarIndex()),
+                //prefs.getInteger("selectedEnemy", Unlocks.getCurrentEnemyIndex()),
+                //prefs.getInteger("selectedCollectable", Unlocks.getCurrentCollectableIndex()),
+                //prefs.getInteger("selectedBullet", Unlocks.getCurrentBulletIndex()));
         
         Options.musicVolume = prefs.getFloat("musicVol", 10) / 10;
         Options.soundVolume = prefs.getFloat("soundVol", 10) / 10;

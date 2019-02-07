@@ -18,7 +18,7 @@ public class Hover extends ClickListener{
     @Override
     public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
         if(event.getListenerActor() instanceof Label){
-            ((Label)event.getListenerActor()).setFontScale(1.2f);
+            ((Label)event.getListenerActor()).setFontScale( 1.2f);
             event.getListenerActor().setScale(1.2f);
         }else{
             event.getListenerActor().setScale(1.2f);

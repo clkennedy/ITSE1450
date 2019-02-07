@@ -43,11 +43,21 @@ import java.util.function.Supplier;
 import sun.font.TrueTypeFont;
 import com.badlogic.gdx.utils.Align;
 import com.dslayer.gamemodes.SurvivalGameMode;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import static java.lang.System.gc;
+import org.json.JSONObject;
+
 /**
  *
  * @author douglas.atkinson
  */
 public class MainMenuScreen extends BaseScreen {
+    
+    public static LabelStyle titleStyle;
+     public static LabelStyle menuStyle;
+     public static LabelStyle buttonStyle;
     
     BaseActor playButton;
     BaseActor instructionButton;
@@ -66,10 +76,10 @@ public class MainMenuScreen extends BaseScreen {
     
     public static boolean loaded = false;
     private static boolean musicPlaying = false;
-    
+    Label multi;
     public void initialize()
     {
-        
+       
         BaseActor.setMainStage(mainStage);
         
         if(!musicPlaying){
@@ -90,13 +100,20 @@ public class MainMenuScreen extends BaseScreen {
         
         parameter.size = 80;
         BitmapFont fontMenu = generator.generateFont(parameter);
+        
+        parameter.size = 40;
+        parameter.borderColor = Color.WHITE;
+        parameter.borderWidth = 0f;
+        BitmapFont fontButton = generator.generateFont(parameter);
         generator.dispose();
         
-        LabelStyle title = new LabelStyle(fontTitle, Color.BROWN);
-        LabelStyle menu = new LabelStyle(fontMenu, Color.BROWN);
+        titleStyle = new LabelStyle(fontTitle, Color.BROWN);
+        menuStyle = new LabelStyle(fontMenu, Color.BROWN);
+        buttonStyle = new LabelStyle(fontButton, Color.BROWN);
         
+        //BaseGame.labelStyle = menuStyle;
         
-        Label l = new Label("Ironside", title);
+        Label l = new Label("Ironside", titleStyle);
         l.setPosition((mainStage.getWidth()/ 2) - (l.getWidth()/2), mainStage.getHeight() - 100);
         
         mainStage.addActor(l);
@@ -105,7 +122,7 @@ public class MainMenuScreen extends BaseScreen {
 
         //TextButton tb = new TextButton("Play", );
         
-        Label play = new Label("Survival", menu);
+        Label play = new Label("Survival", menuStyle);
         play.setSize((play.getWidth() * 1.2f) * Options.aspectRatio, (play.getHeight() *1.2f) * Options.aspectRatio);
         play.setOriginX(play.getWidth() / 2);
         play.setOriginY(play.getHeight()/ 2);
@@ -122,11 +139,31 @@ public class MainMenuScreen extends BaseScreen {
         });
         mainStage.addActor(play);
         
-        Label quit = new Label("Quit", menu);
+        multi = new Label("Multiplayer", menuStyle);
+        multi.setSize((multi.getWidth() * 1.2f) * Options.aspectRatio, (multi.getHeight() *1.2f) * Options.aspectRatio);
+        multi.setOriginX(multi.getWidth() / 2);
+        multi.setOriginY(multi.getHeight()/ 2);
+        multi.setPosition((mainStage.getWidth()/ 2) - (multi.getWidth()/2), (play.getY() - play.getHeight()/2) - 30);
+        multi.setOrigin(multi.getWidth()/2, multi.getHeight()/2);
+        multi.setAlignment(Align.center);
+        
+        multi.addListener(new Hover(){
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                multiplayerGame();
+            }
+
+        });
+        
+        mainStage.addActor(multi);
+        
+        
+        Label quit = new Label("Quit", menuStyle);
         quit.setSize((quit.getWidth() * 1.2f) * Options.aspectRatio, (quit.getHeight() *1.2f) * Options.aspectRatio);
         quit.setOriginX(quit.getWidth() / 2);
         quit.setOriginY(quit.getHeight()/ 2);
-        quit.setPosition((mainStage.getWidth()/ 2) - (quit.getWidth()/2), (play.getY() - play.getHeight()));
+        quit.setPosition((mainStage.getWidth()/ 2) - (quit.getWidth()/2), (multi.getY() - multi.getHeight()));
         quit.setAlignment(Align.center);
         quit.addListener(new Hover(){
             
@@ -172,6 +209,16 @@ public class MainMenuScreen extends BaseScreen {
     public void removeButtons(){
         
     }
+    
+    public void multiplayerGame(){
+        removeButtons();
+        //backgroundMusic.stop();
+        //musicPlaying = false;
+        //multiplayerRoomScreen.rejoined = true;
+        Multiplayer.baseScreen = new multiplayerRoomScreen();
+        Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
+        BaseGame.setActiveScreen(Multiplayer.baseScreen);   
+    }
     public void startGame(){
         removeButtons();
         //backgroundMusic.stop();
@@ -184,6 +231,7 @@ public class MainMenuScreen extends BaseScreen {
         //backgroundMusic.stop();
         //musicPlaying = false;
         Progress.Save();
+        gc();
         Gdx.app.exit();
         System.exit(0);
     }

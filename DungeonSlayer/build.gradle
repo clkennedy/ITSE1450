@@ -63,7 +63,10 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        
+        compile ("io.socket:socket.io-client:1.0.0"){
+            exclude group: 'org.json', module: 'json'
+        }
+        compile fileTree(dir: 'libs', include: '*.jar')
     }
 }
 
