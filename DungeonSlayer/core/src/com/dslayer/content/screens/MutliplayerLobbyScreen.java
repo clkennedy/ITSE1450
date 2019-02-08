@@ -55,6 +55,7 @@ import io.socket.emitter.Emitter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 /**
@@ -66,15 +67,20 @@ public class MutliplayerLobbyScreen extends BaseScreen {
     private HashMap<String, String> players; 
     private HashMap<String, Boolean> playersReady; 
     private HashMap<String, BaseActor> playersChecks; 
-    private List<Label> playerNames;
+    private HashMap<String, Label> playerNames;
     
     private boolean roomDestroyed = false;
     private boolean redrawPlayers = false;
     private boolean redrawReady = false;
     
+    private boolean isReady = false;
+    
     private BaseActor scroll;
     BaseActor checkmark;
     private Table roomTable;
+    
+    Label ready;
+    
     public void initialize()
     {
        checkmark = new BaseActor();
@@ -85,7 +91,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
        
        players = new HashMap<String, String>();
        playersReady = new HashMap<String, Boolean>();
-       playerNames = new ArrayList();
+       playerNames = new HashMap<String, Label>();
        playersChecks = new HashMap<String, BaseActor>();
        
        Multiplayer.socket = multiplayerRoomScreen.getSocket();
@@ -126,7 +132,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         });
         mainStage.addActor(back);
         
-        Label ready = new Label("Ready", MainMenuScreen.buttonStyle);
+        ready = new Label("Ready", MainMenuScreen.buttonStyle);
         //createRoom.setFontScale(.5f);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         ready.setOriginX(ready.getWidth() / 2);
@@ -198,7 +204,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
                 roomName.setAlignment(Align.center);
                 
                 //vet.y -= roomName.getHeight();
-                playerNames.add(roomName);
+                playerNames.put(player, roomName);
                 roomTable.add(roomName);
                 roomTable.row();
                 roomTable.setPosition(0, 0);
@@ -212,18 +218,24 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         }
         
         if(redrawReady){
+            redrawReady = false;
             System.out.println("Redraw Ready Marks");
             for(String id : playersReady.keySet()){
                 if(playersReady.get(id)){
                     if(playersChecks.get(id) != null)
                         playersChecks.get(id).remove();
-                    System.out.println(playerNames.indexOf(players.get(id).toString()));
-                    Label player = playerNames.get(playerNames.indexOf(players.get(id)));
+                    Label playerName = playerNames.get(id);
+                    System.out.println(players.get(id));
+                    
+                    if(playerName == null){
+                        System.err.println("Could not find player");
+                        return;
+                    }
                     checkmark = new BaseActor();
                     checkmark.setAnimation(Avatars.load("check.png"));
                     checkmark.setSize(40,40);
                     checkmark.setOrigin(checkmark.getWidth() / 2, checkmark.getHeight() / 2);
-                    checkmark.setPosition(player.getX() + player.getWidth(), player.getY());
+                    checkmark.setPosition(playerName.getX() + playerName.getWidth(), playerName.getY() + checkmark.getHeight());
                     mainStage.addActor(checkmark);
                     playersChecks.put(id, checkmark);
                 }else{
@@ -247,7 +259,16 @@ public class MutliplayerLobbyScreen extends BaseScreen {
     }
     
     public void readyUp(){
+        if(isReady){
+            isReady = false;
+            Multiplayer.socket.emit("flagUnReady");
+            ready.setText("Ready");
+        }else{
+            isReady = true;
             Multiplayer.socket.emit("flagReady");
+            ready.setText("UnReady");
+        }
+            
     }
     
 public void configSocket(){
@@ -262,6 +283,7 @@ public void configSocket(){
                     playersReady.put(data.getString("id"),false);
                     playersChecks.put(data.getString("id"), null);
                     redrawPlayers = true;
+                    redrawReady = true;
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms" + e.getMessage());
                 }
@@ -278,6 +300,7 @@ public void configSocket(){
                        playersChecks.put(data.getString("id"), null);
                     }
                     redrawPlayers = true;
+                    redrawReady = true;
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms" + e.getMessage());
                 }
@@ -301,8 +324,10 @@ public void configSocket(){
                     String id = data.getString("id").toString();
                     players.remove(id);
                     playersReady.remove(id);
+                    playersChecks.get(id).remove();
                     playersChecks.remove(id);
                     redrawPlayers = true;
+                    redrawReady = true;
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms");
                 }
@@ -326,6 +351,7 @@ public void configSocket(){
                 JSONObject data = (JSONObject) os[0];
                 try{
                     String id = data.getString("id").toString();
+                    System.out.println("player flagged Unready");
                     playersReady.put(id,false);
                     redrawReady = true;
                 }catch(Exception e){

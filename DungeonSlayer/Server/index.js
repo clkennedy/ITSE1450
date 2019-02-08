@@ -123,11 +123,15 @@ io.on('connection', function(socket){
        var player = players.find(p => p.id = socket.id);
        player.ready = true;
        socket.to(player.roomName).emit('playerFlaggedReady', {id:socket.id});
+        socket.emit('playerFlaggedReady', {id:socket.id});
+       
    })
    socket.on('flagUnReady', function(){
        var player = players.find(p => p.id = socket.id);
        player.ready = false;
        socket.to(player.roomName).emit('playerFlaggedUnReady', {id:socket.id});
+       socket.emit('playerFlaggedUnReady', {id:socket.id});
+       
    })
    
 })
