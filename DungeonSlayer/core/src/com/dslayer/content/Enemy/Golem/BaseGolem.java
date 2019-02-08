@@ -54,7 +54,7 @@ public class BaseGolem extends BaseEnemy{
     protected Vector2 moveTo;
     protected Circle moveToRange;
     
-    Skill skill;
+    //Skill skill;
     
     public BaseGolem() {
         

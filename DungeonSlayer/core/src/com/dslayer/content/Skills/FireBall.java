@@ -6,6 +6,7 @@
 package com.dslayer.content.Skills;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -24,10 +25,14 @@ public class FireBall extends Skill{
     private String ico = "Icons/FireBall.png";
     private String icoCD = "Icons/FireBallCooldown.png";
     
+    private String soundPath = "";
+    
+    private Sound sound;
     
     public FireBall(){
         super();
         setup();
+        
     }
     
     public FireBall(float x, float y, Stage s){
@@ -95,6 +100,7 @@ public class FireBall extends Skill{
                 setDirection(degrees)
                 .setFrom(from);
                 canCast = false;
+                
     }
     
     public FireBall isProjectile(){

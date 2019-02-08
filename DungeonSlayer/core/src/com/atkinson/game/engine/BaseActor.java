@@ -26,6 +26,9 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.dslayer.content.Skills.Skill;
+import com.dslayer.content.options.Multiplayer;
+import org.json.JSONObject;
 
 /**
  *  The Base for the Game Objects/Actors in the <br>
@@ -34,8 +37,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  */
 public class BaseActor extends Group {
     
+    protected int network_id;
+    
     //debugging stuff (custom)
-    protected static boolean debug = false;
+    protected static boolean debug = true;
     protected ShapeRenderer sRend;
     // Animation support
     protected Animation<TextureRegion> animation;
@@ -102,6 +107,27 @@ public class BaseActor extends Group {
         
         sRend = new ShapeRenderer();
         
+        
+    }
+    
+    public  int getNetworkID(){
+        return network_id;
+    }
+    
+    public void networkSkillCast(BaseActor a, Vector2 target, Skill.From f){
+        if(Multiplayer.socket == null || !Multiplayer.socket.connected()){
+            return;
+        }
+        JSONObject data = new JSONObject();
+        try{
+            data.put("networkID", a.getNetworkID());
+            data.put("targetX", target.x);
+            data.put("targetY", target.y);
+            data.put("from", f.ordinal());
+            Multiplayer.socket.emit("gameObjectSkillCast", data);
+        }catch(Exception e){
+            
+        }
         
     }
     

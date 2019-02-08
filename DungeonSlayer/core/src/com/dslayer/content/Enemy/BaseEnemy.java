@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.Skills.Skill;
 import java.util.ArrayList;
 
 /**
@@ -28,6 +29,8 @@ public abstract class BaseEnemy extends BaseActor{
     private float healthWaitBeforeLower = .4f;
     private float healthLowerWaitTime = 0;
     private int damageTaken = 0;
+    
+    protected Skill skill;
     
     protected float size;
     protected boolean isDying;
@@ -95,6 +98,11 @@ public abstract class BaseEnemy extends BaseActor{
              healthLowerWaitTime = 0;
         }
     }
+    
+    public void cast(BaseActor actor, Vector2 v2, Skill.From from){
+        
+    }
+    
     public boolean isDead(){
         return this.health - damageTaken <= 0;
     }
