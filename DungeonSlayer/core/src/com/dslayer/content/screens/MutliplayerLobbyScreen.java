@@ -80,6 +80,10 @@ public class MutliplayerLobbyScreen extends BaseScreen {
     private Table roomTable;
     
     Label ready;
+    Label countDown;
+    
+    private float startTime = 5f;
+    private float startTimeTimer = 0;
     
     public void initialize()
     {
@@ -88,6 +92,12 @@ public class MutliplayerLobbyScreen extends BaseScreen {
        checkmark.setSize(40,40);
        checkmark.setOrigin(checkmark.getWidth() / 2, checkmark.getHeight() / 2);
        
+       countDown = new Label(Integer.toString( (int)startTime), MainMenuScreen.titleStyle);
+       countDown.setFontScale(2);
+       countDown.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()/ 2);
+       countDown.setVisible(false);
+       
+       mainStage.addActor(countDown);
        
        players = new HashMap<String, String>();
        playersReady = new HashMap<String, Boolean>();
@@ -244,6 +254,23 @@ public class MutliplayerLobbyScreen extends BaseScreen {
                 }
             }
         }
+        boolean gamelobbyready = true;
+        for(boolean b : playersReady.values()){
+            gamelobbyready = gamelobbyready && b;
+        }
+        if(gamelobbyready){
+            countDown.setVisible(true);
+            countDown.setText(Integer.toString((int)startTime - (int)startTimeTimer));
+            startTimeTimer += dt;
+        }
+        else{
+            startTimeTimer = 0;
+        }
+        
+        if(startTimeTimer > startTime){
+            //start game
+        }
+        
     }
     
     public void backToMainMenu(){
