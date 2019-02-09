@@ -37,10 +37,10 @@ import org.json.JSONObject;
  */
 public class BaseActor extends Group {
     
-    protected int network_id;
+    public String network_id;
     
     //debugging stuff (custom)
-    protected static boolean debug = true;
+    protected static boolean debug = false;
     protected ShapeRenderer sRend;
     // Animation support
     protected Animation<TextureRegion> animation;
@@ -110,7 +110,7 @@ public class BaseActor extends Group {
         
     }
     
-    public  int getNetworkID(){
+    public String getNetworkID(){
         return network_id;
     }
     

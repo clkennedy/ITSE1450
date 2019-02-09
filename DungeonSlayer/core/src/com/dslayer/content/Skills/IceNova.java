@@ -83,7 +83,7 @@ public class IceNova extends Skill{
             if(from == Skill.From.Player){
                 for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                     if(overlaps(enemy)){
-                        ((BaseEnemy)enemy).takeDamage((int)damage);
+                        ((BaseEnemy)enemy).takeDamage((int)damage, player);
                     }
                 }
             }
@@ -104,6 +104,9 @@ public class IceNova extends Skill{
                   ((IceNova)b).setCaster(caster);
                 canCast = false;
                 ((IceNova)b).caster = caster;
+                if(from == Skill.From.Player){
+                    ((Skill)b).player = ((Player)caster);
+                }
         }
     
     public IceNova isProjectile(){

@@ -74,7 +74,7 @@ public class Slash extends Skill{
         if(from == Skill.From.Player){
             for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                 if(overlaps(enemy) && !alreadyHit.contains(enemy)){
-                    ((BaseEnemy)enemy).takeDamage((int)damage);
+                    ((BaseEnemy)enemy).takeDamage((int)damage, player);
                     alreadyHit.add(enemy);
                 }
             }
@@ -87,15 +87,8 @@ public class Slash extends Skill{
 
     @Override
     public void cast(BaseActor caster, Vector2 target, Skill.From from) {
-        float degrees = 0;
-        if(!isEnemy){
-            degrees= (float)(MathUtils.atan2((target.y - (caster.getY() + caster.getHeight()) )
+        float degrees = (float)(MathUtils.atan2((target.y - (caster.getY() + caster.getHeight()) )
                 , target.x - (caster.getX() + caster.getWidth())) * 180.0d / Math.PI);
-        }
-        else{
-            degrees = (float)(MathUtils.atan2((target.y - (caster.getY()) )
-                , target.x - (caster.getX())) * 180.0d / Math.PI);
-        }
         BaseActor b = new Slash(caster.getX() - caster.getWidth() /2,caster.getY() - caster.getHeight() /2 , 
                 BaseActor.getMainStage()).isProjectile()
                 .setProjectileSpeed(500).
@@ -103,6 +96,9 @@ public class Slash extends Skill{
                 setDirection(degrees)
                 .setFrom(from).setDamage(damage);
                 canCast = false;
+                if(from == Skill.From.Player){
+                    ((Skill)b).player = ((Player)caster);
+                }
     }
     
     public Slash isProjectile(){

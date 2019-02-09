@@ -59,38 +59,5 @@ public class ProjectileSpell extends BaseActor{
     public ProjectileSpell setDirection(float degrees){
         direction = degrees;
         return this;
-    } 
-     
-     public void act(float dt){
-        super.act(dt);
-        getBoundaryPolygon();
-        accelerateAtAngle(direction);
-        applyPhysics(dt);
-        
-        if(from == From.Enemy){
-            for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
-                if(overlaps(player)){
-                    ((Player)player).takeDamage((int)damage);
-                    remove();
-                }
-            }
-        }
-        if(from == From.Player){
-            for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
-                if(overlaps(enemy)){
-                    ((BaseEnemy)enemy).takeDamage((int)damage);
-                    remove();
-                }
-            }
-        }
-        
-        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
-            if(wall.boundaryPolygon == null)
-                continue;
-            if(overlaps(wall)){
-                remove();
-            }
-        }
-     }
-    
+    }
 }

@@ -31,15 +31,19 @@ import com.dslayer.content.Rooms.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.options.Avatar;
 import com.dslayer.content.options.Difficulty;
+import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
 import com.dslayer.content.options.Unlocks;
 import static com.dslayer.content.options.Unlocks.currentAvatar;
+import static com.dslayer.content.screens.HeroSelectionScreen.HeroSelectionIndex;
+import static com.dslayer.content.screens.HeroSelectionScreen.currentSelection;
 import com.dslayer.gamemodes.GameMode;
 import com.dslayer.gamemodes.SurvivalGameMode;
 import java.util.List;
 import java.util.ArrayList;
+import org.json.JSONObject;
 
-public class HeroSelectionScreen extends BaseScreen {
+public class MultiplayerHeroSelectionScreen extends BaseScreen {
     
     BaseActor gameOverMessage;
     
@@ -50,7 +54,6 @@ public class HeroSelectionScreen extends BaseScreen {
     
     public static Hero currentSelection = Hero.getNewHero(Hero.heros.ClassicHero);
     public static int HeroSelectionIndex = 0;
-    
     private BaseActor selectionBox;
 
     public ArrayList<BaseActor> heroSelections;
@@ -86,8 +89,8 @@ public class HeroSelectionScreen extends BaseScreen {
         float w = 0;
         
         for(Hero.heros bActor : Hero.heros .values()){
-            Hero h = Hero.getNewHero(bActor);
-            BaseActor b = new BaseActor();
+            Hero b = Hero.getNewHero(bActor);
+            b.setAnimation(b.playRight());
             b.setSize(100, 100);
             b.setOrigin(b.getWidth() / 2, b.getHeight() / 2);
             w += b.getWidth() + 50;
@@ -159,14 +162,22 @@ public class HeroSelectionScreen extends BaseScreen {
                 HeroSelectionIndex = i;
             }
         }
-        BaseGame.setActiveScreen( new HeroSelectionScreen());
+        BaseGame.setActiveScreen(new MultiplayerHeroSelectionScreen());
     }
 	
     public void startGame(){
-        BaseGame.setActiveScreen( new LevelScreen());
+        JSONObject data = new JSONObject();
+        try{
+            data.put("hero", HeroSelectionIndex);
+            Multiplayer.socket.emit("updateHero", data);
+        }catch(Exception e){
+            
+        }
+        
+        BaseGame.setActiveScreen( Multiplayer.lobbyScreen);
     }
     public void cancelGame(){
-        BaseGame.setActiveScreen( new MainMenuScreen());
+        BaseGame.setActiveScreen( Multiplayer.lobbyScreen);
     }
     
     

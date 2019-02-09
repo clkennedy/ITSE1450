@@ -21,6 +21,8 @@ import com.dslayer.content.Skills.GroundSlam;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.LPC;
+import com.dslayer.content.options.Multiplayer;
+import java.util.ArrayList;
 
 /**
  *
@@ -82,6 +84,9 @@ public class BlueGolem extends BaseGolem{
     }
     
     private void lookForTarget(){
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
+            return;
+        
         for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
             if(player.boundaryPolygon == null)
                 continue;
@@ -109,18 +114,18 @@ public class BlueGolem extends BaseGolem{
     }
     
     private void lookForAttack(){
-        if(!skill.canCast())
+        if(!canAttack)
             return;
-        if(target != null){
-            if(Intersector.overlaps(AttackRange, target.getBoundaryPolygon().getBoundingRectangle())){
+        ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
+        for(BaseActor player: boo){
+            if(Intersector.overlaps(AttackRange, player.getBoundaryPolygon().getBoundingRectangle())){
                 attacking = true;
                 setSpeed(0);
-                setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
+                setAnimationWithReset(slashAnimList.get(currentDirection.ordinal()));
                 setSize(size, size);
             }
         }
     }
-    
     private void moveTowardTarget(){
         
         setAcceleration(100);

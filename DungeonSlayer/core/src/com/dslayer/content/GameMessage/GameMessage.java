@@ -35,7 +35,7 @@ public class GameMessage extends BaseActor{
         
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("HumbleFonts/compass/CompassPro.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 70;
+        parameter.size = 50;
         parameter.borderColor = Color.WHITE;
         parameter.borderWidth = 1f;
         BitmapFont fontTitle = generator.generateFont(parameter); // font size 12 pixels

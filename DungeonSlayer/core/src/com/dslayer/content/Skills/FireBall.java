@@ -73,7 +73,7 @@ public class FireBall extends Skill{
         if(from == Skill.From.Player){
             for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                 if(overlaps(enemy)){
-                    ((BaseEnemy)enemy).takeDamage((int)damage);
+                    ((BaseEnemy)enemy).takeDamage((int)damage, player);
                     remove();
                 }
             }
@@ -100,6 +100,9 @@ public class FireBall extends Skill{
                 setDirection(degrees)
                 .setFrom(from);
                 canCast = false;
+        if(from == Skill.From.Player){
+            ((Skill)b).player = ((Player)caster);
+        }
                 
     }
     

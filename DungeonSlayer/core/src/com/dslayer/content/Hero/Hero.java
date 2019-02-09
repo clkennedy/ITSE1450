@@ -38,7 +38,7 @@ public abstract class Hero extends Avatar{
     
     protected float size = 32;
     
-    public static Hero[] heros = {new ClassicHero(), new VikingHero()};
+    public static enum heros{ClassicHero, VikingHero}
     protected String heroName;
     
     protected List<Animation<TextureRegion>> walkAnimList;
@@ -51,6 +51,16 @@ public abstract class Hero extends Avatar{
     protected boolean isDying;
     protected boolean isAttacking;
     
+    public static Hero getNewHero(Hero.heros hero){
+        switch (hero) {
+            case ClassicHero:
+               return new ClassicHero();
+            case VikingHero:
+                return new VikingHero();
+            default:
+                throw new AssertionError();
+        }
+    }
     
     public Hero(Animation<TextureRegion> animation) {
         super(animation);
@@ -130,12 +140,20 @@ public abstract class Hero extends Avatar{
         isDying = b;
     }
     
+    public void trackCD(boolean b){
+        basicSkill.trackCD = b;
+        altSkill.trackCD = b;
+    }
+    
     public abstract void attack(float MouseWorldX,float MouseWorldY, Player player );
     public abstract void altAttack(float MouseWorldX,float MouseWorldY, Player player );
-    public abstract void setup();
+    public abstract void setup(Player player);
     
-    public boolean canAttack(){
-        return canAttack;
+    public boolean canBasicAttack(){
+        return basicSkill.canCast();
+    }
+    public boolean canAltAttack(){
+        return altSkill.canCast();
     }
     
     public void checkAttack(float dt){
@@ -161,6 +179,11 @@ public abstract class Hero extends Avatar{
                waitToCast = false;
            }
         }
+    }
+    
+    public void removeSkills(){
+        basicSkill.remove();
+        altSkill.remove();
     }
 }
     

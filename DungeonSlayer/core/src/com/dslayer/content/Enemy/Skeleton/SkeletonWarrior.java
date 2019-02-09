@@ -16,6 +16,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.*;
+import com.dslayer.content.options.Multiplayer;
+import java.util.ArrayList;
+import org.json.JSONObject;
 
 /**
  *
@@ -46,6 +49,21 @@ public class SkeletonWarrior extends BaseSkeleton{
         skill = new Slash();
         skill.setDamage(attackDamage);
         skill.isEnemy(true);
+        
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+            this.network_id = Integer.toString(Multiplayer.getNextID());
+            JSONObject data = new JSONObject();
+            try{
+                data.put("id",this.network_id);
+                data.put("x", x);
+                data.put("y", y);
+                data.put("type", type.SkeletionWarrior.ordinal());
+                Multiplayer.socket.emit("enemyCreated", data);
+            }
+            catch(Exception e){
+                
+            }
+        }
     }
     
     @Override
@@ -53,7 +71,6 @@ public class SkeletonWarrior extends BaseSkeleton{
         super.act(dt);
         if(isDying)
             return;
-        
         if(attacking){
             if(isAnimationFinished()){
                 attacking = false;
@@ -70,6 +87,9 @@ public class SkeletonWarrior extends BaseSkeleton{
     }
     
     private void lookForTarget(){
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
+            return;
+        
         for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
             if(player.boundaryPolygon == null)
                 continue;
@@ -88,25 +108,52 @@ public class SkeletonWarrior extends BaseSkeleton{
             if(hitWall)
                 setSpeed(0);
             hitWall = false;
+            moveToChanged();
         }
         else if(target != null){
             moveTo.x = target.getX() + (target.getWidth()/2);
             moveTo.y = target.getY() + (target.getHeight()/2);
+            moveToChanged();
         }
         
     }
     
     private void lookForAttack(){
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
+            return;
         if(!canAttack)
             return;
-        if(target != null){
-            if(Intersector.overlaps(AttackRange, target.getBoundaryPolygon().getBoundingRectangle())){
+        ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
+        for(BaseActor player: boo){
+            if(Intersector.overlaps(AttackRange, player.getBoundaryPolygon().getBoundingRectangle())){
                 attacking = true;
                 setSpeed(0);
                 setAnimationWithReset(slashAnimList.get(currentDirection.ordinal()));
                 setSize(size, size);
+                target = player;
+                if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+                    JSONObject data = new JSONObject();
+                    try{
+                    System.out.println(player.network_id);
+                    data.put("id", this.network_id);
+                    data.put("target", player.network_id);
+                    Multiplayer.socket.emit("enemyAttack", data);
+                    }
+                    catch(Exception e){
+                           System.out.println("Failed to push enemy Attack: Skeleton Warrior");
+                    }
+                }
             }
         }
+    }
+    @Override
+    public void attack(BaseActor player){
+        attacking = true;
+        setSpeed(0);
+        setAnimationWithReset(slashAnimList.get(currentDirection.ordinal()));
+        setSize(size, size);
+        if(player != null)
+            target = player;
     }
     
     private void moveTowardTarget(){

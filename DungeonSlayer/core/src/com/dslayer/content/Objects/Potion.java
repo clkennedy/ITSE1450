@@ -9,6 +9,8 @@ import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.Multiplayer;
+import org.json.JSONObject;
 
 /**
  *
@@ -38,6 +40,16 @@ public class Potion extends BaseActor{
         if(despawnable){
             despawnTimer += dt;
             if(despawnTimer > despawnTime){
+                if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("id",this.network_id);
+                Multiplayer.socket.emit("healthPotionPickUp", data);
+            }
+            catch(Exception e){
+                System.out.println("Failed to Push Health Potion Creation");
+            }
+        }
                 remove();
             }
         }

@@ -83,18 +83,23 @@ public class ClassicHero extends Hero{
     }
 
     @Override
-    public void setup() {
+    public void setup(Player player) {
         basicSkill = new FireBall();
         basicSkill.setDamage(35);
-        basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30),(20));
         basicSkill.setCoolDown(1);
-        basicSkill.setIconSize(40);
+        basicSkill.player = player;
         
         altSkill = new IceNova();
-        altSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 + 30),(20));
-        altSkill.setIconSize(40);
+        altSkill.player = player;
         //basicSkill.setIconPosition((int)(BaseActor.getUiStage().getCamera().viewportWidth /2),(int)(BaseActor.getUiStage().getCamera().viewportHeight /2));
     
+        if(player.isLocalPlayer){
+            basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30),(20));
+            basicSkill.setIconSize(40);
+            altSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 + 30),(20));
+            altSkill.setIconSize(40);
+        }
+        
     }
     
     

@@ -35,25 +35,15 @@ public class BaseSkeleton extends BaseEnemy{
     protected List<Animation<TextureRegion>> slashAnimList;
     protected List<Animation<TextureRegion>> castAnimList;
     protected Animation<TextureRegion> dieAnim;
+
+    @Override
+    public void attack(BaseActor player) {
+    }
     
     protected enum WalkDirection{up,left,down,right};
     protected WalkDirection currentDirection;
     
     protected float attackDamage;
-    
-    protected BaseActor target = null;
-    protected Circle AttackRange;
-    protected Circle TargetRange;
-    
-    protected float attackCooldown = 5f;
-    protected float attackCooldownTime = 0f;
-    protected boolean attacking;
-    protected boolean canAttack = true;
-    
-    protected Vector2 moveTo;
-    protected Circle moveToRange;
-    
-    
     
     public BaseSkeleton() {
         

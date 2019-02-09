@@ -248,9 +248,9 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
             if(Multiplayer.socket == null){
                 connectSocket();
             }
+            Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
             Multiplayer.socket.emit("joinMultiplerAgain");
             Multiplayer.socket.emit("requestRooms");
-            Multiplayer.socket.emit("joinMultiplayerAgain");
         }
         
         if(updateUserName){
@@ -337,11 +337,18 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
                 Multiplayer.connected = false;
                 System.out.println("Timeout");
                 }
+        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Multiplayer.connected = false;
+                System.out.println("Disconnected");
+                }
         }).on(Socket.EVENT_CONNECT, new Emitter.Listener(){
             @Override
             public void call(Object... os) {
                 Gdx.app.log("SocketIO", "Connected");
                 Multiplayer.socket.emit("requestRooms");
+                Multiplayer.connected = true;
             }
         }).on("socketID", new Emitter.Listener() {
             @Override
@@ -350,6 +357,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
                 try{
                     String id = data.getString("id");
                     Gdx.app.log("SocketIO", "My Id: " + id);
+                    Multiplayer.myID = id;
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting ID");
                 }
@@ -418,6 +426,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
                 try{
                     updateUserName = true;
                     String userName = data.getString("userName");
+                    Multiplayer.myUserName = userName;
                     if(playerUserName != null){
                         Vector2 olPos = new Vector2(playerUserName.getX(), playerUserName.getY());
                         playerUserName.remove();

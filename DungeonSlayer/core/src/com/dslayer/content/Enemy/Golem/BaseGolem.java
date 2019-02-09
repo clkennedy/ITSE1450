@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
+import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Difficulty;
@@ -36,6 +37,10 @@ public class BaseGolem extends BaseEnemy{
     protected List<Animation<TextureRegion>> slashAnimList;
     protected List<Animation<TextureRegion>> castAnimList;
     protected Animation<TextureRegion> dieAnim;
+
+    @Override
+    public void attack(BaseActor player) {
+    }
     
     protected enum WalkDirection{up,left,down,right};
     protected WalkDirection currentDirection;
@@ -80,9 +85,9 @@ public class BaseGolem extends BaseEnemy{
     }
     
     @Override
-    public void takeDamage(int damage){
+    public void takeDamage(int damage, Player player){
         damage /= 2;
-        super.takeDamage(damage);
+        super.takeDamage(damage, player);
     }
     
     

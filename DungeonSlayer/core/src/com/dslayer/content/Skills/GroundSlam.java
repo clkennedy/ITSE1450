@@ -100,7 +100,7 @@ public class GroundSlam extends Skill{
                 if(from == Skill.From.Player){
                     for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                         if(overlaps(enemy)){
-                            ((BaseEnemy)enemy).takeDamage((int)damage);
+                            ((BaseEnemy)enemy).takeDamage((int)damage, player);
                         }
                     }
                 }
@@ -134,7 +134,7 @@ public class GroundSlam extends Skill{
                 ((GroundSlam)b).location = target;
                 ((GroundSlam)b).deadzone = new Circle(target.x, target.y, 5);
                 caster.setSpeed(0);
-                caster.setAcceleration(600);
+                caster.setAcceleration(0);
                 caster.accelerateAtAngle(degrees);
                 caster.setCanMove(false);
                 ((GroundSlam)b).oldMaxSpeed = caster.getMaxSpeed();
@@ -142,6 +142,9 @@ public class GroundSlam extends Skill{
                 ((GroundSlam)b).caster = caster;
                 ((GroundSlam)b).damage = this.damage;
                 canCast = false;
+                if(from == Skill.From.Player){
+                    ((Skill)b).player = ((Player)caster);
+                }
         }
     
     public GroundSlam isProjectile(){

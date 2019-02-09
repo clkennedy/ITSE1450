@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.dslayer.content.Player.Menu.EscapeMenu;
+import com.dslayer.content.options.Multiplayer;
 
 /**
  *  The Base for Setting up Levels and Displays in the <br>
@@ -33,7 +34,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     protected Table uiTable;
     protected boolean playing;
     
-    protected EscapeMenu esmenu;
+    protected EscapeMenu esmenu = null;
     
     private boolean paused = false;
     
@@ -79,12 +80,15 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         
         if(playing && Gdx.input.isKeyJustPressed(Keys.ESCAPE)){
+           if(Multiplayer.socket == null || !Multiplayer.socket.connected())
             Pause();
-            if(paused){
+           
+            if(esmenu == null){
                 esmenu = new EscapeMenu(uiStage);
             }
             else{
                 esmenu.remove();
+                esmenu = null;
             }
         }
         if(paused){

@@ -56,8 +56,9 @@ import static java.lang.System.gc;
 public class MainMenuScreen extends BaseScreen {
     
     public static LabelStyle titleStyle;
-     public static LabelStyle menuStyle;
-     public static LabelStyle buttonStyle;
+    public static LabelStyle menuStyle;
+    public static LabelStyle buttonStyle;
+    public static LabelStyle pointStyle;
     
     BaseActor playButton;
     BaseActor instructionButton;
@@ -79,7 +80,14 @@ public class MainMenuScreen extends BaseScreen {
     Label multi;
     public void initialize()
     {
-       
+        Multiplayer.restartNetworkid();
+        
+       if(Multiplayer.socket != null && Multiplayer.socket.connected()){
+           Multiplayer.socket.disconnect();
+           Multiplayer.socket.close();
+           Multiplayer.socket = null;
+       }
+        
         BaseActor.setMainStage(mainStage);
         
         if(!musicPlaying){
@@ -107,10 +115,14 @@ public class MainMenuScreen extends BaseScreen {
         BitmapFont fontButton = generator.generateFont(parameter);
         generator.dispose();
         
+        parameter.size = 15;
+        BitmapFont fontPoint = generator.generateFont(parameter);
+        generator.dispose();
+        
         titleStyle = new LabelStyle(fontTitle, Color.BROWN);
         menuStyle = new LabelStyle(fontMenu, Color.BROWN);
         buttonStyle = new LabelStyle(fontButton, Color.BROWN);
-        
+        pointStyle = new LabelStyle(fontPoint, Color.WHITE);
         //BaseGame.labelStyle = menuStyle;
         
         Label l = new Label("Ironside", titleStyle);

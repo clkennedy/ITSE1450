@@ -45,8 +45,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import sun.font.TrueTypeFont;
 import com.badlogic.gdx.utils.Align;
+import com.dslayer.content.Hero.Hero;
 import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.Player.Player;
+import com.dslayer.gamemodes.MultiplayerSurvivalGameMode;
 import com.dslayer.gamemodes.SurvivalGameMode;
 import io.socket.client.IO;
 
@@ -67,16 +69,21 @@ public class MutliplayerLobbyScreen extends BaseScreen {
     private HashMap<String, String> players; 
     private HashMap<String, Boolean> playersReady; 
     private HashMap<String, BaseActor> playersChecks; 
+    private HashMap<String, BaseActor> heroAvatars; 
+    private HashMap<String, Integer> playerHeros;
     private HashMap<String, Label> playerNames;
     
-    private boolean roomDestroyed = false;
-    private boolean redrawPlayers = false;
-    private boolean redrawReady = false;
+    public static boolean reload = false;
+    
+    public static boolean roomDestroyed = false;
+    private boolean redraw = false;
+    private boolean redrawHeros = false;
     
     private boolean isReady = false;
     
     private BaseActor scroll;
     BaseActor checkmark;
+    BaseActor hero;
     private Table roomTable;
     
     Label ready;
@@ -92,17 +99,24 @@ public class MutliplayerLobbyScreen extends BaseScreen {
        checkmark.setSize(40,40);
        checkmark.setOrigin(checkmark.getWidth() / 2, checkmark.getHeight() / 2);
        
+       hero = Hero.getNewHero(Hero.heros.ClassicHero);
+       hero.setAnimation(((Hero)hero).playRight());
+       hero.setSize(30, 30);
+       hero.setOrigin(hero.getWidth() / 2, hero.getHeight() / 2);
+       
        countDown = new Label(Integer.toString( (int)startTime), MainMenuScreen.titleStyle);
-       countDown.setFontScale(2);
+       countDown.setFontScale(4);
        countDown.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()/ 2);
        countDown.setVisible(false);
-       
-       mainStage.addActor(countDown);
+       countDown.setZIndex(3000);
+       uiStage.addActor(countDown);
        
        players = new HashMap<String, String>();
        playersReady = new HashMap<String, Boolean>();
        playerNames = new HashMap<String, Label>();
        playersChecks = new HashMap<String, BaseActor>();
+       playerHeros = new HashMap<String, Integer>();
+       heroAvatars = new HashMap<String, BaseActor>();
        
        Multiplayer.socket = multiplayerRoomScreen.getSocket();
        configSocket();
@@ -159,6 +173,21 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         });
         mainStage.addActor(ready);
         
+        Label HeroSelect = new Label("Hero Selection", MainMenuScreen.buttonStyle);
+        //createRoom.setFontScale(.5f);
+        //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
+        HeroSelect.setOriginX(HeroSelect.getWidth() / 2);
+        HeroSelect.setOriginY(HeroSelect.getHeight()/ 2);
+        HeroSelect.setPosition((mainStage.getWidth()) - (HeroSelect.getWidth() + 10), ready.getY() + ready.getHeight() + 100);
+        HeroSelect.setAlignment(Align.center);
+        HeroSelect.addListener(new Hover(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                HeroSelection();
+            }
+        });
+        mainStage.addActor(HeroSelect);
+        
         Label rooms = new Label("Players", MainMenuScreen.buttonStyle);
         //createRoom.setFontScale(.5f);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
@@ -191,7 +220,13 @@ public class MutliplayerLobbyScreen extends BaseScreen {
             BaseGame.setActiveScreen(Multiplayer.baseScreen);
         }
         
-        if(redrawPlayers){
+        if(reload){
+            reload = false;
+            Multiplayer.socket.emit("getRoomPlayers");
+        }
+        
+        //redraw names
+        if(redraw){
             playerNames.clear();
             scroll.setAnimationWithReset(Avatars.load(EscapeMenu.scroll, .1f, false));
             scroll.setSize(500, 500);
@@ -207,15 +242,44 @@ public class MutliplayerLobbyScreen extends BaseScreen {
             MainMenuScreen.buttonStyle.fontColor = Color.BROWN;
             Vector2 vet = new Vector2(30, mainStage.getHeight() - 100);
             for(String player: players.keySet()){
-                Label roomName = new Label(players.get(player).toString(), roomStyle);
-                roomName.setOriginX(roomName.getWidth() / 2);
-                roomName.setOriginY(roomName.getHeight()/ 2);
+                Label playerName = new Label(players.get(player).toString(), roomStyle);
+                playerName.setOriginX(playerName.getWidth() / 2);
+                playerName.setOriginY(playerName.getHeight()/ 2);
                 //roomName.setPosition(vet.x, vet.y);
-                roomName.setAlignment(Align.center);
+                playerName.setAlignment(Align.center);
                 
-                //vet.y -= roomName.getHeight();
-                playerNames.put(player, roomName);
-                roomTable.add(roomName);
+                //redraw checkmarks ---------------------------------------------
+                playerNames.put(player, playerName);
+                if(playersChecks.get(player) != null){
+                       checkmark = playersChecks.get(player);
+                }else{
+                    checkmark = new BaseActor();
+                    checkmark.setAnimation(Avatars.load("check.png"));
+                    checkmark.setSize(40,40);
+                    checkmark.setOrigin(checkmark.getWidth() / 2, checkmark.getHeight() / 2);
+                }
+                if(playersReady.get(player)){
+                    checkmark.setVisible(true);
+                }else{
+                    checkmark.setVisible(false);
+                }
+                
+                playersChecks.put(player, checkmark);
+                if(heroAvatars.get(player) != null)
+                        heroAvatars.get(player).remove();
+                hero = Hero.getNewHero(Hero.heros.values()[playerHeros.get(player)]);
+                BaseActor b = new BaseActor();
+                b.setAnimationWithReset(((Hero)hero).playRight());
+                b.setSize(30, 30);
+                b.setOrigin(hero.getWidth() /2, hero.getHeight() / 2);
+                heroAvatars.put(player, b);
+                //mainStage.addActor(hero);
+                //uiStage.addActor(hero);
+                
+                roomTable.add(checkmark);
+                roomTable.add(playerName);
+                roomTable.add(b);
+                
                 roomTable.row();
                 roomTable.setPosition(0, 0);
             }
@@ -224,51 +288,33 @@ public class MutliplayerLobbyScreen extends BaseScreen {
             sp.setOrigin(scroll.getWidth()/2, scroll.getHeight() / 2);
             sp.setPosition(15, mainStage.getHeight() - scroll.getHeight() - 50);
             mainStage.addActor(sp);
-            redrawPlayers = false;
+            redraw = false;
+            
         }
         
-        if(redrawReady){
-            redrawReady = false;
-            System.out.println("Redraw Ready Marks");
-            for(String id : playersReady.keySet()){
-                if(playersReady.get(id)){
-                    if(playersChecks.get(id) != null)
-                        playersChecks.get(id).remove();
-                    Label playerName = playerNames.get(id);
-                    System.out.println(players.get(id));
-                    
-                    if(playerName == null){
-                        System.err.println("Could not find player");
-                        return;
-                    }
-                    checkmark = new BaseActor();
-                    checkmark.setAnimation(Avatars.load("check.png"));
-                    checkmark.setSize(40,40);
-                    checkmark.setOrigin(checkmark.getWidth() / 2, checkmark.getHeight() / 2);
-                    checkmark.setPosition(playerName.getX() + playerName.getWidth(), playerName.getY() + checkmark.getHeight());
-                    mainStage.addActor(checkmark);
-                    playersChecks.put(id, checkmark);
-                }else{
-                    if(playersChecks.get(id) != null)
-                        playersChecks.get(id).remove();
-                }
-            }
-        }
         boolean gamelobbyready = true;
         for(boolean b : playersReady.values()){
             gamelobbyready = gamelobbyready && b;
         }
         if(gamelobbyready){
             countDown.setVisible(true);
+            
             countDown.setText(Integer.toString((int)startTime - (int)startTimeTimer));
             startTimeTimer += dt;
         }
         else{
+            countDown.setVisible(false);
             startTimeTimer = 0;
         }
         
         if(startTimeTimer > startTime){
             //start game
+            if(Multiplayer.host){
+                Multiplayer.socket.emit("startGame");
+            }
+            LevelScreen.setGameMode(new MultiplayerSurvivalGameMode());
+            Multiplayer.levelScreen = new LevelScreen();
+            BaseGame.setActiveScreen(Multiplayer.levelScreen);
         }
         
     }
@@ -282,6 +328,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
     public void backToRoomSelection(){
             multiplayerRoomScreen.rejoined = true;
             Multiplayer.socket.emit("leaveRoom");
+            Multiplayer.host = false;
             BaseGame.setActiveScreen(Multiplayer.baseScreen);
     }
     
@@ -298,6 +345,10 @@ public class MutliplayerLobbyScreen extends BaseScreen {
             
     }
     
+    public void HeroSelection(){
+        BaseGame.setActiveScreen(new MultiplayerHeroSelectionScreen());
+    }
+    
 public void configSocket(){
         
     Multiplayer.socket.on("newPlayerJoinedRoom", new Emitter.Listener() {
@@ -305,12 +356,16 @@ public void configSocket(){
             public void call(Object... os) {
                 JSONObject data = (JSONObject) os[0];
                 try{
-                    //System.out.println("yeeHaw");
-                    players.put(data.getString("id"), data.getString("userName"));
-                    playersReady.put(data.getString("id"),false);
-                    playersChecks.put(data.getString("id"), null);
-                    redrawPlayers = true;
-                    redrawReady = true;
+                    String id = data.getString("id");
+                    players.put(id, data.getString("userName"));
+                    playersReady.put(id,false);
+                    playersChecks.put(id, null);
+                    heroAvatars.put(id, null);
+                    playerHeros.put(id, data.getInt("hero"));
+                    if(isReady){
+                        readyUp();
+                    }
+                    redraw = true;
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms" + e.getMessage());
                 }
@@ -322,12 +377,14 @@ public void configSocket(){
                 try{
                     for(int i = 0; i < array.length(); i++){
                        JSONObject data = array.getJSONObject(i);
-                       players.put(data.getString("id"), data.getString("userName")); 
-                       playersReady.put(data.getString("id"),data.getBoolean("ready"));
-                       playersChecks.put(data.getString("id"), null);
+                       String id = data.getString("id");
+                       players.put(id, data.getString("userName")); 
+                       playersReady.put(id,data.getBoolean("ready"));
+                       playersChecks.put(id, null);
+                       heroAvatars.put(id, null);
+                        playerHeros.put(data.getString("id"), data.getInt("hero"));
                     }
-                    redrawPlayers = true;
-                    redrawReady = true;
+                    redraw = true;
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms" + e.getMessage());
                 }
@@ -351,10 +408,44 @@ public void configSocket(){
                     String id = data.getString("id").toString();
                     players.remove(id);
                     playersReady.remove(id);
-                    playersChecks.get(id).remove();
+                    for(BaseActor b : playersChecks.values()){
+                        if( b != null)
+                        b.remove();
+                    }
+                    for(BaseActor b : heroAvatars.values()){
+                        if( b != null)
+                        b.remove();
+                    }
                     playersChecks.remove(id);
-                    redrawPlayers = true;
-                    redrawReady = true;
+                    heroAvatars.remove(id);
+                    if(isReady){
+                        readyUp();
+                    }
+                    redraw = true;
+                }catch(Exception e){
+                    Gdx.app.log("SocketIO", "Error getting Rooms");
+                }
+            }
+        }).on("playerFlaggedReady", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                JSONObject data = (JSONObject) os[0];
+                try{
+                    String id = data.getString("id").toString();
+                    playersReady.put(id,true);
+                    redraw = true;
+                }catch(Exception e){
+                    Gdx.app.log("SocketIO", "Error getting Rooms");
+                }
+            }
+        }).on("playerFlaggedUnReady", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                JSONObject data = (JSONObject) os[0];
+                try{
+                    String id = data.getString("id").toString();
+                    playersReady.put(id,false);
+                    redraw = true;
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms");
                 }
@@ -367,20 +458,22 @@ public void configSocket(){
                     System.out.println("player flagged ready");
                     String id = data.getString("id").toString();
                     playersReady.put(id,true);
-                    redrawReady = true;
+                    redraw = true;
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms");
                 }
             }
-        }).on("playerFlaggedUnReady", new Emitter.Listener() {
+        }).on("updateHero", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
                 JSONObject data = (JSONObject) os[0];
                 try{
                     String id = data.getString("id").toString();
-                    System.out.println("player flagged Unready");
+                    System.out.println("hero Changes");
                     playersReady.put(id,false);
-                    redrawReady = true;
+                    playerHeros.put(id, data.getInt("hero"));
+                    System.out.println(data.getInt("hero"));
+                    redraw = true;
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms");
                 }

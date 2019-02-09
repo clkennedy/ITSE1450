@@ -28,12 +28,18 @@ import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import java.util.ArrayList;
 import com.dslayer.content.Hero.*;
 import com.dslayer.content.screens.HeroSelectionScreen;
+import com.dslayer.content.screens.MultiplayerHeroSelectionScreen;
+import org.json.JSONObject;
 
 /**
  *
  * @author ARustedKnight
  */
 public class Player extends BaseActor{
+    
+    public boolean isLocalPlayer = true;
+    
+    public String UserName;
     
     protected float attackCooldown = 2f;
     protected float attackCooldownTime = 0f;
@@ -66,12 +72,18 @@ public class Player extends BaseActor{
     private boolean recovering = false;
     private int recoverAmount = 0;
     
-    Hero hero;
+    public Hero hero;
     
     private boolean isMoving = false;
     private Vector2 resetCoords;
     
+    public static enum direction{up, down, left, right};
+    public direction dir;
+    private boolean directionChanged = false;
+    
     private float accel = 150f;
+    
+    private int points = 0;
     
     public Player(float x, float y, Stage s){
         super(x,y,s);
@@ -94,9 +106,13 @@ public class Player extends BaseActor{
         resetCoords = new Vector2(x, y);
         
         
-       // setAnimation(Unlocks.currentAvatar.getAnim());
-        hero = HeroSelectionScreen.currentSelection;
-        hero.setup();
+       // setAnimation(Unlocks.currentAvatar.getAnim());\
+        if(Multiplayer.socket != null && Multiplayer.socket.connected()){
+            hero = MultiplayerHeroSelectionScreen.currentSelection;
+        }else{
+            hero = HeroSelectionScreen.currentSelection;
+        }
+        hero.setup(this);
         setAnimation(hero.playRight());
         setScale(1.5f);
         setSize(hero.getDSize(), hero.getDSize());
@@ -110,12 +126,31 @@ public class Player extends BaseActor{
         
         healthBar = new Rectangle(this.getStage().getCamera().viewportWidth - maxHealth - 20, 10, maxHealth, 20);
         
-        
-        
         s.addActor(this);
     }
     
     public void takeDamage(int damage){
+        if(!isLocalPlayer)
+            return;
+        if(health - damageTaken - damage <= 0){
+            this.damageTaken += (health - damageTaken);
+        }
+        else if(health - damageTaken - damage > 0){
+            this.damageTaken += damage;
+        }
+        if(Multiplayer.socket != null && Multiplayer.socket.connected()){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("damage", damage);
+                Multiplayer.socket.emit("heroDamageTaken", data);
+            }
+            catch(Exception e){
+                   System.out.println("Failed to push Hero Damage");
+            }
+        }
+    }
+    
+    public void multiplayerTakeDamage(int damage){
         if(health - damageTaken - damage <= 0){
             this.damageTaken += (health - damageTaken);
         }
@@ -124,7 +159,54 @@ public class Player extends BaseActor{
         }
     }
     
+    public void addPoints(int points){
+        if(!isLocalPlayer)
+            return;
+        this.points += points;
+        if(Multiplayer.socket != null && Multiplayer.socket.connected()){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("points", points);
+                Multiplayer.socket.emit("heroAddPoints", data);
+            }
+            catch(Exception e){
+                   System.out.println("Failed to push Hero Points");
+            }
+        }
+    }
+    
+    public void multiplayerAddPoints(int points){
+        this.points += points;
+    }
+    
+    public int getPoints(){
+        return this.points;
+    }
+    
+    public boolean canMove(){
+        return canMove;
+    }
+    
     public void recover(int recover){
+        if(!isLocalPlayer)
+            return;
+        if((health - damageTaken + recoverAmount) + recover >= maxHealth)
+            this.recoverAmount += maxHealth - (health + recoverAmount);
+        else if(health - damageTaken + recoverAmount + recover < maxHealth)
+            this.recoverAmount += recover;
+        if(Multiplayer.socket != null && Multiplayer.socket.connected()){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("recover", recover);
+                Multiplayer.socket.emit("heroRecover", data);
+            }
+            catch(Exception e){
+                   System.out.println("Failed to push Hero Recover");
+            }
+        }  
+    }
+    
+    public void multiplayerRecover(int recover){
         if((health - damageTaken + recoverAmount) + recover >= maxHealth)
             this.recoverAmount += maxHealth - (health + recoverAmount);
         else if(health - damageTaken + recoverAmount + recover < maxHealth)
@@ -143,7 +225,8 @@ public class Player extends BaseActor{
         if(isVisible()) {
            batch.end();
            sRend.setProjectionMatrix(this.getStage().getCamera().combined);
-           sRend.getProjectionMatrix().setToOrtho2D(0,  0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+           if(isLocalPlayer)
+                sRend.getProjectionMatrix().setToOrtho2D(0,  0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
            sRend.setColor(Color.BLACK);
            sRend.begin(ShapeRenderer.ShapeType.Line);
            sRend.rect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
@@ -164,6 +247,68 @@ public class Player extends BaseActor{
            sRend.end();
            batch.begin();
         }
+    }
+    
+    public void setHero(Hero hero){
+        this.hero = hero;
+        this.setAnimation(this.hero.playRight());
+        setSize(hero.getDSize(), hero.getDSize());
+        healthBar = new Rectangle(this.getStage().getCamera().viewportWidth - maxHealth - 20, 10, maxHealth, 5);
+        this.hero.setup(this);
+        if(!isLocalPlayer){
+            this.hero.trackCD(false);
+        }
+    }
+    
+    public void cast(int x, int y, int skill){
+        int deltaY = (int)getY() - y;
+        int deltaX = (int)getX() - x;
+        if(skill == 0){
+            hero.attack(x, y, this);
+        }
+        else{
+            hero.altAttack(x, y, this);
+        }
+        if(dir == direction.left){
+            setAnimationWithReset(hero.playLeft());
+        }
+        if(dir == direction.right){
+            setAnimationWithReset(hero.playRight());
+        }
+        if(dir == direction.up){
+            setAnimationWithReset(hero.playUp());
+        }
+        if(dir == direction.down){
+            setAnimationWithReset(hero.playDown());
+        }
+        setAnimationPaused(false);
+        setSize(hero.getDSize(), hero.getDSize());
+    }
+    public void updatePos(float x, float y){
+            float deltaY = (int)getY() - y;
+            float deltaX = (int)getX() - x;
+            
+            if(!canMove)
+                return;
+            
+            setPosition(x, y);
+            
+            setAnimationPaused(deltaY == 0 && deltaX == 0);
+            
+            if(dir == direction.left){
+                setAnimation(hero.playLeft());
+            }
+            if(dir == direction.right){
+                setAnimation(hero.playRight());
+            }
+            if(dir == direction.up){
+                setAnimation(hero.playUp());
+            }
+            if(dir == direction.down){
+                setAnimation(hero.playDown());
+            }
+            
+            setSize(hero.getDSize(), hero.getDSize());
     }
     
     private void calculateHealth(float dt){
@@ -198,26 +343,42 @@ public class Player extends BaseActor{
         }
     }
     
-    @Override
-    public void act(float dt){
-        super.act(dt);
-        hero.act(dt);
-        
-        calculateHealth(dt);
+    public boolean checkDying(float dt){
         if(isDead()){
-            
             if(!hero.isDying())
             {
-                System.out.println(getY());
                 setAnimationWithReset(hero.playDie());
                 setAnimationPaused(false);
                 setSize(hero.getDSize(), hero.getDSize());
                 hero.isDying(true);
-                System.out.println(getY());
             }
-            if(hero.isDying())
-                return;
         }
+        return hero.isDying();
+    }
+    
+    @Override
+    public void act(float dt){
+        super.act(dt);
+        hero.act(dt);
+        if(!isLocalPlayer){
+            healthBar.x = (getX()) + ((getWidth()/2) - (healthBar.width /2));
+            healthBar.y = getY() + getHeight();
+            if(isAnimationFinished()){
+                setCanMove(true);
+            }
+            calculateHealth(dt);
+            if(checkDying(dt)){
+                return;
+            }
+            applyPhysics(dt);
+            return;
+        }
+        calculateHealth(dt);
+        
+        if(checkDying(dt)){
+            return;
+        }
+        
         if(isAnimationFinished()){
             setCanMove(true);
         }
@@ -238,6 +399,8 @@ public class Player extends BaseActor{
             if(canMove)
                 setAnimation(hero.playRight());
             setSize(hero.getDSize(), hero.getDSize());
+            directionChanged = dir != direction.right;
+            dir = direction.right;
         }
        if(getX() > MouseWorldX && 
                (Math.abs((MouseWorldX - getX())) > Math.abs(MouseWorldY - getY()))) 
@@ -249,6 +412,8 @@ public class Player extends BaseActor{
                         setAnimation(hero.playLeft());
            
            setSize(hero.getDSize(), hero.getDSize());
+           directionChanged = dir != direction.left;
+            dir = direction.left;
        }
        if((getY()) > MouseWorldY &&
                (Math.abs((MouseWorldX - getX())) < Math.abs(MouseWorldY - getY())))
@@ -260,6 +425,8 @@ public class Player extends BaseActor{
                         setAnimation(hero.playDown());
            
            setSize(hero.getDSize(), hero.getDSize());
+           directionChanged = dir != direction.down;
+            dir = direction.down;
        }
        if((getY()) < MouseWorldY &&
                (Math.abs((MouseWorldX - getX())) < Math.abs(MouseWorldY - getY())))
@@ -271,18 +438,39 @@ public class Player extends BaseActor{
                         setAnimation(hero.playUp());
            
            setSize(hero.getDSize(), hero.getDSize());
+           directionChanged = dir != direction.up;
+            dir = direction.up;
        }
        
        //movement control
        if(canMove){
-            if(Gdx.input.isKeyJustPressed(Keys.Y)){
-                setAnimationWithReset(hero.playLeft());
-            }
-            if(_playerControls.isPressed("Fire") && hero.canAttack()){
+            if(_playerControls.isPressed("Fire") && hero.canBasicAttack()){
                 hero.attack(MouseWorldX, MouseWorldY, this);
+                if(Multiplayer.socket != null && Multiplayer.socket.connected()){
+                    JSONObject data = new JSONObject();
+                    try{
+                        data.put("targetX", MouseWorldX);
+                        data.put("targetY", MouseWorldY);
+                        data.put("skill", 0);
+                        Multiplayer.socket.emit("heroCast", data);
+                        }catch(Exception e){
+
+                        }
+                }
             }
-            if(_playerControls.isPressed("Alt Fire") && hero.canAttack()){
+            if(_playerControls.isPressed("Alt Fire") && hero.canAltAttack()){
                 hero.altAttack(MouseWorldX, MouseWorldY, this);
+                if(Multiplayer.socket != null && Multiplayer.socket.connected()){
+                    JSONObject data = new JSONObject();
+                    try{
+                        data.put("targetX", MouseWorldX);
+                        data.put("targetY", MouseWorldY);
+                        data.put("skill", 1);
+                        Multiplayer.socket.emit("heroCast", data);
+                        }catch(Exception e){
+
+                        }
+                }
             }
             if(_playerControls.isPressed("Right")){
                 setAcceleration(accel * Options.aspectRatio);
@@ -325,6 +513,10 @@ public class Player extends BaseActor{
                 continue;
             preventOverlap(wall);
         }
+    }
+    
+    public boolean directionChanged(){
+        return directionChanged;
         
     }
     

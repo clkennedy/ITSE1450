@@ -55,34 +55,39 @@ public class VikingHero extends Hero{
     public void attack(float MouseWorldX,float MouseWorldY, Player player ) {
         if(basicSkill.canCast()){
             player.setCanMove(false);
-            Vector3 mousePos = BaseActor.getMainStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
-            basicSkill.cast(player, new Vector2(mousePos.x, mousePos.y), Skill.From.Player);
+            basicSkill.cast(player, new Vector2(MouseWorldX, MouseWorldY), Skill.From.Player);
             isAttacking = true;
+            //waitToCast = true;
+            //skillWaitedToCast = basicSkill;
+            //this.caster = player;
+            //this.target = new Vector2(MouseWorldX,MouseWorldY);
         }
-        
     }
     @Override
     public void altAttack(float MouseWorldX,float MouseWorldY, Player player ) {
         if(altSkill.canCast()){
-            Vector3 mousePos = BaseActor.getMainStage().getCamera().unproject(new Vector3(Gdx.input.getX(),Gdx.input.getY(),0));
-            altSkill.cast(player, new Vector2(mousePos.x, mousePos.y), Skill.From.Player);
+            altSkill.cast(player, new Vector2(MouseWorldX, MouseWorldY), Skill.From.Player);
+            
         }
         
     }
 
     @Override
-    public void setup() {
+    public void setup(Player player) {
         basicSkill = new Slash();
         basicSkill.setDamage(35);
-        basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30),(20));
         basicSkill.setCoolDown(1);
-        basicSkill.setIconSize(40);
+        basicSkill.player = player;
         
         altSkill = new GroundSlam();
-        altSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 + 30),(20));
-        altSkill.setIconSize(40);
+        altSkill.player = player;
         //basicSkill.setIconPosition((int)(BaseActor.getUiStage().getCamera().viewportWidth /2),(int)(BaseActor.getUiStage().getCamera().viewportHeight /2));
-    
+        if(player.isLocalPlayer){
+        altSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 + 30),(20));
+        basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30),(20));
+        basicSkill.setIconSize(40);
+        altSkill.setIconSize(40);
+        }
     }
     
     

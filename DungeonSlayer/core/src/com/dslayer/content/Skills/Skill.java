@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.dslayer.content.Player.Player;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 
 /**
@@ -39,6 +40,10 @@ public abstract class Skill extends BaseActor{
     protected boolean isAction = false;
     
     protected boolean isEnemy = false;
+    
+    public boolean trackCD = true;
+    
+    public Player player;
     
     public Skill(){
         super();
@@ -92,7 +97,7 @@ public abstract class Skill extends BaseActor{
     }
     
     public void checkAttack(float dt){
-        if(skillCooldownTime >= skillCooldown){
+        if((skillCooldownTime >= skillCooldown) || !trackCD){
             canCast = true;
             skillCooldownTime = 0;
         }
@@ -116,7 +121,7 @@ public abstract class Skill extends BaseActor{
         if(isAction)
             return;
         checkAttack(dt);
-        if(!canCast && !isEnemy){
+        if(!canCast && !isEnemy && trackCD){
             loadCDTexture();
             if(cdl == null){
                 cdl = new Label(Integer.toString( (int)skillCooldown - (int)skillCooldownTime), BaseGame.labelStyle);
@@ -127,7 +132,7 @@ public abstract class Skill extends BaseActor{
                 cdl.setText(Integer.toString( (int)skillCooldown - (int)skillCooldownTime));
             
         }
-        else if(!isEnemy) {
+        else if(!isEnemy && trackCD) {
             loadCastTexture();
             if(cdl != null){
                 cdl.remove();

@@ -57,4 +57,9 @@ public class Avatar extends BaseActor{
     public float getHeight(){
         return this.h;
     }
+    
+    @Override
+    public void act(float dt){
+        super.act(dt);
+    }
 }

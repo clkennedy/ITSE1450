@@ -13,10 +13,17 @@ import com.badlogic.gdx.math.MathUtils;
 import com.dslayer.content.options.Difficulty;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.Skills.FireBall;
+import com.dslayer.content.Skills.Skill;
+import com.dslayer.content.Skills.Slash;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.LPC;
+import com.dslayer.content.options.Multiplayer;
+import java.util.ArrayList;
+import org.json.JSONObject;
 
 /**
  *
@@ -44,9 +51,28 @@ public class SkeletonMage extends BaseSkeleton{
         AttackRange = new Circle(x, y, 300);
         TargetRange = new Circle(x, y, 500);
         
+        skill = new FireBall();
+        skill.setDamage(40);
+        skill.isEnemy(true);
+        
         castAnimList = LPC.LoadGroupFromFullSheet(skeleMage, LPC.LPCGroupAnims.cast);
         walkAnimList = LPC.LoadGroupFromFullSheet(skeleMage, LPC.LPCGroupAnims.walk);
         dieAnim = LPC.LoadGroupFromFullSheet(skeleMage, LPC.LPCGroupAnims.die).get(0);
+        
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+            this.network_id = Integer.toString(Multiplayer.getNextID());
+            JSONObject data = new JSONObject();
+            try{
+                data.put("id",this.network_id);
+                data.put("x", x);
+                data.put("y", y);
+                data.put("type", type.SkeletonMage.ordinal());
+                Multiplayer.socket.emit("enemyCreated", data);
+            }
+            catch(Exception e){
+                
+            }
+        }
     }
     
     @Override
@@ -58,13 +84,7 @@ public class SkeletonMage extends BaseSkeleton{
         if(attacking){
             if(isAnimationFinished()){
                 attacking = false;
-                float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
-                new ProjectileSpell(getX() - getWidth()/2 ,getY() - getHeight() /2, getStage())
-                        .fireBall()
-                        .setProjectileSpeed(300).
-                        setProjectileRotation(degrees).
-                        setDirection(degrees)
-                        .setFrom(ProjectileSpell.From.Enemy);
+                skill.cast(this, new Vector2(target.getX(), target.getY()), Skill.From.Enemy);
                 canAttack = false;
             }
             return;
@@ -77,6 +97,9 @@ public class SkeletonMage extends BaseSkeleton{
     }
     
     private void lookForTarget(){
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
+            return;
+        
         for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
             if(player.boundaryPolygon == null)
                 continue;
@@ -95,23 +118,50 @@ public class SkeletonMage extends BaseSkeleton{
             if(hitWall)
                 setSpeed(0);
             hitWall = false;
+            moveToChanged();
         }
         else if(target != null){
             moveTo.x = target.getX() + (target.getWidth()/2);
             moveTo.y = target.getY() + (target.getHeight()/2);
+            moveToChanged();
         }
         
     }
     
+    @Override
+    public void attack(BaseActor player){
+        attacking = true;
+        setSpeed(0);
+        setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
+        setSize(size, size);
+        target = player;
+    }
+    
     private void lookForAttack(){
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
+            return;
         if(!canAttack)
             return;
-        if(target != null){
-            if(Intersector.overlaps(AttackRange, target.getBoundaryPolygon().getBoundingRectangle())){
+        ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
+        for(BaseActor player: boo){
+            if(Intersector.overlaps(AttackRange, player.getBoundaryPolygon().getBoundingRectangle())){
                 attacking = true;
                 setSpeed(0);
                 setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
                 setSize(size, size);
+                target = player;
+                if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+                    JSONObject data = new JSONObject();
+                    try{
+                    System.out.println(player.network_id);
+                    data.put("id", this.network_id);
+                    data.put("target", player.network_id);
+                    Multiplayer.socket.emit("enemyAttack", data);
+                    }
+                    catch(Exception e){
+                           System.out.println("Failed to push enemy Attack: Skeleton Warrior");
+                    }
+                }
             }
         }
     }
