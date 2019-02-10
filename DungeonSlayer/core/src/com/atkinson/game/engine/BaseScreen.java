@@ -37,7 +37,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     protected EscapeMenu esmenu = null;
     protected boolean gameover = false;
     
-    private boolean paused = false;
+    protected boolean paused = false;
     
     /**
     * Basic Screen setup for the game<br>

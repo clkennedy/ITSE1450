@@ -62,7 +62,7 @@ public class LevelScreen extends BaseScreen {
     }
 	
     public void update(float dt) {
-        
+        //System.out.println(dt);
         if(currentGamemode.isGameOver())
         {
             gameover = true;

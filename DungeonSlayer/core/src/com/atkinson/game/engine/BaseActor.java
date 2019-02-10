@@ -851,5 +851,14 @@ public class BaseActor extends Group {
     public static Rectangle getWorldBounds() {
        return worldBounds;
     }
-
+    @Override
+    public boolean remove(){
+        
+        if(sRend != null){
+            sRend.dispose();
+            sRend = null;
+        }
+        return super.remove();
+    }
+    
 }

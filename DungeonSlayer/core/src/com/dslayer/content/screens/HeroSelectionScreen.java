@@ -61,6 +61,8 @@ public class HeroSelectionScreen extends BaseScreen {
         BaseActor.setUIStage(uiStage);
         heroSelections = new ArrayList<BaseActor>();
         //private Player player;
+        
+        currentSelection = Hero.getNewHero(Hero.heros.values()[HeroSelectionIndex]);
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("HumbleFonts/compass/CompassPro.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 100;

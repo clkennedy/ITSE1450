@@ -260,4 +260,10 @@ public abstract class BaseEnemy extends BaseActor{
             preventOverlap(wall);
         }
     }
+    @Override
+    public boolean remove(){
+        
+        
+        return super.remove();
+    }
 }

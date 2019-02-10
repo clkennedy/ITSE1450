@@ -57,7 +57,7 @@ public class GameMessage extends BaseActor{
         
         if(messages.size() == 0 && message == null){
             return;
-        }else if(messages.size() > 0){
+        }else if(messages.size() > 0 && message == null){
             
             message = new Label(messages.remove(0), mStyle);
             message.setPosition((BaseActor.getMainStage().getWidth()/ 2) - (message.getWidth()/2),

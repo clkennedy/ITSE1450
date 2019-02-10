@@ -81,7 +81,7 @@ public class MainMenuScreen extends BaseScreen {
     public void initialize()
     {
         Multiplayer.restartNetworkid();
-        
+        paused = false;
        if(Multiplayer.socket != null && Multiplayer.socket.connected()){
            Multiplayer.socket.disconnect();
            Multiplayer.socket.close();
