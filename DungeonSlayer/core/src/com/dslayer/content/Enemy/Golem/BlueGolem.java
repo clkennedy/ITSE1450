@@ -23,6 +23,7 @@ import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.LPC;
 import com.dslayer.content.options.Multiplayer;
 import java.util.ArrayList;
+import org.json.JSONObject;
 
 /**
  *
@@ -60,6 +61,21 @@ public class BlueGolem extends BaseGolem{
         skill = new GroundSlam();
         skill.setDamage(attackDamage);
         skill.isEnemy(true);
+        
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+            this.network_id = Integer.toString(Multiplayer.getNextID());
+            JSONObject data = new JSONObject();
+            try{
+                data.put("id",this.network_id);
+                data.put("x", x);
+                data.put("y", y);
+                data.put("type", type.BlueGolem.ordinal());
+                Multiplayer.socket.emit("enemyCreated", data);
+            }
+            catch(Exception e){
+                
+            }
+        }
     }
     
     @Override
@@ -83,37 +99,20 @@ public class BlueGolem extends BaseGolem{
         applyPhysics(dt);
     }
     
-    private void lookForTarget(){
-        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
-            return;
-        
-        for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
-            if(player.boundaryPolygon == null)
-                continue;
-            if(Intersector.overlaps(TargetRange,player.getBoundaryPolygon().getBoundingRectangle())){
-                if(target == null)
-                    target = player;
-            }
-            else{
-                target = null;
-            }
-        }
-        
-        if(target == null && (hitWall || Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle()))){
-            moveTo.x = MathUtils.random(Difficulty.worldWidth);
-            moveTo.y = MathUtils.random(Difficulty.worldHeight);
-            if(hitWall)
-                setSpeed(0);
-            hitWall = false;
-        }
-        else if(target != null){
-            moveTo.x = target.getX() + (target.getWidth()/2);
-            moveTo.y = target.getY() + (target.getHeight()/2);
-        }
-        
+    
+    
+    @Override
+    public void attack(BaseActor player){
+        attacking = true;
+        setSpeed(0);
+        setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
+        setSize(size, size);
+        target = player;
     }
     
     private void lookForAttack(){
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
+            return;
         if(!canAttack)
             return;
         ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
@@ -121,8 +120,21 @@ public class BlueGolem extends BaseGolem{
             if(Intersector.overlaps(AttackRange, player.getBoundaryPolygon().getBoundingRectangle())){
                 attacking = true;
                 setSpeed(0);
-                setAnimationWithReset(slashAnimList.get(currentDirection.ordinal()));
+                setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
                 setSize(size, size);
+                target = player;
+                if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+                    JSONObject data = new JSONObject();
+                    try{
+                    System.out.println(player.network_id);
+                    data.put("id", this.network_id);
+                    data.put("target", player.network_id);
+                    Multiplayer.socket.emit("enemyAttack", data);
+                    }
+                    catch(Exception e){
+                           System.out.println("Failed to push enemy Attack: Blue Golem");
+                    }
+                }
             }
         }
     }

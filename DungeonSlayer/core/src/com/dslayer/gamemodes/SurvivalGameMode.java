@@ -10,6 +10,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
@@ -20,6 +23,8 @@ import com.dslayer.content.Rooms.DungeonPanels;
 import com.dslayer.content.Rooms.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.options.Difficulty;
+import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.screens.MainMenuScreen;
 import java.util.List;
 
 /**
@@ -45,6 +50,8 @@ public class SurvivalGameMode extends GameMode{
     
     private boolean goSent = false;
     
+    Label points;
+    
     private GameMessage gm;
     
     public SurvivalGameMode(Stage s){
@@ -66,9 +73,21 @@ public class SurvivalGameMode extends GameMode{
         Difficulty.newGame();
         
         dr.Draw(mainStage);
-        
+        Table pointTable = new Table();
         player = new Player(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
+        Label u = new Label(player.hero.getName() +": ", MainMenuScreen.pointStyle);
+        u.setAlignment(Align.left);
+        pointTable.add(u);
+        points = new Label(Integer.toString(player.getPoints()), MainMenuScreen.pointStyle);
+        points.setAlignment(Align.right);
         
+        float width = u.getWidth() + points.getWidth();
+        pointTable.setWidth(width);
+        pointTable.add(points);
+        pointTable.row();
+        pointTable.setHeight(u.getHeight());
+        pointTable.setPosition(pointTable.getWidth() / 2, BaseActor.getUiStage().getHeight() - pointTable.getHeight());
+        BaseActor.getUiStage().addActor(pointTable);
         gm = new GameMessage();
         gm.AddMessage("Welcome");
     }
@@ -78,13 +97,16 @@ public class SurvivalGameMode extends GameMode{
         {
             if(!goSent){
                 gm.AddMessage("Game Over");
+                gm.AddMessage("Total Points: " + player.getPoints());
                 goSent = true;
             }
-            if(player.isAnimationFinished()){
+            if(player.isAnimationFinished() && gm.isEmpty()){
                 gameOver = true;
             }
             return;
         }
+        
+        points.setText( Integer.toString(player.getPoints()));
         
         potionRespawnTimer += dt;
         List<BaseActor> hPots = BaseActor.getList(mainStage, "com.dslayer.content.Objects.Potions.HealthPotion2");

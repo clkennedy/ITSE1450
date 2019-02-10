@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -21,6 +22,7 @@ import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Difficulty;
+import com.dslayer.content.options.Multiplayer;
 import java.util.List;
 
 /**
@@ -38,26 +40,11 @@ public class BaseGolem extends BaseEnemy{
     protected List<Animation<TextureRegion>> castAnimList;
     protected Animation<TextureRegion> dieAnim;
 
-    @Override
-    public void attack(BaseActor player) {
-    }
+    
     
     protected enum WalkDirection{up,left,down,right};
     protected WalkDirection currentDirection;
     
-    protected float attackDamage;
-    
-    protected BaseActor target = null;
-    protected Circle AttackRange;
-    protected Circle TargetRange;
-    
-    protected float attackCooldown = 5f;
-    protected float attackCooldownTime = 0f;
-    protected boolean attacking;
-    protected boolean canAttack = true;
-    
-    protected Vector2 moveTo;
-    protected Circle moveToRange;
     
     //Skill skill;
     
@@ -89,8 +76,9 @@ public class BaseGolem extends BaseEnemy{
         damage /= 2;
         super.takeDamage(damage, player);
     }
-    
-    
+    @Override
+    public void attack(BaseActor player) {
+    }
     public void draw(Batch batch, float parentAlpha) {
                 
         Color c = getColor();

@@ -286,6 +286,7 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('enemyDied', data);
+           socket.emit('enemyDied', data);
            console.log(data.id + " Enemy Died");
        }  
    })

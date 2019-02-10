@@ -794,6 +794,19 @@ public class BaseActor extends Group {
         cam.update();
     }
     
+    public void alignCameraOnOtherActor(BaseActor other) {
+        Camera cam = this.getStage().getCamera();
+        Viewport v = this.getStage().getViewport();
+        // center camera on actor
+        cam.position.set( other.getX() + other.getOriginX(), other.getY() + other.getOriginY(), 0 );
+        // bound camera to layout
+        cam.position.x = MathUtils.clamp(cam.position.x,
+            cam.viewportWidth/2,  worldBounds.width -  cam.viewportWidth/2);
+        cam.position.y = MathUtils.clamp(cam.position.y,
+            cam.viewportHeight/2, worldBounds.height - cam.viewportHeight/2);
+        cam.update();
+    }
+    
     
     /**
     * Allows the Actor to treat the world as if it were round.

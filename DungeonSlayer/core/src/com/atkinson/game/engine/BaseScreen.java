@@ -35,6 +35,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     protected boolean playing;
     
     protected EscapeMenu esmenu = null;
+    protected boolean gameover = false;
     
     private boolean paused = false;
     
@@ -79,10 +80,14 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         
-        if(playing && Gdx.input.isKeyJustPressed(Keys.ESCAPE)){
+        if((playing && Gdx.input.isKeyJustPressed(Keys.ESCAPE)) || gameover){
            if(Multiplayer.socket == null || !Multiplayer.socket.connected())
             Pause();
            
+            if(gameover){
+                playing = false;
+                gameover = false;
+            }
             if(esmenu == null){
                 esmenu = new EscapeMenu(uiStage);
             }

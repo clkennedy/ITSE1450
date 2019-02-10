@@ -426,7 +426,18 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
                 try{
                     updateUserName = true;
                     String userName = data.getString("userName");
-                    Multiplayer.myUserName = userName;
+                    if(Multiplayer.myUserName == ""){
+                        Multiplayer.myUserName = userName;
+                    }else{
+                        userName = Multiplayer.myUserName;
+                        JSONObject obj = new JSONObject();
+                        try{
+                            obj.put("userName", userName);
+                            Multiplayer.socket.emit("updateUserName", obj);
+                        }catch(Exception e){
+                            System.out.println(" " + e.getMessage());
+                        }
+                    }
                     if(playerUserName != null){
                         Vector2 olPos = new Vector2(playerUserName.getX(), playerUserName.getY());
                         playerUserName.remove();
@@ -444,8 +455,6 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
                     }else{
                         playerUserNameText = userName;
                     }
-                    System.out.println(updateUserName);
-                    
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms");
                 }
@@ -485,6 +494,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
             try{
                 obj.put("userName", text);
                 Multiplayer.socket.emit("updateUserName", obj);
+                Multiplayer.myUserName = text;
             }catch(Exception e){
                 System.out.println("com.dslayer.content.screens.multiplayerRoomScreen.input() 312: " + e.getMessage());
             }

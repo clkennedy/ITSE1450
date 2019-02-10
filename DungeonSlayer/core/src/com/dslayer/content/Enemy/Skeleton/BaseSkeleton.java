@@ -13,12 +13,14 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Difficulty;
+import com.dslayer.content.options.Multiplayer;
 import java.util.List;
 
 /**
@@ -42,9 +44,7 @@ public class BaseSkeleton extends BaseEnemy{
     
     protected enum WalkDirection{up,left,down,right};
     protected WalkDirection currentDirection;
-    
-    protected float attackDamage;
-    
+
     public BaseSkeleton() {
         
     }

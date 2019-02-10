@@ -48,6 +48,10 @@ public class GameMessage extends BaseActor{
         messages.add(m);
     }
     
+    public boolean isEmpty(){
+        return messages.isEmpty() && message == null;
+    }
+    
     public void act(float dt){
         super.act(dt);
         

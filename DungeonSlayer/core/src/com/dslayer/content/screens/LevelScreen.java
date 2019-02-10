@@ -30,20 +30,18 @@ import com.dslayer.gamemodes.SurvivalGameMode;
 
 public class LevelScreen extends BaseScreen {
     
-    private Player player;
-    private boolean gameOver;
     BaseActor gameOverMessage;
     
-    private static GameMode currentGamemode;
+    private GameMode currentGamemode;
     
-    private BaseEnemy debugEnemy;
     Music backgroundMusic;
-    
     
     private boolean returnToMainScreen = false;
     
-    public static void setGameMode(GameMode gm){
+    public void setGameMode(GameMode gm){
         currentGamemode = gm;
+        currentGamemode.updateMainStage();
+        currentGamemode.setup();
     }
 
     public void initialize() {
@@ -53,9 +51,11 @@ public class LevelScreen extends BaseScreen {
         Difficulty.passInLevelScreen(this);
 
         //stage setup
+        if(currentGamemode != null){
         currentGamemode.updateMainStage();
         currentGamemode.setup();
-        player = currentGamemode.getPlayer();
+        }
+        
         // Instantiate Plane and set world bounds
         
         playing = true;
@@ -65,7 +65,7 @@ public class LevelScreen extends BaseScreen {
         
         if(currentGamemode.isGameOver())
         {
-            //Pause();
+            gameover = true;
         }
         currentGamemode.update(dt);
     }

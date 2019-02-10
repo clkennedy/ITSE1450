@@ -312,8 +312,8 @@ public class MutliplayerLobbyScreen extends BaseScreen {
             if(Multiplayer.host){
                 Multiplayer.socket.emit("startGame");
             }
-            LevelScreen.setGameMode(new MultiplayerSurvivalGameMode());
             Multiplayer.levelScreen = new LevelScreen();
+            Multiplayer.levelScreen.setGameMode(new MultiplayerSurvivalGameMode());
             BaseGame.setActiveScreen(Multiplayer.levelScreen);
         }
         

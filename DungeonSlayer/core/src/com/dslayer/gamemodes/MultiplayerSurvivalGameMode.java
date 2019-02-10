@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
@@ -85,7 +86,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
     private float spawnTimer = 3f;
     private float spawnTime = 0;
     
-    private float GolemSpawnTimer = 120f;
+    private float GolemSpawnTimer = 40f;
     private float GolemSpawnTime = 0;
     
     private float increaseEnemyTimer = 10f;
@@ -114,6 +115,11 @@ public class MultiplayerSurvivalGameMode extends GameMode{
     
     public MultiplayerSurvivalGameMode(){
         this(BaseActor.getMainStage());
+        
+    }
+    @Override
+    public void setup() {
+        
         gameObjects = new HashMap<String, BaseActor>();
         OtherPlayers = new HashMap<String, Player>();
         OtherPlayersHero = new HashMap<String, Integer>();
@@ -121,6 +127,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         OtherPlayersOldPos = new HashMap<String, Vector2>();    
         OtherPlayersTimer = new HashMap<String, Float>();
         PlayerPointLabels = new HashMap<String, Label>();
+        OtherPlayersUserNames = new HashMap<String, String>();
         
         pointTable = new Table();
         
@@ -129,9 +136,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         healthPotsToSpawn = new ArrayList<enemyInfo>();
         heroCast = new ArrayList<skillInfo>();
         setupSocketListeners();
-    }
-    @Override
-    public void setup() {
+        
         Room dr = new DungeonRoom();
         dr.generateRoom(30,40);
         
@@ -146,14 +151,20 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         player = new Player(100, 100, mainStage);
         player.network_id = Multiplayer.myID;
         
-        pointTable.add(new Label(Multiplayer.myUserName, MainMenuScreen.pointStyle));
+        Label u = new Label(Multiplayer.myUserName +": ", MainMenuScreen.pointStyle);
+        u.setAlignment(Align.left);
+        pointTable.add(u);
         Label p = new Label(Integer.toString(player.getPoints()), MainMenuScreen.pointStyle);
+        p.setAlignment(Align.right);
         PlayerPointLabels.put(Multiplayer.myID, p);
         
+        float width = u.getWidth() + p.getWidth();
+        pointTable.setWidth(width);
         pointTable.add(p);
         pointTable.row();
-        
-        mainStage.addActor(pointTable);
+        pointTable.setHeight(u.getHeight());
+        pointTable.setPosition(pointTable.getWidth() / 2, BaseActor.getUiStage().getHeight() - pointTable.getHeight());
+        BaseActor.getUiStage().addActor(pointTable);
         //player = new Player(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
         JSONObject data = new JSONObject();
         try{
@@ -197,12 +208,48 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                 //mainStage.addActor(op);
                 OtherPlayers.put(id, op);
                 
-                pointTable.add(new Label(op.UserName, MainMenuScreen.pointStyle));
+                Label u = new Label(op.UserName +": ", MainMenuScreen.pointStyle);
+                u.setAlignment(Align.left);
+                pointTable.add(u);
                 Label p = new Label(Integer.toString(op.getPoints()), MainMenuScreen.pointStyle);
                 PlayerPointLabels.put(op.network_id, p);
 
                 pointTable.add(p);
                 pointTable.row();
+                
+                float width = u.getWidth() + p.getWidth();
+                pointTable.setHeight(pointTable.getHeight() + u.getHeight());
+                if(pointTable.getWidth() < width){
+                    pointTable.setWidth(width);
+                }
+                pointTable.setPosition(pointTable.getWidth() / 2, BaseActor.getUiStage().getHeight() - pointTable.getHeight());
+                //BaseActor.getUiStage().addActor(pointTable);
+            }
+        }
+        
+        boolean anyOtherPlayerAlive = false;
+        for(Player b : OtherPlayers.values()){
+            anyOtherPlayerAlive = anyOtherPlayerAlive || !b.isDead();
+        }
+        
+        if(!anyOtherPlayerAlive && player.isDead()){
+            //gameOver
+            //gm.AddMessage("All Party Memebers have Died");
+            return;
+        }
+        
+        if(player.isDead()){
+            //player.alignCamera();
+        }
+        
+        
+        
+        for(String id : PlayerPointLabels.keySet()){
+            if(Multiplayer.myID.equals(id)){
+                PlayerPointLabels.get(id).setText(Integer.toString(player.getPoints()));
+            }else{
+                if(OtherPlayers.get(id) != null)
+                PlayerPointLabels.get(id).setText(Integer.toString(OtherPlayers.get(id).getPoints()));
             }
         }
         
@@ -255,7 +302,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             else{
                 BaseActor b = OtherPlayers.get(enemy.player_id);
                 //((BaseEnemy)gameObjects.get(enemy.id)).target = OtherPlayers.get(enemy.player_id);
-                //((BaseEnemy)gameObjects.get(enemy.id)).attack(OtherPlayers.get(enemy.player_id));
+                ((BaseEnemy)gameObjects.get(enemy.id)).attack(OtherPlayers.get(enemy.player_id));
             }
         }
         enemiesAttack.clear();
@@ -302,7 +349,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                         d.put("tarX", ((BaseEnemy) b).moveTo.x);
                         d.put("tarY", ((BaseEnemy) b).moveTo.y);
                     }catch(Exception e){
-                        System.out.println("Could add enemey for Sync " + ((BaseEnemy) b).network_id);
+                        System.out.println("Couldn't add enemey for Sync " + ((BaseEnemy) b).network_id + "| " + e.getMessage() + d.toString());
                     }
                     enemies.put(d);
                 }
@@ -316,10 +363,10 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         
         potionRespawnTimer += dt;
         List<BaseActor> hPots = BaseActor.getList(mainStage, "com.dslayer.content.Objects.Potions.HealthPotion2");
-            
-        if(hPots.size() < maxPotionsOnFeild){
-            if(potionRespawnTimer > potionRespawnInterval){
-                potionRespawnTimer = 0;
+        
+        if(potionRespawnTimer > potionRespawnInterval){
+            potionRespawnTimer = 0;
+            if(hPots.size() < maxPotionsOnFeild && MathUtils.randomBoolean(.8f)){
                 BaseActor a =new HealthPotion2(MathUtils.random(Difficulty.worldWidth - (DungeonPanels.defaultSize * 2)) + DungeonPanels.defaultSize, 
                         MathUtils.random(Difficulty.worldHeight - (DungeonPanels.defaultSize * 2))+ DungeonPanels.defaultSize, 
                         mainStage);
@@ -333,8 +380,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         spawnTime += dt;
         if(spawnTime > spawnTimer && enemies.size() < maxNumOfEnemies ){
             BaseActor b;
-            if(//MathUtils.randomBoolean()
-                    false){
+            if(MathUtils.randomBoolean(.4f)){
                 b = new SkeletonMage(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
            }
             else{
@@ -348,23 +394,20 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             gameObjects.put(b.network_id, b);
         }
         
-        if(true)
-            return;
-        
         GolemSpawnTime += dt;
         if(GolemSpawnTime > GolemSpawnTimer ){
             BaseActor b = null;
             if(MathUtils.randomBoolean(.8f)){
                 b = new BlueGolem(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
-           }
-            if(b != null){
-                gm.AddMessage("Blue Golem Appeared");
-                while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
-                        b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                     b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
+                if(b != null){
+                    gm.AddMessage("Blue Golem Appeared");
+                    while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
+                            b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
+                         b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
+                    }
                 }
+                gameObjects.put(b.network_id, b);
             }
-            gameObjects.put(b.network_id, b);
             GolemSpawnTime = 0;
         }
         
@@ -461,7 +504,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                     JSONObject data = (JSONObject) os[0];
                                     try{
                                         String id = data.getString("id");
-                                        //gameObjects.remove(id);
+                                        gameObjects.remove(id);
                                     }catch(Exception e){
                                         System.out.println("Enemy failed to Die" + e.getMessage());
                                     }

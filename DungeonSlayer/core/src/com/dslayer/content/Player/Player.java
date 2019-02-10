@@ -263,6 +263,10 @@ public class Player extends BaseActor{
     public void cast(int x, int y, int skill){
         int deltaY = (int)getY() - y;
         int deltaX = (int)getX() - x;
+        
+        if(checkDying())
+                return;
+        
         if(skill == 0){
             hero.attack(x, y, this);
         }
@@ -288,7 +292,7 @@ public class Player extends BaseActor{
             float deltaY = (int)getY() - y;
             float deltaX = (int)getX() - x;
             
-            if(!canMove)
+            if(!canMove || checkDying())
                 return;
             
             setPosition(x, y);
@@ -343,7 +347,7 @@ public class Player extends BaseActor{
         }
     }
     
-    public boolean checkDying(float dt){
+    public boolean checkDying(){
         if(isDead()){
             if(!hero.isDying())
             {
@@ -363,19 +367,20 @@ public class Player extends BaseActor{
         if(!isLocalPlayer){
             healthBar.x = (getX()) + ((getWidth()/2) - (healthBar.width /2));
             healthBar.y = getY() + getHeight();
+            
+            calculateHealth(dt);
+            if(checkDying()){
+                return;
+            }
             if(isAnimationFinished()){
                 setCanMove(true);
-            }
-            calculateHealth(dt);
-            if(checkDying(dt)){
-                return;
             }
             applyPhysics(dt);
             return;
         }
         calculateHealth(dt);
         
-        if(checkDying(dt)){
+        if(checkDying()){
             return;
         }
         

@@ -96,38 +96,6 @@ public class SkeletonMage extends BaseSkeleton{
         applyPhysics(dt);
     }
     
-    private void lookForTarget(){
-        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
-            return;
-        
-        for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
-            if(player.boundaryPolygon == null)
-                continue;
-            if(Intersector.overlaps(TargetRange,player.getBoundaryPolygon().getBoundingRectangle())){
-                if(target == null)
-                    target = player;
-            }
-            else{
-                target = null;
-            }
-        }
-        
-        if(target == null && (hitWall || Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle()))){
-            moveTo.x = MathUtils.random(Difficulty.worldWidth);
-            moveTo.y = MathUtils.random(Difficulty.worldHeight);
-            if(hitWall)
-                setSpeed(0);
-            hitWall = false;
-            moveToChanged();
-        }
-        else if(target != null){
-            moveTo.x = target.getX() + (target.getWidth()/2);
-            moveTo.y = target.getY() + (target.getHeight()/2);
-            moveToChanged();
-        }
-        
-    }
-    
     @Override
     public void attack(BaseActor player){
         attacking = true;

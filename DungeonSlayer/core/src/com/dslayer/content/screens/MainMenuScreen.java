@@ -113,7 +113,6 @@ public class MainMenuScreen extends BaseScreen {
         parameter.borderColor = Color.WHITE;
         parameter.borderWidth = 0f;
         BitmapFont fontButton = generator.generateFont(parameter);
-        generator.dispose();
         
         parameter.size = 15;
         BitmapFont fontPoint = generator.generateFont(parameter);
@@ -235,7 +234,6 @@ public class MainMenuScreen extends BaseScreen {
         removeButtons();
         //backgroundMusic.stop();
         //musicPlaying = false;
-        LevelScreen.setGameMode(new SurvivalGameMode());
         BaseGame.setActiveScreen(new HeroSelectionScreen());   
     }
     public void quitGame(){

@@ -163,7 +163,9 @@ public class HeroSelectionScreen extends BaseScreen {
     }
 	
     public void startGame(){
-        BaseGame.setActiveScreen( new LevelScreen());
+        LevelScreen l = new LevelScreen();
+        l.setGameMode(new SurvivalGameMode());
+        BaseGame.setActiveScreen(l);
     }
     public void cancelGame(){
         BaseGame.setActiveScreen( new MainMenuScreen());

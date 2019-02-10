@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -19,6 +21,7 @@ import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.Skill;
+import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
 import java.util.ArrayList;
 import org.json.JSONObject;
@@ -48,6 +51,8 @@ public abstract class BaseEnemy extends BaseActor{
     public BaseActor target = null;
     protected Circle AttackRange;
     protected Circle TargetRange;
+    
+    protected float attackDamage;
     
     protected float attackCooldown = 5f;
     protected float attackCooldownTime = 0f;
@@ -93,6 +98,15 @@ public abstract class BaseEnemy extends BaseActor{
         }
         if(isDead()){
             player.addPoints(pointsWorth);
+            if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+                JSONObject data = new JSONObject();
+                try{
+                    data.put("id", this.network_id);
+                    Multiplayer.socket.emit("enemyDied", data);
+                }catch(Exception e){
+                    System.out.println("Failed to push enemy Died");
+                }
+            }
         }
         if(Multiplayer.socket != null && Multiplayer.socket.connected()){
             JSONObject data = new JSONObject();
@@ -114,6 +128,39 @@ public abstract class BaseEnemy extends BaseActor{
         else if(health - damageTaken - damage > 0){
             this.damageTaken += damage;
         }
+    }
+    
+    protected void lookForTarget(){
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
+            return;
+        
+        for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
+            if(player.boundaryPolygon == null)
+                continue;
+            if(Intersector.overlaps(TargetRange,player.getBoundaryPolygon().getBoundingRectangle()) //&& !((Player)player).isDead()
+                    ){
+                if(target == null)
+                    target = player;
+            }
+            else{
+                target = null;
+            }
+        }
+        
+        if(target == null && (hitWall || Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle()))){
+            moveTo.x = MathUtils.random(Difficulty.worldWidth);
+            moveTo.y = MathUtils.random(Difficulty.worldHeight);
+            if(hitWall)
+                setSpeed(0);
+            hitWall = false;
+            moveToChanged();
+        }
+        else if(target != null){
+            moveTo.x = target.getX() + (target.getWidth()/2);
+            moveTo.y = target.getY() + (target.getHeight()/2);
+            moveToChanged();
+        }
+        
     }
     
     public abstract void die();
@@ -156,7 +203,7 @@ public abstract class BaseEnemy extends BaseActor{
                 data.put("y", moveTo.y);
                 Multiplayer.socket.emit("enemyTargetChange", data);
             }catch(Exception e){
-                System.out.println("Failed to push target change");
+                System.out.println("Failed to push target change" + e.getMessage());
             }
         }
     }
@@ -192,15 +239,6 @@ public abstract class BaseEnemy extends BaseActor{
         super.act(dt);
         calculateHealth(dt);
         if(isDead() && !isDying){
-            if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
-            JSONObject data = new JSONObject();
-            try{
-                data.put("id", this.network_id);
-                Multiplayer.socket.emit("enemyDied", data);
-            }catch(Exception e){
-                System.out.println("Failed to push enemy Died");
-            }
-        }
             die();
         }
         if(isDying && isAnimationFinished()){
