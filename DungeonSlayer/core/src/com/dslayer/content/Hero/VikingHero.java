@@ -7,6 +7,7 @@ package com.dslayer.content.Hero;
 
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -37,6 +38,7 @@ public class VikingHero extends Hero{
     
     public VikingHero(){
         super();
+        texture = new Texture(Gdx.files.internal(vikingHero));
         Down = Avatars.load(DefaultPlayerDown, 1, 4, .2f, true);
         Up = Avatars.load(DefaultPlayerUP, 1, 4, .2f, true);
         Left = Avatars.load(DefaultPlayerLeft, 1, 4, .2f, true);
@@ -45,9 +47,9 @@ public class VikingHero extends Hero{
         setBoundaryRectangle();
         heroName = "Björn";
         
-        walkAnimList = LPC.LoadGroupFromFullSheet(vikingHero, LPC.LPCGroupAnims.walk);
-        castAnimList = LPC.LoadGroupFromFullSheet(vikingHero, LPC.LPCGroupAnims.slash, .05f);
-        dieAnim = LPC.LoadGroupFromFullSheet(vikingHero, LPC.LPCGroupAnims.die).get(0);
+        walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
+        castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.slash, .05f);
+        dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);
         
     }
 

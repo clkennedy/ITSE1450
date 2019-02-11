@@ -110,13 +110,14 @@ public class SurvivalGameMode extends GameMode{
         
         potionRespawnTimer += dt;
         List<BaseActor> hPots = BaseActor.getList(mainStage, "com.dslayer.content.Objects.Potions.HealthPotion2");
-            
-        if(hPots.size() < maxPotionsOnFeild){
-            if(potionRespawnTimer > potionRespawnInterval){
-                potionRespawnTimer = 0;
-                new HealthPotion2(MathUtils.random(Difficulty.worldWidth - (DungeonPanels.defaultSize * 2)) + DungeonPanels.defaultSize, 
+        
+        if(potionRespawnTimer > potionRespawnInterval){
+            potionRespawnTimer = 0;
+            if(hPots.size() < maxPotionsOnFeild && MathUtils.randomBoolean(.8f)){
+                BaseActor a =new HealthPotion2(MathUtils.random(Difficulty.worldWidth - (DungeonPanels.defaultSize * 2)) + DungeonPanels.defaultSize, 
                         MathUtils.random(Difficulty.worldHeight - (DungeonPanels.defaultSize * 2))+ DungeonPanels.defaultSize, 
-                        mainStage).enableDespawnTimer(30);
+                        mainStage);
+                        ((HealthPotion2)a).enableDespawnTimer(30);
             }
         }
         
@@ -125,7 +126,7 @@ public class SurvivalGameMode extends GameMode{
         spawnTime += dt;
         if(spawnTime > spawnTimer && enemies.size() < maxNumOfEnemies ){
             BaseActor b;
-            if(MathUtils.randomBoolean()){
+            if(MathUtils.randomBoolean(.4f)){
                 b = new SkeletonMage(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
            }
             else{
@@ -133,7 +134,7 @@ public class SurvivalGameMode extends GameMode{
             }
             spawnTime= 0;
             while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
-                   b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
+                b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
                 b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
             }
         }
@@ -143,12 +144,12 @@ public class SurvivalGameMode extends GameMode{
             BaseActor b = null;
             if(MathUtils.randomBoolean(.8f)){
                 b = new BlueGolem(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
-           }
-            if(b != null){
-                gm.AddMessage("Blue Golem Appeared");
-                while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
+                if(b != null){
+                    gm.AddMessage("Blue Golem Appeared");
+                    while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
                         b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                     b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
+                        b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
+                    }
                 }
             }
             GolemSpawnTime = 0;

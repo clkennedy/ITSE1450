@@ -68,6 +68,11 @@ public abstract class Skill extends BaseActor{
         return this;
     }
     
+    public Skill setProjectileDeAcceleration(float speed){
+        setDeceleration(speed);
+        return this;
+    }
+    
     public void setupIcon(float x, float y){
         baIcon  = new BaseActor(x,y,BaseActor.getUiStage());
     }

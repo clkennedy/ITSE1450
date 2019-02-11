@@ -6,6 +6,7 @@
 package com.dslayer.content.Skills;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -14,30 +15,30 @@ import com.dslayer.content.Player.Player;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
-import java.util.ArrayList;
-import java.util.List;
+import static com.dslayer.content.projectiles.Spells.Projectiles.*;
 
 /**
  *
  * @author ARustedKnight
  */
-public class Slash extends Skill{
+public class ArrowShot extends Skill{
     
-    private String ico = "Icons/Slash.png";
-    private String icoCD = "Icons/SlashCD.png";
+    private String ico = "Icons/ArrowShotIcon.png";
+    private String icoCD = "Icons/ArrowShotIconCD.png";
     
-    private float duration = .5f;
-    private float durationTimer = 0;
+    private String soundPath = "";
     
-    List<BaseActor> alreadyHit;
+    private Sound sound;
     
-    public Slash(){
+    public ArrowShot(){
         super();
         setup();
+        
     }
     
-    public Slash(float x, float y, Stage s){
+    public ArrowShot(float x, float y, Stage s){
         super(x,y,s);
+        setOrigin(getWidth() / 2, getHeight() / 2);
         setup();
     }
     
@@ -65,23 +66,27 @@ public class Slash extends Skill{
         
         if(from == Skill.From.Enemy){
             for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
-                if(overlaps(player) && !alreadyHit.contains(player)){
+                if(overlaps(player)){
                     ((Player)player).takeDamage((int)damage);
-                    alreadyHit.add(player);
+                    remove();
                 }
             }
         }
         if(from == Skill.From.Player){
             for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
-                if(overlaps(enemy) && !alreadyHit.contains(enemy)){
+                if(overlaps(enemy)){
                     ((BaseEnemy)enemy).takeDamage((int)damage, player);
-                    alreadyHit.add(enemy);
+                    remove();
                 }
             }
         }
-        durationTimer += dt;
-        if(durationTimer > duration){
-            remove();
+        
+        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
+            if(wall.boundaryPolygon == null)
+                continue;
+            if(overlaps(wall)){
+                remove();
+            }
         }
      }
 
@@ -89,26 +94,32 @@ public class Slash extends Skill{
     public void cast(BaseActor caster, Vector2 target, Skill.From from) {
         float degrees = (float)(MathUtils.atan2((target.y - (caster.getY() + caster.getHeight()) )
                 , target.x - (caster.getX() + caster.getWidth())) * 180.0d / Math.PI);
-        BaseActor b = new Slash(caster.getX() + caster.getWidth() /2,caster.getY() + caster.getHeight() /2 , 
+        
+        BaseActor b = new ArrowShot(caster.getX() + caster.getWidth() / 2,caster.getY() + caster.getHeight() / 2 , 
                 BaseActor.getMainStage()).isProjectile()
-                .setProjectileSpeed(500).
-                setProjectileRotation(degrees).
-                setDirection(degrees)
-                .setFrom(from).setDamage(damage);
+                //.setProjectileSpeed(300)
+                .setProjectileDeAcceleration(600)
+                .setProjectileRotation(degrees)
+                .setDirection(degrees)
+                .setFrom(from);
                 canCast = false;
-                if(from == Skill.From.Player){
-                    ((Skill)b).player = ((Player)caster);
-                }
+                b.setMotionAngle(degrees);
+        if(from == Skill.From.Player){
+            ((Skill)b).player = ((Player)caster);
+        }
+                
     }
     
-    public Slash isProjectile(){
+    public ArrowShot isProjectile(){
         isAction = true;
-        alreadyHit = new ArrayList<BaseActor>();
-        setAnimation(Projectiles.getSlashAnim());
+        loadTexture(Arrow);
+        setScale(.1f);
+        setSpeed(600);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setPosition(getX() - (getWidth() /2) , getY() - (getHeight() / 2));
-        setBoundaryPolygon(12);
+        setBoundaryPolygonHalfLong(12);
+        damage = 50;
         return this;
     }
     

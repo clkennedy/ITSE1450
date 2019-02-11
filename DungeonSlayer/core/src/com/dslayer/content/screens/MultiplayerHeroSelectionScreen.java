@@ -89,8 +89,9 @@ public class MultiplayerHeroSelectionScreen extends BaseScreen {
         float w = 0;
         
         for(Hero.heros bActor : Hero.heros .values()){
-            Hero b = Hero.getNewHero(bActor);
-            b.setAnimation(b.playRight());
+            Hero h = Hero.getNewHero(bActor);
+            BaseActor b = new BaseActor();
+            b.setAnimation(h.playRight());
             b.setSize(100, 100);
             b.setOrigin(b.getWidth() / 2, b.getHeight() / 2);
             w += b.getWidth() + 50;

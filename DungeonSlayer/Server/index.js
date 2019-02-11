@@ -7,11 +7,29 @@ var rooms = [];
 
 
 server.listen(8080, function(){
-    console.log("Server Running..");
+    log("Server Running..");
 })
 
+function getDateTime(){
+    var d = new Date()
+    var dd = d.getDate();
+    var yy = d.getFullYear();
+    var mm = d.getMonth() + 1;
+    var hh = d.getHours();
+    var min = d.getMinutes();
+    var ml = d.getMilliseconds();
+    
+    return mm+"/"+dd+"/"+yy+" " + hh +":"+min+":"+ml +": ";
+    
+}
+
+function log(s){
+    console.log(getDateTime() + s);
+}
+
 io.on('connection', function(socket){
-    console.log("player " + socket.id + " connected");
+    var address = socket.request.connection.remoteAddress;
+    log("player " + socket.id + " connected: " + address);
     socket.emit('socketID', {id: socket.id});
     socket.on('disconnect', function(){
         for(var i = 0; i< players.length; i++){
@@ -29,7 +47,7 @@ io.on('connection', function(socket){
                             rooms[j].numOfPlayer -= 1;
                             if(rooms[j].host == socket.id){
                                 socket.to(players[i].roomName).emit('roomDestroyed', {roomName: rooms[j].name});
-                                console.log(rooms[j].name + " was Destroyed");
+                                log(rooms[j].name + " was Destroyed");
                                 rooms.splice(j,1);
                             }
                         }
@@ -39,13 +57,15 @@ io.on('connection', function(socket){
                 players.splice(i,1);
             }
         }
-        console.log("player " + socket.id + " disconnected");
-        console.log("Total Player: " + players.length);
+        log("player " + socket.id + " disconnected");
+        log("Total Player: " + players.length);
    });
+   
+   
    
    var player = new Player(socket.id,"Player"+(nextPlayerNum ++),0,0);
    players.push(player);
-   console.log("Total Player: " + players.length);
+   log("Total Player: " + players.length);
    socket.emit('pushDefaultUserName', {id: socket.id, userName: player.userName});
    
    socket.on('joinRoom', function(data){
@@ -56,7 +76,7 @@ io.on('connection', function(socket){
             room.numOfPlayer ++;
             socket.join(room.name);
             socket.emit('successfulRoomJoin');
-            console.log(player.id + " joined " + player.roomName + ": player " + 
+            log(player.id + " joined " + player.roomName + ": player " + 
                     rooms.find(r => r.name == data.roomName).numOfPlayer + "/" + rooms.find(r => r.name == data.roomName).maxPlayer)
             socket.to(room.name).emit("newPlayerJoinedRoom", {id: socket.id, userName: player.userName, hero: player.hero});
             socket.emit('getRoomPlayers', players.filter(p => p.roomName == room.name));
@@ -73,31 +93,31 @@ io.on('connection', function(socket){
    })
    
    socket.on('leaveRoom', function(){
-       console.log("looking for player " + socket.id);
+       log("looking for player " + socket.id);
        var player = players.find(p => p.id == socket.id);
-       players.forEach(p => console.log(p.id));
+       //players.forEach(p => log(p.id));
        if(player != null){
-           console.log("player found, looking for room");
+           log("player found, looking for room");
            room = rooms.find(r => r.name == player.roomName);
        }
             
        if(room != null && player != null){
-           console.log("room found, push disconnected event");
+           log("room found, push disconnected event");
            socket.to(room.name).emit('playerDisconnectedFromRoom', {id: socket.id});
-      //console.log("set all player ready to false;");
+      //log("set all player ready to false;");
            
-        console.log("decrease num of players");
+       log("decrease num of players");
        room.numOfPlayer --;
        
        player.roomName = "";
-       console.log("push current players to room");
+       log("push current players to room");
        socket.to(room.name).emit('getRoomPlayers',  players.filter(p => p.roomName == room.name));
        player.ready = false;
-       console.log("player leave room");
+       log("player leave room");
        socket.leave(room.name);
-       console.log(socket.id + " left room: " + room.name);
+       log(socket.id + " left room: " + room.name);
        if(room.host == socket.id){
-           console.log("Player was host, destroying room");
+           log("Player was host, destroying room");
            socket.to(room.name).emit('roomDestroyed', {roomName: room.name});
            rooms.splice(rooms.indexOf(room), 1);
        }
@@ -107,7 +127,7 @@ io.on('connection', function(socket){
    socket.on('joinMultiplerAgain',function(){
        var player = players.find(p => p.id == socket.id);
        if(player != null){
-           console.log("pushed user name for player " + socket.id + ": " + player.userName);
+           log("pushed user name for player " + socket.id + ": " + player.userName);
             socket.emit('pushDefaultUserName', {id: socket.id, userName: player.userName});
        }
    })
@@ -127,7 +147,7 @@ io.on('connection', function(socket){
             r.numOfPlayer ++;
             r.inLobby = true;
             rooms.push(r);
-            console.log(r.name + " was created/host id: " + r.host + "/numplayers: " + r.numOfPlayer);
+            log(r.name + " was created/host id: " + r.host + "/numplayers: " + r.numOfPlayer);
             for(var i = 0; i < players.length; i ++){
                 if(players[i].id == socket.id){
                     players[i].roomName = r.name;
@@ -147,7 +167,7 @@ io.on('connection', function(socket){
        var player = players.find(p => p.id == socket.id);
        var old = player.userName;
        player.userName = data.userName;
-       console.log("player " + socket.id + " updated user name to " +players.find(p => p.id == socket.id).userName);
+       log("player " + socket.id + " updated user name to " +players.find(p => p.id == socket.id).userName);
    })
    
    socket.on('flagReady', function(){
@@ -185,7 +205,7 @@ io.on('connection', function(socket){
    socket.on('startGame', function(){
        room = rooms.find(r => r.host == socket.id);
        room.inLobby = false;
-       console.log(room.name + " started Game");
+       log(room.name + " started Game");
    })
    
    socket.on('updateHeroPosition', function(data){
@@ -201,7 +221,7 @@ io.on('connection', function(socket){
        data.id = socket.id;
        if(room != null){
            socket.to(room.name).emit('heroCast', data);
-           //console.log(socket.id + " cast " + ((data.skill == 0)? "basic":"Alternate") + " Slill");
+           //log(socket.id + " cast " + ((data.skill == 0)? "basic":"Alternate") + " Slill");
        }  
    })
    socket.on('heroDamageTaken', function(data){
@@ -210,7 +230,7 @@ io.on('connection', function(socket){
        data.id = socket.id;
        if(room != null){
            socket.to(room.name).emit('heroDamageTaken', data);
-           //console.log(socket.id + " took " + data.damage + " damage");
+           //log(socket.id + " took " + data.damage + " damage");
        }  
    })
    socket.on('heroRecover', function(data){
@@ -219,7 +239,7 @@ io.on('connection', function(socket){
        data.id = socket.id;
        if(room != null){
            socket.to(room.name).emit('heroRecover', data);
-           console.log(socket.id + " recovered " + data.recover + " damage");
+           log(socket.id + " recovered " + data.recover + " damage");
        }  
    })
    socket.on('heroAddPoints', function(data){
@@ -228,7 +248,7 @@ io.on('connection', function(socket){
        data.id = socket.id;
        if(room != null){
            socket.to(room.name).emit('heroAddPoints', data);
-           console.log(socket.id + " recovered " + data.recover + " damage");
+           log(socket.id + " recovered " + data.recover + " damage");
        }  
    })
    
@@ -237,7 +257,7 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('healthPotionCreated', data);
-           console.log("Health Pot " + data.id + " Created");
+           log("Health Pot " + data.id + " Created");
        }   
    })
    socket.on('healthPotionPickUp', function(data){
@@ -245,7 +265,7 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('healthPotionPickUp', data);
-           //console.log("Health Pot " + data.id + " picked up");
+           //log("Health Pot " + data.id + " picked up");
        }   
    })
    
@@ -254,7 +274,7 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('enemyTargetChange', data);
-           //console.log("Enemy " + data.id + " Changed Target " );
+           //log("Enemy " + data.id + " Changed Target " );
        }  
    })
    socket.on('enemyCreated', function(data){
@@ -262,7 +282,7 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('enemyCreated', data);
-           console.log("Enemy " + data.id + " Created");
+           log("Enemy " + data.id + " Created");
        }   
    })
    socket.on('enemyAttack', function(data){
@@ -270,7 +290,7 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('enemyAttack', data);
-           //console.log("Enemy " + data.id + " Attacked " + data.target);
+           //log("Enemy " + data.id + " Attacked " + data.target);
        }     
    })
    socket.on('enemyDamageTaken', function(data){
@@ -278,7 +298,7 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('enemyDamageTaken', data);
-           console.log(data.id + " enemy took " + data.damage + " damage");
+           log(data.id + " enemy took " + data.damage + " damage");
        }  
    })
    socket.on('enemyDied', function(data){
@@ -287,7 +307,7 @@ io.on('connection', function(socket){
        if(room != null){
            socket.to(room.name).emit('enemyDied', data);
            socket.emit('enemyDied', data);
-           console.log(data.id + " Enemy Died");
+           log(data.id + " Enemy Died");
        }  
    })
    socket.on('syncEnemies', function(data){
@@ -295,7 +315,7 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('syncEnemies', data);
-           //console.log("syning Enemies");
+           //log("syning Enemies");
        }  
    })
 })
@@ -329,5 +349,5 @@ function Enemt(id){
 }
 //socket.broadcast.emit('newPlayer', {id: socket.id});
    // socket.on('disconnect', function(){
-   ///     console.log("player disconnected");
+   ///     log("player disconnected");
    // })

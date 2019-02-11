@@ -106,6 +106,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
     private List<enemyAttack> enemiesAttack;
     private List<enemyInfo> healthPotsToSpawn;
     
+    private List<String> gameObjectToRemove;
+    
     private float moveTimeElepased = 0;
     
     public MultiplayerSurvivalGameMode(Stage s){
@@ -135,6 +137,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         enemiesToSpawn = new ArrayList<enemyInfo>();
         healthPotsToSpawn = new ArrayList<enemyInfo>();
         heroCast = new ArrayList<skillInfo>();
+        gameObjectToRemove = new ArrayList<String>();
+        
         setupSocketListeners();
         
         Room dr = new DungeonRoom();
@@ -232,17 +236,23 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             anyOtherPlayerAlive = anyOtherPlayerAlive || !b.isDead();
         }
         
-        if(!anyOtherPlayerAlive && player.isDead()){
-            //gameOver
-            //gm.AddMessage("All Party Memebers have Died");
-            return;
+        if(!anyOtherPlayerAlive && player.isDead() && !gameOver){
+            /*gameOver = true;
+            gm.AddMessage("All Party Members have Died");
+            Player p = player;
+            for(Player b : OtherPlayers.values()){
+                if(b.getPoints() > p.getPoints()){
+                    p = b;
+                }
+            }
+            gm.AddMessage("HighestScore was " + p.UserName +": " + p.getPoints());
+            return;*/
         }
         
-        if(player.isDead()){
-            //player.alignCamera();
+        for(String id : gameObjectToRemove){
+            gameObjects.remove(id).remove();
         }
-        
-        
+        gameObjectToRemove.clear();
         
         for(String id : PlayerPointLabels.keySet()){
             if(Multiplayer.myID.equals(id)){
@@ -270,7 +280,16 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                 OtherPlayersTimer.put(id, f);
             }
         }
-        
+        if(player.isDead()){
+            Player p = player;
+            for(Player b : OtherPlayers.values()){
+                if(!b.isDead()){
+                    p = b;
+                    break;
+                }
+            }
+            player.alignCameraOnOtherActor(p);
+        }
         
         for(skillInfo info: heroCast){
             OtherPlayers.get(info.id).cast(info.targetX, info.targetY, info.skill);
@@ -440,9 +459,9 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                     JSONObject data = (JSONObject) os[0];
                                     try{
                                         String id = data.getString("id");
-                                        gameObjects.remove(id).remove();
+                                        gameObjectToRemove.add(id);
                                     }catch(Exception e){
-                                        System.out.println("Failed Health Pot Pick Up");
+                                        System.out.println("Failed Health Pot Pick Up " + e.getMessage());
                                     }
                                 }
                             }).on("enemyCreated", new Emitter.Listener() {

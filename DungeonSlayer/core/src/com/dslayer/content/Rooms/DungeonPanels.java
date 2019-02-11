@@ -27,14 +27,7 @@ public class DungeonPanels extends BaseActor{
         int frameWidth = texture.getWidth() / cols;
         int frameHeight = texture.getHeight() / rows;
         TextureRegion[][] temp = TextureRegion.split(texture, frameWidth, frameHeight);
-        Array<TextureRegion> textureArray = new Array<TextureRegion>();
-        for(int r = 0; r < rows; r++) {
-            for(int c = 0; c < cols; c++) {
-                textureArray.add(temp[r][c]);
-            }
-        }
-        
-        return temp;        
+        return temp;
     }
     
     private static BaseActor DefaultSize(BaseActor t){

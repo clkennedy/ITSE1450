@@ -15,10 +15,11 @@ import com.dslayer.content.options.Avatars;
  */
 public class Projectiles {
     
-    private static final String FireBall = "particles/11_fire_spritesheet.png";
-    private static final String IceNova = "particles/19_freezing_spritesheet.png";
-    private static final String Slash = "particles/Slash.png";
-    private static final String[] Shatter = {"particles/Shatter/Shatter0.png","particles/Shatter/Shatter1.png", "particles/Shatter/Shatter2.png",
+    public static final String FireBall = "particles/11_fire_spritesheet.png";
+    public static final String Arrow = "particles/Arrow.png";
+    public static final String IceNova = "particles/19_freezing_spritesheet.png";
+    public static final String Slash = "particles/Slash.png";
+    public static final String[] Shatter = {"particles/Shatter/Shatter0.png","particles/Shatter/Shatter1.png", "particles/Shatter/Shatter2.png",
     "particles/Shatter/Shatter3.png","particles/Shatter/Shatter4.png"};
     
     public static Animation<TextureRegion> getFireBallAnim(){

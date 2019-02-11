@@ -38,11 +38,10 @@ public abstract class Hero extends Avatar{
     
     protected float size = 32;
     
-    public static enum heros{ClassicHero, VikingHero}
+    public static enum heros{ClassicHero, VikingHero, ArcherHero}
     protected String heroName;
     
     protected List<Animation<TextureRegion>> walkAnimList;
-    protected List<Animation<TextureRegion>> slashAnimList;
     protected List<Animation<TextureRegion>> castAnimList;
     protected List<Animation<TextureRegion>> castBasicAnimList;
     protected List<Animation<TextureRegion>> castAltAnimList;
@@ -57,6 +56,8 @@ public abstract class Hero extends Avatar{
                return new ClassicHero();
             case VikingHero:
                 return new VikingHero();
+            case ArcherHero:
+                return new ArcherHero();
             default:
                 throw new AssertionError();
         }

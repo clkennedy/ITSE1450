@@ -33,11 +33,11 @@ public class LPC {
     shoot,
     die
     };
-    public static List<Animation<TextureRegion>> LoadGroupFromFullSheet(String filename,LPCGroupAnims anim){
-        return LoadGroupFromFullSheet(filename, anim, .1f);
+    public static List<Animation<TextureRegion>> LoadGroupFromFullSheet(Texture texture,LPCGroupAnims anim){
+        return LoadGroupFromFullSheet(texture, anim, .1f);
     }
     
-    public static List<Animation<TextureRegion>> LoadGroupFromFullSheet(String filename,LPCGroupAnims anim, float duration){
+    public static List<Animation<TextureRegion>> LoadGroupFromFullSheet(Texture texture,LPCGroupAnims anim, float duration){
         //List<Animation<TextureRegion>> anims = Avatars.loadMulti(filename, 21, 13, .5f, true);
         List<Animation<TextureRegion>> rtnAnim = new ArrayList<Animation<TextureRegion>>();
         int trim=0;
@@ -82,7 +82,6 @@ public class LPC {
                 throw new AssertionError();
         }
         
-        Texture texture = new Texture(Gdx.files.internal(filename), true);
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         int frameWidth = texture.getWidth() / cols;
         int frameHeight = texture.getHeight() / rows;

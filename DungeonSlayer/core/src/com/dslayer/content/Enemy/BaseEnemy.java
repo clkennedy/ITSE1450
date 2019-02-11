@@ -96,6 +96,17 @@ public abstract class BaseEnemy extends BaseActor{
         else if(health - damageTaken - damage > 0){
             this.damageTaken += damage;
         }
+        if(Multiplayer.socket != null && Multiplayer.socket.connected()){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("id", this.network_id);
+                data.put("damage", damage);
+                Multiplayer.socket.emit("enemyDamageTaken", data);
+            }
+            catch(Exception e){
+                   System.out.println("Failed to push enemy Damage");
+            }
+        }
         if(isDead()){
             player.addPoints(pointsWorth);
             if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
@@ -106,17 +117,6 @@ public abstract class BaseEnemy extends BaseActor{
                 }catch(Exception e){
                     System.out.println("Failed to push enemy Died");
                 }
-            }
-        }
-        if(Multiplayer.socket != null && Multiplayer.socket.connected()){
-            JSONObject data = new JSONObject();
-            try{
-                data.put("id", this.network_id);
-                data.put("damage", damage);
-                Multiplayer.socket.emit("enemyDamageTaken", data);
-            }
-            catch(Exception e){
-                   System.out.println("Failed to push enemy Damage");
             }
         }
     }
@@ -137,8 +137,7 @@ public abstract class BaseEnemy extends BaseActor{
         for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
             if(player.boundaryPolygon == null)
                 continue;
-            if(Intersector.overlaps(TargetRange,player.getBoundaryPolygon().getBoundingRectangle()) //&& !((Player)player).isDead()
-                    ){
+            if(Intersector.overlaps(TargetRange,player.getBoundaryPolygon().getBoundingRectangle()) && !((Player)player).isDead()){
                 if(target == null)
                     target = player;
             }
@@ -225,6 +224,9 @@ public abstract class BaseEnemy extends BaseActor{
         else{
              healthLowerWaitTime = 0;
         }
+        if(isDead()){
+            //setBoundaryPolygon(0);
+        }
     }
     
     public void cast(BaseActor actor, Vector2 v2, Skill.From from){
@@ -262,7 +264,6 @@ public abstract class BaseEnemy extends BaseActor{
     }
     @Override
     public boolean remove(){
-        
         
         return super.remove();
     }

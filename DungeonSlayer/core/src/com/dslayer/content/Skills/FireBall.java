@@ -15,6 +15,7 @@ import com.dslayer.content.Player.Player;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
+import static com.dslayer.content.projectiles.Spells.Projectiles.FireBall;
 
 /**
  *
@@ -37,6 +38,7 @@ public class FireBall extends Skill{
     
     public FireBall(float x, float y, Stage s){
         super(x,y,s);
+        setOrigin(getWidth() / 2, getHeight() / 2);
         setup();
     }
     
@@ -93,7 +95,7 @@ public class FireBall extends Skill{
         float degrees = (float)(MathUtils.atan2((target.y - (caster.getY() + caster.getHeight()) )
                 , target.x - (caster.getX() + caster.getWidth())) * 180.0d / Math.PI);
         
-        BaseActor b = new FireBall(caster.getX() - caster.getWidth(),caster.getY() - caster.getHeight() , 
+        BaseActor b = new FireBall(caster.getX() + caster.getWidth() / 2,caster.getY() + caster.getHeight() / 2 , 
                 BaseActor.getMainStage()).isProjectile()
                 .setProjectileSpeed(300).
                 setProjectileRotation(degrees).
@@ -108,9 +110,10 @@ public class FireBall extends Skill{
     
     public FireBall isProjectile(){
         isAction = true;
-        setAnimation(Projectiles.getFireBallAnim());
+        loadAnimationFromSheet(FireBall, 8, 8, .05f, true);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
+        setPosition(getX() - (getWidth() /2) , getY() - (getHeight() / 2));
         setBoundaryPolygonHalfLong(12);
         setRotation(90);
         damage = 50;

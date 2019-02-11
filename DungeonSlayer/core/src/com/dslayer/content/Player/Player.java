@@ -231,12 +231,15 @@ public class Player extends BaseActor{
            sRend.begin(ShapeRenderer.ShapeType.Line);
            sRend.rect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
            sRend.end();
-           sRend.setColor(Color.RED);
+            if(isLocalPlayer)
+                sRend.setColor(Color.RED);
+            else
+                sRend.setColor(Color.BLUE);
            sRend.begin(ShapeRenderer.ShapeType.Filled);
            for(int i = 0; i < health - damageTaken; i++){
                sRend.rect(healthBar.x + i, healthBar.y, 1, healthBar.height);
            }
-           sRend.setColor(Color.BLUE);
+           sRend.setColor(Color.GREEN);
            for(int i = (health - damageTaken) ; i < (health - damageTaken) + recoverAmount ; i++){
                sRend.rect(healthBar.x + i, healthBar.y, 1, healthBar.height);
            }

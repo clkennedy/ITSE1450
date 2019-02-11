@@ -50,6 +50,8 @@ public class BaseActor extends Group {
     // Velocity support
     private Vector2 velocityVec;
     
+    protected Texture texture;
+    
     // Acceleration support
     private Vector2 accelerationVec;
     private float acceleration;
@@ -247,6 +249,12 @@ public class BaseActor extends Group {
             setBoundaryRectangle();
         }
     }
+    @Override
+    public void setSize(float width, float height){
+        super.setSize(width, height);
+        setOrigin(width / 2, height / 2);
+    }
+    
      public void setAnimationWithReset(Animation<TextureRegion> anim) {
         animation = anim;
         elapsedTime = 0;
@@ -318,9 +326,10 @@ public class BaseActor extends Group {
         
         for(int n = 0; n < fileCount; n++) {
             String fileName = fileNames[n];
-            Texture texture = new Texture(Gdx.files.internal(fileName));
+            texture = new Texture(Gdx.files.internal(fileName));
             texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
             textureArray.add(new TextureRegion(texture));
+            //texture.dispose();
         }
         
         Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);
@@ -369,7 +378,7 @@ public class BaseActor extends Group {
     * @return the Converted Animation
     */
     public Animation<TextureRegion> loadAnimationFromSheet(String fileName, int rows, int cols, float frameDuration, boolean loop) {
-        Texture texture = new Texture(Gdx.files.internal(fileName), true);
+        texture = new Texture(Gdx.files.internal(fileName), true);
         texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         int frameWidth = texture.getWidth() / cols;
         int frameHeight = texture.getHeight() / rows;
@@ -590,6 +599,11 @@ public class BaseActor extends Group {
     * @param numSides the number of sides the polygon will have
     */
     public void setBoundaryPolygon(int numSides) {
+        if(numSides == 0){
+            boundaryPolygon = null;
+            return;
+        }
+            
         float w = getWidth();
         float h = getHeight();
         float[] vertices = new float[2*numSides];
@@ -858,6 +872,14 @@ public class BaseActor extends Group {
             sRend.dispose();
             sRend = null;
         }
+        
+        if(animation != null){
+            animation.getKeyFrame(0).getTexture().dispose();
+        }
+        
+        if(texture != null)
+            texture.dispose();
+        
         return super.remove();
     }
     
