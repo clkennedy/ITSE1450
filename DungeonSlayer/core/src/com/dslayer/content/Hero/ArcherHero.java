@@ -25,10 +25,6 @@ import com.dslayer.content.projectiles.Spells.ProjectileSpell;
  * @author ARustedKnight
  */
 public class ArcherHero extends Hero{
-    final static public String DefaultPlayerUP = "Player\\Deafult Player\\Character_Up.png";
-    final static public String DefaultPlayerDown = "Player\\Deafult Player\\Character_Down.png";
-    final static public String DefaultPlayerLeft = "Player\\Deafult Player\\Character_Left.png";
-    final static public String DefaultPlayerRight = "Player\\Deafult Player\\Character_Right.png";
     
     final static public String archerHero = "Player/Archer/Arya.png";
 
@@ -39,18 +35,15 @@ public class ArcherHero extends Hero{
     public ArcherHero(){
         super();
         texture = new Texture(Gdx.files.internal(archerHero));
-        Down = Avatars.load(DefaultPlayerDown, 1, 4, .2f, true);
-        Up = Avatars.load(DefaultPlayerUP, 1, 4, .2f, true);
-        Left = Avatars.load(DefaultPlayerLeft, 1, 4, .2f, true);
-        Right = Avatars.load(DefaultPlayerRight, 1, 4, .2f, true);
-        setAnimation(Right);
-        setBoundaryRectangle();
-        heroName = "Björn";
+        
+        heroName = "Ayra";
         
         walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
-        castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.shoot, .05f);
+        castAltAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.slash, .1f);
+        castBasicAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.shoot, .03f);
         dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);
-        
+        setAnimation(playRight());
+        setBoundaryRectangle();
     }
 
     @Override
@@ -58,7 +51,7 @@ public class ArcherHero extends Hero{
         if(basicSkill.canCast()){
             player.setCanMove(false);
             //basicSkill.cast(player, new Vector2(MouseWorldX, MouseWorldY), Skill.From.Player);
-            //castAnimList = castBasicAnimList;
+            castAnimList = castBasicAnimList;
             isAttacking = true;
             waitToCast = true;
             skillWaitedToCast = basicSkill;
@@ -69,8 +62,14 @@ public class ArcherHero extends Hero{
     @Override
     public void altAttack(float MouseWorldX,float MouseWorldY, Player player ) {
         if(altSkill.canCast()){
-            altSkill.cast(player, new Vector2(MouseWorldX, MouseWorldY), Skill.From.Player);
-            
+            //altSkill.cast(player, new Vector2(MouseWorldX, MouseWorldY), Skill.From.Player);
+            player.setCanMove(false);
+            isAttacking = true;
+            castAnimList = castAltAnimList;
+            waitToCast = true;
+            skillWaitedToCast = altSkill;
+            this.caster = player;
+            this.target = new Vector2(MouseWorldX,MouseWorldY);
         }
         
     }
@@ -79,10 +78,10 @@ public class ArcherHero extends Hero{
     public void setup(Player player) {
         basicSkill = new ArrowShot();
         basicSkill.setDamage(35);
-        basicSkill.setCoolDown(1);
+        basicSkill.setCoolDown(.5f);
         basicSkill.player = player;
         
-        altSkill = new GroundSlam();
+        altSkill = new BearTrap();
         altSkill.player = player;
         //basicSkill.setIconPosition((int)(BaseActor.getUiStage().getCamera().viewportWidth /2),(int)(BaseActor.getUiStage().getCamera().viewportHeight /2));
         if(player.isLocalPlayer){

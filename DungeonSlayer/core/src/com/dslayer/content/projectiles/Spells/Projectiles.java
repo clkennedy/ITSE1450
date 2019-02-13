@@ -17,6 +17,7 @@ public class Projectiles {
     
     public static final String FireBall = "particles/11_fire_spritesheet.png";
     public static final String Arrow = "particles/Arrow.png";
+    public static final String BearTrap = "Traps/Bear_Trap.png";
     public static final String IceNova = "particles/19_freezing_spritesheet.png";
     public static final String Slash = "particles/Slash.png";
     public static final String[] Shatter = {"particles/Shatter/Shatter0.png","particles/Shatter/Shatter1.png", "particles/Shatter/Shatter2.png",

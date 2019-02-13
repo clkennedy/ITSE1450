@@ -20,7 +20,9 @@ public class DungeonPanels extends BaseActor{
     
     public static TextureRegion[][] Panels = load("Rooms/Dungeon/DungeonStarter.png",17,6);
     public static final int defaultSize = 50;
-            
+    
+    //Texture texture;
+    
     private static TextureRegion[][] load(String fileName, int rows, int cols) {
         Texture texture = new Texture(Gdx.files.internal(fileName), true);
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -30,7 +32,7 @@ public class DungeonPanels extends BaseActor{
         return temp;
     }
     
-    private static BaseActor DefaultSize(BaseActor t){
+    protected static BaseActor DefaultSize(BaseActor t){
         t.setSize(defaultSize, defaultSize);
         return t;
     }

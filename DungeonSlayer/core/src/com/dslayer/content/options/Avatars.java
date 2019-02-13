@@ -87,8 +87,8 @@ public class Avatars {
         return temp;        
     }
     
-    public static List<Animation<TextureRegion>> loadMulti(String fileName, int rows, int cols, float frameDuration, boolean loop) {
-        Texture texture = new Texture(Gdx.files.internal(fileName), true);
+    public static List<Animation<TextureRegion>> loadMulti(Texture texture, int rows, int cols, float frameDuration, boolean loop) {
+        
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         int frameWidth = texture.getWidth() / cols;
         int frameHeight = texture.getHeight() / rows;

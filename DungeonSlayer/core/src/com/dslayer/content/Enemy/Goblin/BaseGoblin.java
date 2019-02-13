@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dslayer.content.Enemy.Skeleton;
+package com.dslayer.content.Enemy.Goblin;
 
+import com.dslayer.content.Enemy.Golem.*;
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.TextureArray;
@@ -18,6 +19,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
+import com.dslayer.content.Player.Player;
+import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
@@ -27,25 +30,26 @@ import java.util.List;
  *
  * @author ARustedKnight
  */
-public class BaseSkeleton extends BaseEnemy{
+public class BaseGoblin extends BaseEnemy{
     
     protected List<Animation<TextureRegion>> walkAnimList;
     protected List<Animation<TextureRegion>> slashAnimList;
     protected List<Animation<TextureRegion>> castAnimList;
     protected Animation<TextureRegion> dieAnim;
 
-    @Override
-    public void attack(BaseActor player) {
-    }
+    
     
     protected enum WalkDirection{up,left,down,right};
     protected WalkDirection currentDirection;
-
-    public BaseSkeleton() {
+    
+    
+    //Skill skill;
+    
+    public BaseGoblin() {
         
     }
     
-    public BaseSkeleton(float x, float y, Stage s){
+    public BaseGoblin(float x, float y, Stage s){
         super(x,y,s);
         
         AttackRange = new Circle(x, y, 100);
@@ -59,6 +63,14 @@ public class BaseSkeleton extends BaseEnemy{
         
     }
     
+    @Override
+    public void takeDamage(int damage, Player player){
+        damage /= 2;
+        super.takeDamage(damage, player);
+    }
+    @Override
+    public void attack(BaseActor player) {
+    }
     public void draw(Batch batch, float parentAlpha) {
                 
         Color c = getColor();
@@ -108,9 +120,11 @@ public class BaseSkeleton extends BaseEnemy{
             attackCooldownTime += dt;
         }
     }
+    
     protected void moveTowardTarget2(){
         if(!canMove)
             return;
+        
         setAcceleration(100);
         float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
         accelerateAtAngle(degrees);

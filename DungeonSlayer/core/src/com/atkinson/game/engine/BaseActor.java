@@ -342,7 +342,7 @@ public class BaseActor extends Group {
         if(animation == null) {
             setAnimation(anim);
         }
-        
+        setAnimation(anim);
         return anim;
     }
     public Animation<TextureRegion> loadAnimationFromTexture(TextureRegion texture, float frameDuration, boolean loop) {

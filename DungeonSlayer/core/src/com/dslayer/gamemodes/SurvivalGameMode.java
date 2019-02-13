@@ -13,7 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.dslayer.content.Enemy.Goblin.GoblinAssassin;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
+import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.GameMessage.GameMessage;
@@ -67,6 +69,7 @@ public class SurvivalGameMode extends GameMode{
         
         Room dr = new DungeonRoom();
         dr.generateRoom(30,40);
+        dr.fillRoomWithObjects(14);
         
         Difficulty.worldHeight = dr.getRoomHeight();
         Difficulty.worldWidth = dr.getRoomWidth();
@@ -90,6 +93,8 @@ public class SurvivalGameMode extends GameMode{
         BaseActor.getUiStage().addActor(pointTable);
         gm = new GameMessage();
         gm.AddMessage("Welcome");
+        
+        new GoblinAssassin(100, 100, mainStage);
     }
     @Override
     public void update(float dt) {
@@ -127,15 +132,23 @@ public class SurvivalGameMode extends GameMode{
         if(spawnTime > spawnTimer && enemies.size() < maxNumOfEnemies ){
             BaseActor b;
             if(MathUtils.randomBoolean(.4f)){
-                b = new SkeletonMage(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
+                b = new SkeletonMage(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                        MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize), mainStage);
            }
+            else if(MathUtils.randomBoolean(.95f)){
+                b = new SkeletonWarrior(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                        MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize), mainStage);
+            }
             else{
-                b = new SkeletonWarrior(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
+                 b = new SkeletonArmored(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                        MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize), mainStage);
+                 gm.AddMessage("An Armored Skeleton has Risen");
             }
             spawnTime= 0;
             while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
                 b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
+                b.setPosition(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                        MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize));
             }
         }
         
@@ -143,12 +156,14 @@ public class SurvivalGameMode extends GameMode{
         if(GolemSpawnTime > GolemSpawnTimer ){
             BaseActor b = null;
             if(MathUtils.randomBoolean(.8f)){
-                b = new BlueGolem(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
+                b = new BlueGolem(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                            MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize), mainStage);
                 if(b != null){
                     gm.AddMessage("Blue Golem Appeared");
                     while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
                         b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                        b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
+                        b.setPosition(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                            MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize));
                     }
                 }
             }

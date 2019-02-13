@@ -8,6 +8,7 @@ package com.dslayer.content.Enemy;
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.Enemy.Golem.BaseGolem;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
@@ -64,6 +66,12 @@ public abstract class BaseEnemy extends BaseActor{
     public Vector2 moveTo;
     protected Circle moveToRange;
     
+    protected Texture walk;
+    protected Texture attack;
+    protected Texture die;
+    
+    protected boolean canMove = true;
+    
     public static BaseEnemy getNewEnemy(type en,float x,float y){
         switch (en) {
             case SkeletionWarrior:
@@ -85,6 +93,10 @@ public abstract class BaseEnemy extends BaseActor{
         super(x,y,s);
         size = 50;
         healthBar = new Rectangle(x, y, maxHealth , 5);
+    }
+    
+    public void setCanMove(boolean b){
+        canMove = b;
     }
     
     public void takeDamage(int damage, Player player){
@@ -264,7 +276,13 @@ public abstract class BaseEnemy extends BaseActor{
     }
     @Override
     public boolean remove(){
-        
+        if(attack != null)
+            attack.dispose();
+        if(walk != null)
+            walk.dispose();
+        if(die != null)
+            die.dispose();
         return super.remove();
     }
+    
 }

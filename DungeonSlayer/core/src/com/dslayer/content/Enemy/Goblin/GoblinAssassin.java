@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dslayer.content.Enemy.Skeleton;
+package com.dslayer.content.Enemy.Goblin;
 
+import com.dslayer.content.Enemy.Skeleton.*;
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,40 +28,47 @@ import org.json.JSONObject;
  * @author ARustedKnight
  */
 
-public class SkeletonWarrior extends BaseSkeleton{
+public class GoblinAssassin extends BaseGoblin{
+    
+    private final String goblinWalk = "Enemy/Goblin/walk.png";
+    private final String goblinAttack = "Enemy/Goblin/attack.png";
+    private final String goblinDie = "Enemy/Goblin/die.png";
     
     Skill skill;
     
-     private final String skeleWarrior = "Enemy/Skeleton/SkeletonWarrior.png";
-    
-    public SkeletonWarrior(float x, float y, Stage s){
+    public GoblinAssassin(float x, float y, Stage s){
         
         super(x,y,s);
-        texture = new Texture(Gdx.files.internal(skeleWarrior));
+        die = new Texture(Gdx.files.internal(goblinDie));
+        walk = new Texture(Gdx.files.internal(goblinWalk));
+        attack = new Texture(Gdx.files.internal(goblinAttack));
         
-        maxHealth = 55;
+        maxHealth = 40;
         health = maxHealth;
         healthBar = new Rectangle(x, y, maxHealth , 5);
         
-        setSize(size,size);
-        setBoundaryPolygon(8);
-        setMaxSpeed(50);
-        setOrigin(getWidth() /2, getHeight() / 2);
-        attackDamage = 30;
-
-        AttackRange = new Circle(x, y, 40);
-        TargetRange = new Circle(x, y, 300);
+        AttackRange = new Circle(x, y, 30);
+        TargetRange = new Circle(x, y, 500);
         
-        castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.slash);
-        walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
-        dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);
+        castAnimList = LPC.loadMulti(attack , 4, 4, .1f, false);
+        walkAnimList = LPC.loadMulti(walk , 4, 7, .1f, true);
+        dieAnim = LPC.loadMulti(die , 1, 5, .3f, false).get(0);
         
         currentDirection = WalkDirection.down;
         setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
         
-        skill = new Slash();
+        setSize(size,size);
+        setBoundaryPolygon(8);
+        setMaxSpeed(150);
+        setAcceleration(3000);
+        setDeceleration(3000);
+        setOrigin(getWidth() /2, getHeight() / 2);
+        attackDamage = 50;
+        
+        skill = new Stab();
         skill.setDamage(attackDamage);
         skill.isEnemy(true);
+        skill.setCoolDown(2f);
         
         if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
             this.network_id = Integer.toString(Multiplayer.getNextID());

@@ -8,7 +8,10 @@ package com.dslayer.content.Rooms;
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.Rooms.Dungeon.DungeonHole;
+import com.dslayer.content.Rooms.Dungeon.DungeonPillar;
 import com.dslayer.content.options.Difficulty;
 
 /**
@@ -16,6 +19,8 @@ import com.dslayer.content.options.Difficulty;
  * @author ARustedKnight
  */
 public class DungeonRoom extends Room{
+
+    
 
     private enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight, URIWall, ULIWall, LRIWall, LLIWall, Empty}
     
@@ -71,7 +76,40 @@ public class DungeonRoom extends Room{
         this.roomWidth = width * DungeonPanels.defaultSize;
         this.roomHeight = height * DungeonPanels.defaultSize;
         this._layout = temp;
-        return null;
+        return this;
+    }
+    
+    @Override
+    public Room fillRoomWithObjects(int num) {
+        for(int i = 0; i < num; i++){
+            BaseActor b = null;
+            switch(MathUtils.random(1)){
+                case 0:
+                    b = new DungeonHole();
+                    break;
+                case 1:
+                    b = new DungeonPillar();
+                    break;
+                default:
+                    b = new DungeonHole();
+                    break;
+            }
+            
+            b.setPosition(-50, -50);
+            while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
+                   b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
+                float x = MathUtils.random(DungeonPanels.defaultSize, roomWidth - DungeonPanels.defaultSize - b.getWidth());
+                float y = MathUtils.random(DungeonPanels.defaultSize, roomHeight - DungeonPanels.defaultSize - b.getHeight());
+                b.setPosition(x, y);
+                for(BaseActor obj : roomObjects){
+                    if(b.overlaps(obj)){
+                        b.setPosition(-50, -50);
+                    }
+                }
+            }
+            roomObjects.add(b);
+        }
+        return this;
     }
 
     @Override
@@ -86,6 +124,11 @@ public class DungeonRoom extends Room{
                 temp.getBoundaryPolygon();
                 mainStage.addActor(temp);
             }
+        }
+        for(BaseActor b: roomObjects){
+            b.setZIndex(1200);
+            System.out.println(b.getX() + "|" + b.getY());
+            mainStage.addActor(b);
         }
     }
     

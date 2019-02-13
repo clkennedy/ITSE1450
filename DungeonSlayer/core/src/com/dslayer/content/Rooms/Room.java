@@ -5,7 +5,10 @@
  */
 package com.dslayer.content.Rooms;
 
+import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -19,12 +22,13 @@ public abstract class Room {
     protected float roomWidth;
     protected float roomHeight;
     
-    //protected int defaultSize = 75;
+    protected List<BaseActor> roomObjects = new ArrayList();
     
     public enum Size{Small, Medium, Large};
     
     public abstract Room generateRoom();
     public abstract Room generateRoom(Size size);
+    public abstract Room fillRoomWithObjects(int num);
     public abstract Room generateRoom(int length, int height);
     
     public abstract void Draw(Stage mainStage);

@@ -27,24 +27,27 @@ import org.json.JSONObject;
  * @author ARustedKnight
  */
 
-public class SkeletonWarrior extends BaseSkeleton{
+public class SkeletonArmored extends BaseSkeleton{
+    
+    private final String skeleArmored = "Enemy/Skeleton/ArmoredSkeleton.png";
     
     Skill skill;
     
-     private final String skeleWarrior = "Enemy/Skeleton/SkeletonWarrior.png";
-    
-    public SkeletonWarrior(float x, float y, Stage s){
+    public SkeletonArmored(float x, float y, Stage s){
+        
         
         super(x,y,s);
-        texture = new Texture(Gdx.files.internal(skeleWarrior));
+        texture = new Texture(Gdx.files.internal(skeleArmored));
         
-        maxHealth = 55;
+        pointsWorth = 25;
+        
+        maxHealth = 175;
         health = maxHealth;
         healthBar = new Rectangle(x, y, maxHealth , 5);
         
         setSize(size,size);
         setBoundaryPolygon(8);
-        setMaxSpeed(50);
+        setMaxSpeed(40);
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 30;
 
@@ -76,6 +79,11 @@ public class SkeletonWarrior extends BaseSkeleton{
                 
             }
         }
+    }
+    @Override
+    public void takeDamage(int damage, Player player){
+        damage /= 2;
+        super.takeDamage(damage, player);
     }
     
     @Override
@@ -159,5 +167,11 @@ public class SkeletonWarrior extends BaseSkeleton{
         setAnimation(walkAnimList.get(currentDirection.ordinal()));
         setSize(size, size);
     }
-    
+     @Override
+    public void die() {
+        setSpeed(0);
+        setAnimationWithReset(dieAnim);
+        setSize(size, size);
+        isDying = true;
+    }
 }

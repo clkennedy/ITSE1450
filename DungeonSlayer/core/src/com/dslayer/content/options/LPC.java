@@ -107,7 +107,7 @@ public class LPC {
         return animList;
     }
     
-    public static Animation<TextureRegion> LoadFromFullSheet(String filename,LPCAnims anim){
+    public static Animation<TextureRegion> LoadFromFullSheet(Texture filename,LPCAnims anim){
         List<Animation<TextureRegion>> anims = Avatars.loadMulti(filename, 21, 13, .5f, true);
         Animation<TextureRegion> rtnAnim = anims.get(anim.ordinal());;
         int trim=0;
@@ -156,4 +156,31 @@ public class LPC {
         return rtnAnim;
     }
     
+    
+    public static List<Animation<TextureRegion>> loadMulti(Texture texture, int rows, int cols, float frameDuration, boolean loop) {
+        
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        int frameWidth = texture.getWidth() / cols;
+        int frameHeight = texture.getHeight() / rows;
+        TextureRegion[][] temp = TextureRegion.split(texture, frameWidth, frameHeight);
+        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+        
+        List<Animation<TextureRegion>> animList = new ArrayList<Animation<TextureRegion>>();
+        Animation<TextureRegion> anim = null;
+        for(int r = 0; r < rows; r++) {
+            textureArray.clear();
+            for(int c = 0; c < cols; c++) {
+                textureArray.add(temp[r][c]);
+                anim = new Animation<TextureRegion>(frameDuration, textureArray);
+                if(loop) {
+                    anim.setPlayMode(Animation.PlayMode.LOOP);
+                }
+                else {
+                    anim.setPlayMode(Animation.PlayMode.NORMAL);
+                }
+            }
+            animList.add(anim);
+        }
+        return animList;        
+    }
 }

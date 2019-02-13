@@ -30,7 +30,7 @@ public abstract class Skill extends BaseActor{
     protected Texture iconCD;
     protected BaseActor baIcon;
     protected float iconSize = 30f;
-    Label cdl;
+    protected Label cdl;
     
     protected float skillCooldown = 2f;
     protected float skillCooldownTime = 0f;
@@ -149,6 +149,18 @@ public abstract class Skill extends BaseActor{
     
     public boolean canCast(){
         return canCast;
+    }
+    
+    @Override
+    public boolean remove(){
+        if(baIcon != null)
+            baIcon.remove();
+        if(icon != null)
+            icon.dispose();
+        if(iconCD != null)
+            iconCD.dispose();
+        
+        return super.remove();
     }
     
     protected abstract void loadCDTexture();

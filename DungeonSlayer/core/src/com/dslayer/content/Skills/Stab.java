@@ -6,17 +6,14 @@
 package com.dslayer.content.Skills;
 
 import com.atkinson.game.engine.BaseActor;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Player.Player;
-import com.dslayer.content.Rooms.Dungeon.DungeonObject;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
-import static com.dslayer.content.projectiles.Spells.Projectiles.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,33 +21,23 @@ import java.util.List;
  *
  * @author ARustedKnight
  */
-public class ArrowShot extends Skill{
+public class Stab extends Skill{
     
-    private String ico = "Icons/ArrowShotIcon.png";
-    private String icoCD = "Icons/ArrowShotIconCD.png";
+    private String ico = "Icons/Slash.png";
+    private String icoCD = "Icons/SlashCD.png";
     
-    private String soundPath = "";
-    
-    private Sound sound;
-    
-    private int pierce = 3;
-    
-    private float stayArroundDureation = 2;
-    private float stayTimer=0;
+    private float duration = .15f;
+    private float durationTimer = 0;
     
     List<BaseActor> alreadyHit;
     
-    private float baseSpeed;
-    
-    public ArrowShot(){
+    public Stab(){
         super();
         setup();
-        
     }
     
-    public ArrowShot(float x, float y, Stage s){
+    public Stab(float x, float y, Stage s){
         super(x,y,s);
-        setOrigin(getWidth() / 2, getHeight() / 2);
         setup();
     }
     
@@ -76,45 +63,25 @@ public class ArrowShot extends Skill{
         accelerateAtAngle(direction);
         applyPhysics(dt);
         
-        if(getSpeed() <=0){
-            stayTimer+=dt;
-            if(stayTimer > stayArroundDureation){
-                remove();
-            }
-            return;
-        }
-        
         if(from == Skill.From.Enemy){
             for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
                 if(overlaps(player) && !alreadyHit.contains(player)){
                     ((Player)player).takeDamage((int)damage);
                     alreadyHit.add(player);
-                    pierce--;
-                    if(pierce == 0)
-                        remove();
                 }
             }
         }
         if(from == Skill.From.Player){
             for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                 if(overlaps(enemy) && !alreadyHit.contains(enemy)){
-                    float d = damage * (getSpeed() /  baseSpeed) * ((float)pierce / 3f);
-                    ((BaseEnemy)enemy).takeDamage((int)d, player);
+                    ((BaseEnemy)enemy).takeDamage((int)damage, player);
                     alreadyHit.add(enemy);
-                    pierce--;
-                    if(pierce == 0)
-                        remove();
                 }
             }
         }
-        
-        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
-            if(wall.boundaryPolygon == null || (wall instanceof DungeonObject))
-                continue;
-            preventOverlap(wall);
-            if(overlaps(wall)){
-                setSpeed(0);
-            }
+        durationTimer += dt;
+        if(durationTimer > duration){
+            remove();
         }
      }
 
@@ -122,34 +89,29 @@ public class ArrowShot extends Skill{
     public void cast(BaseActor caster, Vector2 target, Skill.From from) {
         float degrees = (float)(MathUtils.atan2((target.y - (caster.getY() + caster.getHeight()) )
                 , target.x - (caster.getX() + caster.getWidth())) * 180.0d / Math.PI);
-        
-        BaseActor b = new ArrowShot(caster.getX() + caster.getWidth() / 2,caster.getY() + caster.getHeight() / 2 , 
+        BaseActor b = new Stab(caster.getX() + caster.getWidth() /2,caster.getY() + caster.getHeight() /2 , 
                 BaseActor.getMainStage()).isProjectile()
-                //.setProjectileSpeed(300)
-                .setProjectileDeAcceleration(600)
+                .setProjectileSpeed(500)
                 .setProjectileRotation(degrees)
                 .setDirection(degrees)
-                .setFrom(from);
+                .setFrom(from).setDamage(damage);
+        b.setMotionAngle(degrees);
                 canCast = false;
-                b.setMotionAngle(degrees);
-        if(from == Skill.From.Player){
-            ((Skill)b).player = ((Player)caster);
-        }
-                
+                if(from == Skill.From.Player){
+                    ((Skill)b).player = ((Player)caster);
+                }
     }
     
-    public ArrowShot isProjectile(){
+    public Stab isProjectile(){
         isAction = true;
-        loadTexture(Arrow);
-        setScale(.1f);
-        baseSpeed = 700;
         alreadyHit = new ArrayList<BaseActor>();
-        setSpeed(baseSpeed);
+        setAnimation(Projectiles.getSlashAnim());
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setPosition(getX() - (getWidth() /2) , getY() - (getHeight() / 2));
-        setBoundaryPolygonHalfLong(12);
-        damage = 50;
+        setBoundaryPolygon(12);
+        setSpeed(400);
+        
         return this;
     }
     

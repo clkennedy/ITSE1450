@@ -72,6 +72,9 @@ public class Player extends BaseActor{
     private boolean recovering = false;
     private int recoverAmount = 0;
     
+    private float defaultDamageModifier = 1;
+    private float damageModifier = 1;
+    
     public Hero hero;
     
     private boolean isMoving = false;
@@ -132,6 +135,9 @@ public class Player extends BaseActor{
     public void takeDamage(int damage){
         if(!isLocalPlayer)
             return;
+        
+        damage = (int)(damage / damageModifier);
+        
         if(health - damageTaken - damage <= 0){
             this.damageTaken += (health - damageTaken);
         }
@@ -157,6 +163,31 @@ public class Player extends BaseActor{
         else if(health - damageTaken - damage > 0){
             this.damageTaken += damage;
         }
+    }
+    
+    public void setMaxHealth(int health){
+        maxHealth = health;
+    }
+    
+    public int getMaxHealth(){
+        return maxHealth;
+    }
+    
+    public void setHealth(int health){
+        this.health = health;
+    }
+    
+    public void setDamageModifier(float dm){
+        damageModifier = dm;
+    }
+    
+    public void resetDamageModifier(){
+        damageModifier = defaultDamageModifier;
+    }
+    
+    public void setDefaultDamageModifer(float dm){
+        defaultDamageModifier = dm;
+        damageModifier = dm;
     }
     
     public void addPoints(int points){

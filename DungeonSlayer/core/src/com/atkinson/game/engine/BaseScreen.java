@@ -81,7 +81,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         
         if((playing && Gdx.input.isKeyJustPressed(Keys.ESCAPE)) || gameover){
-           if(Multiplayer.socket == null || !Multiplayer.socket.connected())
+           if(Multiplayer.socket == null || !Multiplayer.socket.connected() ||gameover)
             Pause();
            
             if(gameover){

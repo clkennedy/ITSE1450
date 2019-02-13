@@ -8,6 +8,7 @@ package com.dslayer.content.Enemy.Golem;
 import com.dslayer.content.Enemy.Skeleton.*;
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.math.MathUtils;
@@ -39,11 +40,16 @@ public class BlueGolem extends BaseGolem{
     public BlueGolem(float x, float y, Stage s){
         
         super(x,y,s);
+        die = new Texture(Gdx.files.internal(GolemDie));
+        walk = new Texture(Gdx.files.internal(GolemWalk));
+        attack = new Texture(Gdx.files.internal(GolemAttak));
+        
+        pointsWorth = 20;
+        
         maxHealth = 150;
         health = maxHealth;
         healthBar = new Rectangle(x, y, maxHealth , 5);
-        currentDirection = WalkDirection.down;
-        setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
+        
         size= 75;
         setSize(size,size);
         setBoundaryPolygon(8);
@@ -54,9 +60,12 @@ public class BlueGolem extends BaseGolem{
         AttackRange = new Circle(x, y, 100);
         TargetRange = new Circle(x, y, 500);
         
-        castAnimList = Avatars.loadMulti(GolemAttak, 4, 7, .2f, false);
-        walkAnimList = Avatars.loadMulti(GolemWalk, 4, 7, .5f, true);
-        dieAnim = Avatars.loadMulti(GolemDie, 2, 7, .3f, false).get(1);
+        castAnimList = Avatars.loadMulti(attack, 4, 7, .2f, false);
+        walkAnimList = Avatars.loadMulti(walk, 4, 7, .5f, true);
+        dieAnim = Avatars.loadMulti(die, 2, 7, .3f, false).get(1);
+        
+        currentDirection = WalkDirection.down;
+        setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
         
         skill = new GroundSlam();
         skill.setDamage(attackDamage);
@@ -168,23 +177,6 @@ public class BlueGolem extends BaseGolem{
         setSize(size, size);
         isDying = true;
     }
-    private void moveTowardTarget2(){
-        
-        setAcceleration(100);
-        float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
-        accelerateAtAngle(degrees);
-        
-        if(degrees > -45 && degrees <= 45)
-            currentDirection = WalkDirection.right;
-        if(degrees > 45 && degrees <= 135)
-            currentDirection = WalkDirection.up;
-        if(degrees > -135 && degrees <= -45)
-            currentDirection = WalkDirection.down;
-        if((degrees >= -180 && degrees <= -135) || (degrees >= 135 && degrees <= 180))
-            currentDirection = WalkDirection.left;
-        
-        setAnimation(walkAnimList.get(currentDirection.ordinal()));
-        setSize(size, size);
-    }
+    
     
 }

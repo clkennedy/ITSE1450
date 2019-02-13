@@ -45,6 +45,8 @@ import org.json.JSONObject;
  * @author ARustedKnight
  */
 public class MultiplayerSurvivalGameMode extends GameMode{
+
+    private boolean endGame = false;
     
     class skillInfo{
         public String id;
@@ -154,6 +156,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         
         player = new Player(100, 100, mainStage);
         player.network_id = Multiplayer.myID;
+        player.UserName = Multiplayer.myUserName;
         
         Label u = new Label(Multiplayer.myUserName +": ", MainMenuScreen.pointStyle);
         u.setAlignment(Align.left);
@@ -236,8 +239,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             anyOtherPlayerAlive = anyOtherPlayerAlive || !b.isDead();
         }
         
-        if(!anyOtherPlayerAlive && player.isDead() && !gameOver){
-            /*gameOver = true;
+        if(!anyOtherPlayerAlive && player.isDead() && !endGame){
+            endGame = true;
             gm.AddMessage("All Party Members have Died");
             Player p = player;
             for(Player b : OtherPlayers.values()){
@@ -246,7 +249,10 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                 }
             }
             gm.AddMessage("HighestScore was " + p.UserName +": " + p.getPoints());
-            return;*/
+            return;
+        }
+        if(endGame && gm.isEmpty()){
+            gameOver = true;
         }
         
         for(String id : gameObjectToRemove){

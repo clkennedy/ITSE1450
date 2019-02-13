@@ -55,9 +55,6 @@ public class BaseGolem extends BaseEnemy{
     public BaseGolem(float x, float y, Stage s){
         super(x,y,s);
         
-        walkAnimList = Avatars.loadMulti(SkeletonBody, 4, 9, .1f, true);
-        slashAnimList = Avatars.loadMulti(SkeletonBodySlash, 4, 6, .1f, false);
-        castAnimList = Avatars.loadMulti(SkeletonBodyCast, 4, 7, .1f, false);
         dieAnim = Avatars.load(DieAnimPath, 1, 6, .2f, false);
         
         AttackRange = new Circle(x, y, 100);
@@ -127,5 +124,26 @@ public class BaseGolem extends BaseEnemy{
         if(!canAttack){
             attackCooldownTime += dt;
         }
+    }
+    
+    protected void moveTowardTarget2(){
+        if(!canMove)
+            return;
+        
+        setAcceleration(100);
+        float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
+        accelerateAtAngle(degrees);
+        
+        if(degrees > -45 && degrees <= 45)
+            currentDirection = WalkDirection.right;
+        if(degrees > 45 && degrees <= 135)
+            currentDirection = WalkDirection.up;
+        if(degrees > -135 && degrees <= -45)
+            currentDirection = WalkDirection.down;
+        if((degrees >= -180 && degrees <= -135) || (degrees >= 135 && degrees <= 180))
+            currentDirection = WalkDirection.left;
+        
+        setAnimation(walkAnimList.get(currentDirection.ordinal()));
+        setSize(size, size);
     }
 }

@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.Rooms.Dungeon.DungeonObject;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
@@ -82,7 +83,7 @@ public class FireBall extends Skill{
         }
         
         for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
-            if(wall.boundaryPolygon == null)
+            if(wall.boundaryPolygon == null  || (wall instanceof DungeonObject))
                 continue;
             if(overlaps(wall)){
                 remove();

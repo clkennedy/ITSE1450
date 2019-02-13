@@ -40,11 +40,12 @@ public class SkeletonMage extends BaseSkeleton{
         super(x,y,s);
         texture = new Texture(Gdx.files.internal(skeleMage));
         
-        maxHealth = 75;
+        pointsWorth = 15;
+        
+        maxHealth = 40;
         health = maxHealth;
         healthBar = new Rectangle(x, y, maxHealth , 5);
-        currentDirection = WalkDirection.down;
-        setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
+        
         setSize(size,size);
         setBoundaryPolygon(8);
         setMaxSpeed(50);
@@ -61,6 +62,9 @@ public class SkeletonMage extends BaseSkeleton{
         castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.cast);
         walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
         dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);
+        
+        currentDirection = WalkDirection.down;
+        setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
         
         if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
             this.network_id = Integer.toString(Multiplayer.getNextID());
@@ -166,24 +170,6 @@ public class SkeletonMage extends BaseSkeleton{
         setAnimationWithReset(dieAnim);
         setSize(size, size);
         isDying = true;
-    }
-    private void moveTowardTarget2(){
-        
-        setAcceleration(100);
-        float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
-        accelerateAtAngle(degrees);
-        
-        if(degrees > -45 && degrees <= 45)
-            currentDirection = WalkDirection.right;
-        if(degrees > 45 && degrees <= 135)
-            currentDirection = WalkDirection.up;
-        if(degrees > -135 && degrees <= -45)
-            currentDirection = WalkDirection.down;
-        if((degrees >= -180 && degrees <= -135) || (degrees >= 135 && degrees <= 180))
-            currentDirection = WalkDirection.left;
-        
-        setAnimation(walkAnimList.get(currentDirection.ordinal()));
-        setSize(size, size);
     }
     
 }
