@@ -115,11 +115,15 @@ public class SkeletonMage extends BaseSkeleton{
     private void lookForAttack(){
         if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
             return;
-        if(!canAttack)
-            return;
+        
         ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
+        boolean anyPlayerInAttackRange = false;
         for(BaseActor player: boo){
             if(Intersector.overlaps(AttackRange, player.getBoundaryPolygon().getBoundingRectangle())){
+                anyPlayerInAttackRange = true;
+                chaseTarget = false;
+                if(!canAttack)
+                    return;
                 attacking = true;
                 setSpeed(0);
                 setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
@@ -137,6 +141,11 @@ public class SkeletonMage extends BaseSkeleton{
                            System.out.println("Failed to push enemy Attack: Skeleton Warrior");
                     }
                 }
+            moveTo.x = getX();
+            moveTo.y = getY();
+            moveToChanged();
+            }else if(!anyPlayerInAttackRange){
+                chaseTarget = true;
             }
         }
     }

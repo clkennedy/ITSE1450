@@ -8,7 +8,6 @@ package com.dslayer.content.Rooms.Dungeon;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.dslayer.content.Rooms.DungeonPanels;
 
 /**
  *

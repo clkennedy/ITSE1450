@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dslayer.content.Rooms;
+package com.dslayer.content.Rooms.Dungeon;
 
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
@@ -11,12 +11,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.dslayer.content.Rooms.RoomPanels;
 
 /**
  *
  * @author ARustedKnight
  */
-public class DungeonPanels extends BaseActor{
+public class DungeonPanels extends RoomPanels{
     
     public static TextureRegion[][] Panels = load("Rooms/Dungeon/DungeonStarter.png",17,6);
     public static final int defaultSize = 50;

@@ -125,7 +125,11 @@ public class BaseGoblin extends BaseEnemy{
         if(!canMove)
             return;
         
-        setAcceleration(100);
+        if(Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle())){
+            setSpeed(20);
+        }
+        
+        //setAcceleration(100);
         float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
         accelerateAtAngle(degrees);
         

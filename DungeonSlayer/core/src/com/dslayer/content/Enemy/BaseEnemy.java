@@ -17,8 +17,10 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.Enemy.Goblin.GoblinAssassin;
 import com.dslayer.content.Enemy.Golem.BaseGolem;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
+import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.Player.Player;
@@ -33,8 +35,10 @@ import org.json.JSONObject;
  * @author ARustedKnight
  */
 public abstract class BaseEnemy extends BaseActor{
+
+    protected boolean chaseTarget = true;
     
-    public static enum type{SkeletionWarrior, SkeletonMage, BlueGolem};
+    public static enum type{SkeletionWarrior, SkeletonMage, ArmoredSkeleton, BlueGolem, GoblinAssassin};
     
     protected int maxHealth;
     protected int health;
@@ -80,6 +84,10 @@ public abstract class BaseEnemy extends BaseActor{
                 return new SkeletonMage(x, y, BaseActor.getMainStage());
             case BlueGolem:
                 return new BlueGolem(x, y, BaseActor.getMainStage());
+            case ArmoredSkeleton:
+                return new SkeletonArmored(x, y, BaseActor.getMainStage());
+            case GoblinAssassin:
+                return new GoblinAssassin(x, y, BaseActor.getMainStage());
             default:
                 throw new AssertionError();
         }
@@ -166,7 +174,7 @@ public abstract class BaseEnemy extends BaseActor{
             hitWall = false;
             moveToChanged();
         }
-        else if(target != null){
+        else if(target != null && chaseTarget){
             moveTo.x = target.getX() + (target.getWidth()/2);
             moveTo.y = target.getY() + (target.getHeight()/2);
             moveToChanged();
@@ -263,8 +271,8 @@ public abstract class BaseEnemy extends BaseActor{
         healthBar.x = (getX()) + ((getWidth()/2) - (healthBar.width /2));
         healthBar.y = getY() + getHeight();
         //wall Collison
-        ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels");
-        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
+        ArrayList<BaseActor> allRoomObjects = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels");
+        for(BaseActor wall: allRoomObjects){
             if(wall.boundaryPolygon == null)
                 continue;
             if(overlaps(wall)){

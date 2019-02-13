@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dslayer.content.Rooms;
+package com.dslayer.content.Rooms.Dungeon;
 
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Rooms.Dungeon.DungeonHole;
 import com.dslayer.content.Rooms.Dungeon.DungeonPillar;
+import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.options.Difficulty;
 
 /**

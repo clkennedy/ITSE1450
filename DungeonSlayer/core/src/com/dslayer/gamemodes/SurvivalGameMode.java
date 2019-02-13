@@ -21,8 +21,8 @@ import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.GameMessage.GameMessage;
 import com.dslayer.content.Objects.Potions.HealthPotion2;
 import com.dslayer.content.Player.Player;
-import com.dslayer.content.Rooms.DungeonPanels;
-import com.dslayer.content.Rooms.DungeonRoom;
+import com.dslayer.content.Rooms.Dungeon.DungeonPanels;
+import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
@@ -46,6 +46,9 @@ public class SurvivalGameMode extends GameMode{
     
     private float GolemSpawnTimer = 75f;
     private float GolemSpawnTime = 0;
+    
+    private float GoblinSpawn = 15f;
+    private float GoblinSpawnTimer = 0;
     
     private float increaseEnemyTimer = 10f;
     private float increaseEnemyTime = 0f;
@@ -77,7 +80,8 @@ public class SurvivalGameMode extends GameMode{
         
         dr.Draw(mainStage);
         Table pointTable = new Table();
-        player = new Player(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
+        player = new Player(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                        MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize), mainStage);
         Label u = new Label(player.hero.getName() +": ", MainMenuScreen.pointStyle);
         u.setAlignment(Align.left);
         pointTable.add(u);
@@ -93,8 +97,6 @@ public class SurvivalGameMode extends GameMode{
         BaseActor.getUiStage().addActor(pointTable);
         gm = new GameMessage();
         gm.AddMessage("Welcome");
-        
-        new GoblinAssassin(100, 100, mainStage);
     }
     @Override
     public void update(float dt) {
@@ -168,6 +170,24 @@ public class SurvivalGameMode extends GameMode{
                 }
             }
             GolemSpawnTime = 0;
+        }
+        
+        GoblinSpawnTimer += dt;
+        if(GoblinSpawnTimer > GoblinSpawn){
+            GoblinSpawnTimer = 0;
+            BaseActor b = null;
+            if(MathUtils.randomBoolean(.1f)){
+                b = new GoblinAssassin(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                            MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize), mainStage);
+            }
+            if(b != null){
+                    gm.AddMessage("Goblin Assassin has Scurried in");
+                    while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
+                        b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
+                        b.setPosition(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                            MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize));
+                    }
+                }
         }
         
         increaseEnemyTime += dt;

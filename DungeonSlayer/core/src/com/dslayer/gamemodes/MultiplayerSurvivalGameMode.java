@@ -23,8 +23,8 @@ import com.dslayer.content.GameMessage.GameMessage;
 import com.dslayer.content.Hero.Hero;
 import com.dslayer.content.Objects.Potions.HealthPotion2;
 import com.dslayer.content.Player.Player;
-import com.dslayer.content.Rooms.DungeonPanels;
-import com.dslayer.content.Rooms.DungeonRoom;
+import com.dslayer.content.Rooms.Dungeon.DungeonPanels;
+import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Difficulty;
@@ -123,7 +123,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
     }
     @Override
     public void setup() {
-        
+        Multiplayer.host = true;
         gameObjects = new HashMap<String, BaseActor>();
         OtherPlayers = new HashMap<String, Player>();
         OtherPlayersHero = new HashMap<String, Integer>();

@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dslayer.content.Rooms.Dungeon;
+package com.dslayer.content.Rooms;
 
-import com.dslayer.content.Rooms.RoomObject;
+import com.atkinson.game.engine.BaseActor;
 
 /**
  *
- * @author ARustedKnight
+ * @author cameron.kennedy
  */
-public class DungeonObject extends RoomObject{
+public class RoomPanels extends BaseActor{
     
 }

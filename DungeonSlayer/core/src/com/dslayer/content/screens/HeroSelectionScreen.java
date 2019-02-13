@@ -27,7 +27,7 @@ import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.Hero.Hero;
 import com.dslayer.content.Player.Player;
-import com.dslayer.content.Rooms.DungeonRoom;
+import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.options.Avatar;
 import com.dslayer.content.options.Difficulty;

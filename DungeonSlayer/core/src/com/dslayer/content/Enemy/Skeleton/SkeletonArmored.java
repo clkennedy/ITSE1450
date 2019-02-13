@@ -72,7 +72,7 @@ public class SkeletonArmored extends BaseSkeleton{
                 data.put("id",this.network_id);
                 data.put("x", x);
                 data.put("y", y);
-                data.put("type", type.SkeletionWarrior.ordinal());
+                data.put("type", type.ArmoredSkeleton.ordinal());
                 Multiplayer.socket.emit("enemyCreated", data);
             }
             catch(Exception e){

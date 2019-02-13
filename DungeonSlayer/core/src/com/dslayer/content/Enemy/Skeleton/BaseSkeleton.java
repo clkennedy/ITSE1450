@@ -112,6 +112,9 @@ public class BaseSkeleton extends BaseEnemy{
         if(!canMove)
             return;
         setAcceleration(100);
+        if(Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle())){
+            return;
+        }
         float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
         accelerateAtAngle(degrees);
         

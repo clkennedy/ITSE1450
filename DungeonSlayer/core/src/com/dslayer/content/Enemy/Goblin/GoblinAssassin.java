@@ -61,7 +61,8 @@ public class GoblinAssassin extends BaseGoblin{
         setBoundaryPolygon(8);
         setMaxSpeed(150);
         setAcceleration(3000);
-        setDeceleration(3000);
+        setDeceleration(1500);
+        alwaysApplyDecerlation = true;
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 50;
         
@@ -77,7 +78,7 @@ public class GoblinAssassin extends BaseGoblin{
                 data.put("id",this.network_id);
                 data.put("x", x);
                 data.put("y", y);
-                data.put("type", type.SkeletionWarrior.ordinal());
+                data.put("type", type.GoblinAssassin.ordinal());
                 Multiplayer.socket.emit("enemyCreated", data);
             }
             catch(Exception e){

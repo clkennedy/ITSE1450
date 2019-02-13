@@ -76,9 +76,9 @@ public class VikingHero extends Hero{
 
     @Override
     public void setup(Player player) {
-        player.setMaxHealth(150);
+        player.setMaxHealth(120);
         player.setHealth(player.getMaxHealth());
-        player.setDefaultDamageModifer(1.5f);
+        player.setDefaultDamageModifer(1.3f);
         basicSkill = new Slash();
         basicSkill.setDamage(35);
         basicSkill.setCoolDown(1);

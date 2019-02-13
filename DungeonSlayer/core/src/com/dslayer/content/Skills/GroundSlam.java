@@ -86,8 +86,12 @@ public class GroundSlam extends Skill{
             this.centerAtActor(caster);
             caster.setAcceleration(600);
             caster.accelerateAtAngle(direction);
+            if(player != null)
+                player.setIgnoreRoomObjects(true);
         }
         if(landed){
+            if(player != null)
+                player.setIgnoreRoomObjects(false);
             setAnimationPaused(false);
             if(ticktimer < tick){
                 if(from == Skill.From.Enemy){

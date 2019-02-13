@@ -67,7 +67,7 @@ public class HealthPotion2 extends Potion{
             }
         }
         
-        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
+        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels")){
             if(wall.boundaryPolygon == null)
                 continue;
             preventOverlap(wall);

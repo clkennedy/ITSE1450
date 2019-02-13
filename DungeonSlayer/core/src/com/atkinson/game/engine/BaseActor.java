@@ -67,6 +67,7 @@ public class BaseActor extends Group {
     private static Rectangle worldBounds;
     
     protected boolean canMove = true;
+    protected boolean alwaysApplyDecerlation;
     
     /**
     * Constructor of the Base actor

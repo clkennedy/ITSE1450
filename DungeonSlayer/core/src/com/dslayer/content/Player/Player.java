@@ -27,6 +27,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import java.util.ArrayList;
 import com.dslayer.content.Hero.*;
+import com.dslayer.content.Rooms.Dungeon.DungeonObject;
+import com.dslayer.content.Rooms.RoomObject;
 import com.dslayer.content.screens.HeroSelectionScreen;
 import com.dslayer.content.screens.MultiplayerHeroSelectionScreen;
 import org.json.JSONObject;
@@ -79,6 +81,7 @@ public class Player extends BaseActor{
     
     private boolean isMoving = false;
     private Vector2 resetCoords;
+    private boolean ignoreRoomObjects = false;
     
     public static enum direction{up, down, left, right};
     public direction dir;
@@ -130,6 +133,10 @@ public class Player extends BaseActor{
         healthBar = new Rectangle(this.getStage().getCamera().viewportWidth - maxHealth - 20, 10, maxHealth, 20);
         
         s.addActor(this);
+    }
+    
+    public void setIgnoreRoomObjects(boolean b){
+        ignoreRoomObjects = b;
     }
     
     public void takeDamage(int damage){
@@ -546,11 +553,12 @@ public class Player extends BaseActor{
         int count = 0;
         
         //wall Collison
-        ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels");
-        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.DungeonPanels")){
-            if(wall.boundaryPolygon == null)
+        ArrayList<BaseActor> allRoomObjects = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels");
+        for(BaseActor obj: allRoomObjects){
+            if(obj.boundaryPolygon == null || (ignoreRoomObjects && obj instanceof RoomObject)){
                 continue;
-            preventOverlap(wall);
+            }
+            preventOverlap(obj);
         }
     }
     
