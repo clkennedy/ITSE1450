@@ -185,12 +185,10 @@ public class MainMenuScreen extends BaseScreen {
         options.setOrigin(options.getWidth()/2, options.getHeight()/2);
         options.setAlignment(Align.center);
         multi.addListener(new Hover(){
-
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 optionScreen();
             }
-
         });
         
         mainStage.addActor(options);
