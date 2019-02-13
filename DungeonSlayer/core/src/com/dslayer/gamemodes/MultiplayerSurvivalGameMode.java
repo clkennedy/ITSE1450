@@ -128,7 +128,6 @@ public class MultiplayerSurvivalGameMode extends GameMode{
     }
     @Override
     public void setup() {
-        Multiplayer.host = true;
         gameObjects = new HashMap<String, BaseActor>();
         OtherPlayers = new HashMap<String, Player>();
         OtherPlayersHero = new HashMap<String, Integer>();

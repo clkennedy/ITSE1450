@@ -70,6 +70,8 @@ public class SurvivalGameMode extends GameMode{
     @Override
     public void setup() {
         
+        Multiplayer.host = true;
+        
         Room dr = new DungeonRoom();
         dr.generateRoom(30,40);
         dr.fillRoomWithObjects(14);

@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
 
@@ -84,7 +85,7 @@ public class GroundSlam extends Skill{
         getBoundaryPolygon();
         if(!landed){
             this.centerAtActor(caster);
-            caster.setAcceleration(600);
+            caster.setAcceleration(600 * Options.aspectRatio);
             caster.accelerateAtAngle(direction);
             if(player != null)
                 player.setIgnoreRoomObjects(true);
@@ -121,6 +122,7 @@ public class GroundSlam extends Skill{
                     && !landed){
             caster.setSpeed(0);
             caster.setMaxSpeed(oldMaxSpeed);
+            caster.setAcceleration(0);
             caster.setCanMove(true);
             landed = true;
         }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.dslayer.Launcher.DungeonSlayer;
 import com.dslayer.content.options.Difficulty;
+import com.dslayer.content.options.Options;
 
 public class DesktopLauncher {
 	public static void main (String[] args)
@@ -16,7 +17,12 @@ public class DesktopLauncher {
     cfg.title = "Ironside";
     cfg.width = (int)Difficulty.worldWidth;
     cfg.height = (int)Difficulty.worldHeight;
-    //cfg.resizable = false;
+    
+    Options.baseWidth = Difficulty.worldWidth;
+    Options.baseHeight = Difficulty.worldHeight;
+    
+    //Options.displayType = Options.DisplayType.WINDOWED;
+    cfg.resizable = false;
     //cfg.fullscreen = true;
     //cfg.vSyncEnabled = true;
     

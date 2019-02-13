@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Align;
 import com.dslayer.content.screens.MainMenuScreen;
 
 /**
@@ -28,16 +29,16 @@ public class Options extends BaseScreen{
     public static float musicVolume = 1f;
     public static float soundVolume = 1f;
     
-    public static Label lMusicVol = new Label(Integer.toString((int)(musicVolume * 10)), BaseGame.labelStyle);
-    public static Label lSoundVol = new Label(Integer.toString((int)(soundVolume * 10)), BaseGame.labelStyle);
+    public static Label lMusicVol = null;
+    public static Label lSoundVol = null;
     
     public static float aspectRatio = 1;
     
     static int currentMenuIndex = -1;
-    BaseActor mainmenu;
+    Label mainmenu;
     
-    public static float desktopWidth= 0;
-    public static float desktopheight= 0;
+    public static float baseWidth= 0;
+    public static float baseHeight= 0;
     
     public static enum DisplayType {FULLSCREEN, WINDOW_BORDERLESS, WINDOWED};
     
@@ -46,30 +47,23 @@ public class Options extends BaseScreen{
     public void initialize()
     {
         float w = 0;
+       
         
-        while(w < Gdx.graphics.getWidth()){
-            //BaseActor bGround =new Sky(w, 0, mainStage, "sky.png");
-            //bGround.setSpeed(0);
-            //w+=bGround.getWidth();
-        }
-        
-        BaseActor musicVol = new BaseActor(0, 0, mainStage);
-        musicVol.loadTexture("musicvol.png");
+        Label musicVol = new Label("Music Volume", MainMenuScreen.buttonStyle);
         musicVol.setSize(musicVol.getWidth() * Options.aspectRatio, musicVol.getHeight()  * Options.aspectRatio);
         musicVol.setOriginX(musicVol.getWidth() / 2);
         musicVol.setOriginY(musicVol.getHeight()/ 2);
-        musicVol.setBoundaryRectangle();
-        musicVol.getBoundaryPolygon();
-        musicVol.centerAtPosition(Gdx.graphics.getWidth() / 4,550 * Options.aspectRatio);
+        musicVol.setAlignment(Align.center);
+        musicVol.setPosition(Gdx.graphics.getWidth() / 8, 500 * Options.aspectRatio);
         
-        BaseActor musicVolDec = new BaseActor(0, 0, mainStage);
-        musicVolDec.loadTexture("leftarrow.png");
+        mainStage.addActor(musicVol);
+        
+        Label musicVolDec = new Label("-", MainMenuScreen.buttonStyle);
         musicVolDec.setSize(musicVolDec.getWidth()  * Options.aspectRatio, musicVolDec.getHeight() * Options.aspectRatio);
         musicVolDec.setOriginX(musicVolDec.getWidth() / 2);
         musicVolDec.setOriginY(musicVolDec.getHeight()/ 2);
-        musicVolDec.setBoundaryRectangle();
-        musicVolDec.getBoundaryPolygon();
-        musicVolDec.setPosition(Gdx.graphics.getWidth() / 8,470 * Options.aspectRatio);
+        musicVolDec.setAlignment(Align.center);
+        musicVolDec.setPosition(Gdx.graphics.getWidth() / 8, 470 * Options.aspectRatio);
         musicVolDec.addListener(new Hover(){
             
             @Override
@@ -78,21 +72,25 @@ public class Options extends BaseScreen{
             }
         
         });
+        mainStage.addActor(musicVolDec);
         
+        //lMusicVol
+        lMusicVol = new Label("", MainMenuScreen.buttonStyle);
         lMusicVol.setText(Integer.toString((int)(musicVolume * 10)));
-        lMusicVol.setFontScale(.7f * Options.aspectRatio);
-        lMusicVol.setColor(Color.FOREST);
+        lMusicVol.setStyle(MainMenuScreen.buttonStyle);
+        lMusicVol.setFontScale(1f * Options.aspectRatio);
         lMusicVol.setSize(lMusicVol.getWidth(), lMusicVol.getHeight());
-        //lMusicVol.setPosition(Gdx.graphics.getWidth() / (Difficulty.worldWidth /125),460 * Options.aspectRatio);
+        lMusicVol.setOriginX(lMusicVol.getWidth() / 2);
+        lMusicVol.setOriginY(lMusicVol.getHeight()/ 2);
+        lMusicVol.setAlignment(Align.center);
+        lMusicVol.setPosition((((musicVolDec.getX() + musicVolDec.getWidth())  + 35)* Options.aspectRatio),musicVolDec.getY());
         mainStage.addActor(lMusicVol);
         
-        BaseActor musicVolInc = new BaseActor(0, 0, mainStage);
-        musicVolInc.loadTexture("rightarrow.png");
+        Label musicVolInc = new Label("+", MainMenuScreen.buttonStyle);
         musicVolInc.setSize(musicVolInc.getWidth() * Options.aspectRatio, musicVolInc.getHeight() * Options.aspectRatio);
         musicVolInc.setOriginX(musicVolInc.getWidth() / 2);
         musicVolInc.setOriginY(musicVolInc.getHeight()/ 2);
-        musicVolInc.setBoundaryRectangle();
-        musicVolInc.getBoundaryPolygon();
+        musicVolInc.setAlignment(Align.center);
         musicVolInc.setPosition(Gdx.graphics.getWidth() / 4, 470 * Options.aspectRatio);
         musicVolInc.addListener(new Hover(){
             
@@ -102,27 +100,23 @@ public class Options extends BaseScreen{
             }
         
         });
-        
-        
+        mainStage.addActor(musicVolInc);
         
         //Sound Options
-        BaseActor soundVol = new BaseActor(0, 0, mainStage);
-        soundVol.loadTexture("soundvol.png");
+        Label soundVol = new Label("Sound Volume", MainMenuScreen.buttonStyle);
         soundVol.setSize(soundVol.getWidth() * Options.aspectRatio, soundVol.getHeight() * Options.aspectRatio);
         soundVol.setOriginX(soundVol.getWidth() / 2);
         soundVol.setOriginY(soundVol.getHeight()/ 2);
-        soundVol.setBoundaryRectangle();
-        soundVol.getBoundaryPolygon();
-        soundVol.centerAtPosition(Gdx.graphics.getWidth() / 4,350 * Options.aspectRatio);
+        soundVol.setAlignment(Align.center);
+        soundVol.setPosition(Gdx.graphics.getWidth() / 8,musicVolInc.getY() - musicVolInc.getHeight());
+        mainStage.addActor(soundVol);
         
-        BaseActor soundVolDec = new BaseActor(0, 0, mainStage);
-        soundVolDec.loadTexture("leftarrow.png");
+        
+        Label soundVolDec = new Label("-", MainMenuScreen.buttonStyle);
         soundVolDec.setSize(soundVolDec.getWidth() * Options.aspectRatio, soundVolDec.getHeight() * Options.aspectRatio);
         soundVolDec.setOriginX(soundVolDec.getWidth() / 2);
         soundVolDec.setOriginY(soundVolDec.getHeight()/ 2);
-        soundVolDec.setBoundaryRectangle();
-        soundVolDec.getBoundaryPolygon();
-        soundVolDec.setPosition(Gdx.graphics.getWidth() / 8,270 * Options.aspectRatio);
+        soundVolDec.setPosition(Gdx.graphics.getWidth() / 8,soundVol.getY() - soundVol.getHeight());
         soundVolDec.addListener(new Hover(){
             
             @Override
@@ -131,22 +125,26 @@ public class Options extends BaseScreen{
             }
         
         });
+        mainStage.addActor(soundVolDec);
         
+        lSoundVol = new Label("", MainMenuScreen.buttonStyle);
         lSoundVol.setText(Integer.toString((int)(soundVolume * 10)));
-        lSoundVol.setFontScale(.7f * Options.aspectRatio);
-        lSoundVol.setColor(Color.FOREST);
+        lSoundVol.setFontScale(1f * Options.aspectRatio);
+        lSoundVol.setStyle(MainMenuScreen.buttonStyle);
         lSoundVol.setSize(lSoundVol.getWidth(), lSoundVol.getHeight());
-        //lSoundVol.setPosition(Gdx.graphics.getWidth() / (Difficulty.worldWidth /125),260 * Options.aspectRatio);
+        lSoundVol.setOriginX(lMusicVol.getWidth() / 2);
+        lSoundVol.setOriginY(lMusicVol.getHeight()/ 2);
+        lSoundVol.setAlignment(Align.center);
+        lSoundVol.setPosition((((soundVolDec.getX() + soundVolDec.getWidth())  + 35)* Options.aspectRatio),soundVolDec.getY());
         mainStage.addActor(lSoundVol);
         
-        BaseActor soundVolInc = new BaseActor(0, 0, mainStage);
-        soundVolInc.loadTexture("rightarrow.png");
+        Label soundVolInc = new Label("+", MainMenuScreen.buttonStyle);
+        soundVolInc.setFontScale(1f * Options.aspectRatio);
         soundVolInc.setSize(soundVolInc.getWidth() * Options.aspectRatio, soundVolInc.getHeight() * Options.aspectRatio);
         soundVolInc.setOriginX(soundVolInc.getWidth() / 2);
         soundVolInc.setOriginY(soundVolInc.getHeight()/ 2);
-        soundVolInc.setBoundaryRectangle();
-        soundVolInc.getBoundaryPolygon();
-        soundVolInc.setPosition(Gdx.graphics.getWidth() / 4,270 * Options.aspectRatio);
+        soundVolInc.setAlignment(Align.center);
+        soundVolInc.setPosition(Gdx.graphics.getWidth() / 4,soundVolDec.getY());
         soundVolInc.addListener(new Hover(){
             
             @Override
@@ -155,14 +153,14 @@ public class Options extends BaseScreen{
             }
         
         });
+        mainStage.addActor(soundVolInc);
         
-        BaseActor lastDisplay = new BaseActor(0, 0, mainStage);
-        lastDisplay.loadTexture("leftarrow.png");
+        Label lastDisplay = new Label("<", MainMenuScreen.buttonStyle);
+        soundVolInc.setFontScale(1f * Options.aspectRatio);
         lastDisplay.setSize(lastDisplay.getWidth() * Options.aspectRatio, lastDisplay.getHeight() * Options.aspectRatio);
         lastDisplay.setOriginX(lastDisplay.getWidth() / 2);
         lastDisplay.setOriginY(lastDisplay.getHeight()/ 2);
-        lastDisplay.setBoundaryRectangle();
-        lastDisplay.getBoundaryPolygon();
+        lastDisplay.setAlignment(Align.center);
         lastDisplay.setPosition(Gdx.graphics.getWidth() / 8,200 * Options.aspectRatio);
         lastDisplay.addListener(new Hover(){
             
@@ -172,24 +170,26 @@ public class Options extends BaseScreen{
             }
         
         });
+        mainStage.addActor(lastDisplay);
         
-        Label displayText = new Label("", BaseGame.labelStyle);
+        Label displayText = new Label("", MainMenuScreen.buttonStyle);
         displayText.setText((displayType == DisplayType.FULLSCREEN)? "Fullscreen" :
                 (displayType == DisplayType.WINDOWED)? "Windowed": "Borderless");
-        displayText.setFontScale(.7f * Options.aspectRatio);
-        displayText.setColor(Color.FOREST);
+        displayText.setFontScale(1f * Options.aspectRatio);
         displayText.setSize(displayText.getWidth(), displayText.getHeight());
-        //displayText.setPosition(Gdx.graphics.getWidth() / (Difficulty.worldWidth /125),220* Options.aspectRatio);
+        displayText.setOriginX(lastDisplay.getWidth() / 2);
+        displayText.setOriginY(lastDisplay.getHeight()/ 2);
+        displayText.setAlignment(Align.center);
+        displayText.setPosition(lastDisplay.getX() +(100 * Options.aspectRatio),220* Options.aspectRatio);
         mainStage.addActor(displayText);
         
-        BaseActor nextDisplay = new BaseActor(0, 0, mainStage);
-        nextDisplay.loadTexture("rightarrow.png");
+        Label nextDisplay = new Label(">", MainMenuScreen.buttonStyle);
+        soundVolInc.setFontScale(1f * Options.aspectRatio);
         nextDisplay.setSize(nextDisplay.getWidth() * Options.aspectRatio, nextDisplay.getHeight() * Options.aspectRatio);
         nextDisplay.setOriginX(nextDisplay.getWidth() / 2);
         nextDisplay.setOriginY(nextDisplay.getHeight()/ 2);
-        nextDisplay.setBoundaryRectangle();
-        nextDisplay.getBoundaryPolygon();
-        nextDisplay.setPosition(displayText.getX()+ (190 * Options.aspectRatio),200 * Options.aspectRatio);
+        nextDisplay.setAlignment(Align.center);
+        nextDisplay.setPosition(displayText.getX()+ (100 * Options.aspectRatio),200 * Options.aspectRatio);
         nextDisplay.addListener(new Hover(){
             
             @Override
@@ -198,28 +198,28 @@ public class Options extends BaseScreen{
             }
         
         });
-        
+        mainStage.addActor(nextDisplay);
         //mainmenu
         
         
-        mainmenu = new BaseActor(0, 0, mainStage);
-        mainmenu.loadTexture("mainmenu.png");
+        mainmenu = new Label("Main Menu", MainMenuScreen.buttonStyle);
+        mainmenu.setFontScale(1f * Options.aspectRatio);
         mainmenu.setSize((mainmenu.getWidth() / 3) * Options.aspectRatio,(mainmenu.getHeight() /3) * Options.aspectRatio);
         mainmenu.setOriginX(mainmenu.getWidth() / 2);
         mainmenu.setOriginY(mainmenu.getHeight()/ 2);
-        mainmenu.setBoundaryRectangle();
-        mainmenu.getBoundaryPolygon();
-        mainmenu.centerAtPosition(Gdx.graphics.getWidth() / 2,50 * Options.aspectRatio);
+        mainmenu.setAlignment(Align.center);
+        mainmenu.setPosition(Gdx.graphics.getWidth() / 2,50);
         mainmenu.addListener(new Hover(){
             
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 event.getListenerActor().remove();
                 Progress.Save();
-                //BaseGame.setActiveScreen( new MenuScreen());
+                BaseGame.setActiveScreen( new MainMenuScreen());
             }
         
         });
+        mainStage.addActor(mainmenu);
         
     }
     
@@ -349,22 +349,22 @@ public class Options extends BaseScreen{
         if(Gdx.graphics.supportsDisplayModeChange() && displayType == DisplayType.FULLSCREEN){
               if(Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode())){
                   displayType = DisplayType.FULLSCREEN;
-                  Options.aspectRatio = (float)(Gdx.graphics.getHeight() /(float)Difficulty.worldHeight);
+                  Options.aspectRatio = (float)(Gdx.graphics.getHeight() /(float)baseHeight);
               }
           }
           else if(Gdx.graphics.supportsDisplayModeChange() && displayType == DisplayType.WINDOWED){
               Gdx.graphics.setUndecorated(false);
-              if(Gdx.graphics.setWindowedMode((int)Difficulty.worldWidth, (int)Difficulty.worldHeight)){
+              if(Gdx.graphics.setWindowedMode((int)baseWidth, (int)baseHeight)){
                 //System.setProperty("org.lwjgl.opengl.Window.undecorated", "false");
                 //Gdx.graphics.setUndecorated(true);
-                  aspectRatio = Gdx.graphics.getHeight() /(float)Difficulty.worldHeight;
+                  aspectRatio = Gdx.graphics.getHeight() /(float)baseHeight;
               }
           }
         else if(Gdx.graphics.supportsDisplayModeChange() && displayType == DisplayType.WINDOW_BORDERLESS){
             Gdx.graphics.setUndecorated(true);
               if(Gdx.graphics.setWindowedMode(Gdx.graphics.getDisplayMode(Gdx.graphics.getMonitor()).width,
                       (int)Gdx.graphics.getDisplayMode(Gdx.graphics.getMonitor()).height)){
-                aspectRatio = Gdx.graphics.getHeight() /(float)Difficulty.worldHeight;
+                aspectRatio = Gdx.graphics.getHeight() /(float)baseHeight;
                   
               }
           }

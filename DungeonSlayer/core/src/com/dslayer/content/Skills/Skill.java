@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 
 /**
@@ -63,8 +64,13 @@ public abstract class Skill extends BaseActor{
     }
     
     
+    public Skill setProjectileAcceleration(float speed){
+        setAcceleration(speed * Options.aspectRatio);
+        return this;
+    }
+    
     public Skill setProjectileSpeed(float speed){
-        setAcceleration(speed);
+        setSpeed(speed * Options.aspectRatio);
         return this;
     }
     

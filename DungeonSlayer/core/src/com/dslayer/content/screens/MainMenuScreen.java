@@ -88,6 +88,7 @@ public class MainMenuScreen extends BaseScreen {
     {
         Multiplayer.restartNetworkid();
         paused = false;
+        
        if(Multiplayer.socket != null && Multiplayer.socket.connected()){
            Multiplayer.socket.disconnect();
            Multiplayer.socket.close();
@@ -181,10 +182,10 @@ public class MainMenuScreen extends BaseScreen {
         options.setSize((options.getWidth() * 1.2f) * Options.aspectRatio, (options.getHeight() *1.2f) * Options.aspectRatio);
         options.setOriginX(options.getWidth() / 2);
         options.setOriginY(options.getHeight()/ 2);
-        options.setPosition((options.getWidth()/ 2) - (options.getWidth()/2), (multi.getY() - multi.getHeight()/2) - 30);
+        options.setPosition((mainStage.getWidth()/ 2) - (options.getWidth()/2), (multi.getY() - multi.getHeight()/2) - 30);
         options.setOrigin(options.getWidth()/2, options.getHeight()/2);
         options.setAlignment(Align.center);
-        multi.addListener(new Hover(){
+        options.addListener(new Hover(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 optionScreen();
@@ -335,15 +336,15 @@ public class MainMenuScreen extends BaseScreen {
     
     @Override
     public void dispose(){
-        
-        if(fontButton != null)
+        Progress.Save();
+        /*if(fontButton != null)
             fontButton.dispose();
         if(fontMenu !=  null)
             fontMenu.dispose();
         if(fontPoint != null)
             fontPoint.dispose();
         if(fontTitle != null)
-            fontTitle.dispose();
+            fontTitle.dispose();*/
         
         super.dispose();
     }

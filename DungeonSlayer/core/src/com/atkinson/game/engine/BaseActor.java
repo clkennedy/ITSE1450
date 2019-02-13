@@ -28,6 +28,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import org.json.JSONObject;
 
 /**
@@ -96,6 +97,8 @@ public class BaseActor extends Group {
         setPosition(x, y);
         
         s.addActor(this);
+        
+        setScale(1f * Options.aspectRatio);
         
         animation = null;
         elapsedTime = 0;
@@ -449,7 +452,8 @@ public class BaseActor extends Group {
     * @param speed the new speed of the BaseActor
     */
     public void setSpeed(float speed) {
-        // if length is zero, then assume motion angle is zero degrees
+        //if length is zero, then assume motion angle is zero degrees
+        //speed *= Options.aspectRatio;
         if(velocityVec.len() == 0)
             velocityVec.set(speed, 0);
         else
@@ -504,7 +508,7 @@ public class BaseActor extends Group {
     * @param acc how fast the object can accelerate
     */
     public void setAcceleration(float acc) {
-        acceleration = acc;
+        acceleration = acc * Options.aspectRatio;
     }
     
     /**
@@ -875,7 +879,10 @@ public class BaseActor extends Group {
         }
         
         if(animation != null){
-            animation.getKeyFrame(0).getTexture().dispose();
+            for(int i = 0; i < (int)(animation.getAnimationDuration() / animation.getFrameDuration()); i++){
+                if(animation.getKeyFrame(i) != null)
+                 animation.getKeyFrame(i).getTexture().dispose();
+            }
         }
         
         if(texture != null)

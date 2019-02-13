@@ -17,6 +17,7 @@ import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.*;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.LPC;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 
 /**
@@ -96,10 +97,10 @@ public class ClassicHero extends Hero{
         //basicSkill.setIconPosition((int)(BaseActor.getUiStage().getCamera().viewportWidth /2),(int)(BaseActor.getUiStage().getCamera().viewportHeight /2));
     
         if(player.isLocalPlayer){
-            basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30),(20));
-            basicSkill.setIconSize(40);
-            altSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 + 30),(20));
-            altSkill.setIconSize(40);
+            altSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 + 30*Options.aspectRatio) ,(20));
+        basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30*Options.aspectRatio),(20));
+        basicSkill.setIconSize(40);
+        altSkill.setIconSize(40);
         }
         
     }

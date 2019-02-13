@@ -23,6 +23,7 @@ import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import java.util.List;
 
 /**
@@ -57,8 +58,8 @@ public class BaseGolem extends BaseEnemy{
         
         dieAnim = Avatars.load(DieAnimPath, 1, 6, .2f, false);
         
-        AttackRange = new Circle(x, y, 100);
-        TargetRange = new Circle(x, y, 100);
+        AttackRange = new Circle(x, y, 100 * Options.aspectRatio);
+        TargetRange = new Circle(x, y, 100* Options.aspectRatio);
         
         moveTo = new Vector2();
         moveTo.x = MathUtils.random(Difficulty.worldWidth);

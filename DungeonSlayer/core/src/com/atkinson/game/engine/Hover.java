@@ -18,20 +18,20 @@ public class Hover extends ClickListener{
     @Override
     public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
         if(event.getListenerActor() instanceof Label){
-            ((Label)event.getListenerActor()).setFontScale( 1.2f);
-            event.getListenerActor().setScale(1.2f);
+            ((Label)event.getListenerActor()).setFontScale(((Label)event.getListenerActor()).getFontScaleX() *  1.2f);
+            event.getListenerActor().scaleBy(.4f);
         }else{
-            event.getListenerActor().setScale(1.2f);
+            event.getListenerActor().scaleBy(.4f);
         }
     }
     @Override
     public void exit(InputEvent event, float x, float y, int pointer, Actor toActor){
         
         if(event.getListenerActor() instanceof Label){
-            ((Label)event.getListenerActor()).setFontScale(1f);
-            event.getListenerActor().setScale(1);
+            ((Label)event.getListenerActor()).setFontScale(((Label)event.getListenerActor()).getFontScaleX() /  1.2f);
+            event.getListenerActor().scaleBy(-.4f);
         }else{
-            event.getListenerActor().setScale(1);
+            event.getListenerActor().scaleBy(-.4f);
         }
         //System.out.println("com.atkinson.game.Hover.enter()");
     }

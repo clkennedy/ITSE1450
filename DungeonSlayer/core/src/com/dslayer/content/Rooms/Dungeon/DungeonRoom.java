@@ -14,6 +14,7 @@ import com.dslayer.content.Rooms.Dungeon.DungeonHole;
 import com.dslayer.content.Rooms.Dungeon.DungeonPillar;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.options.Difficulty;
+import com.dslayer.content.options.Options;
 
 /**
  *
@@ -74,8 +75,8 @@ public class DungeonRoom extends Room{
             }
             //System.out.println();
         }
-        this.roomWidth = width * DungeonPanels.defaultSize;
-        this.roomHeight = height * DungeonPanels.defaultSize;
+        this.roomWidth = width * DungeonPanels.defaultSize * Options.aspectRatio;
+        this.roomHeight = height * DungeonPanels.defaultSize* Options.aspectRatio;
         this._layout = temp;
         return this;
     }
@@ -121,7 +122,7 @@ public class DungeonRoom extends Room{
                 temp = Map(Key.values()[this._layout[i][j]]);
                 //if(temp == null)
                     //continue;
-                temp.setPosition(j * DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize - (i * DungeonPanels.defaultSize));
+                temp.setPosition(j * temp.getWidth(),Difficulty.worldHeight - temp.getHeight() - (i * temp.getHeight()));
                 temp.getBoundaryPolygon();
                 mainStage.addActor(temp);
             }

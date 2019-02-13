@@ -19,6 +19,7 @@ import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.*;
 import com.dslayer.content.options.LPC;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import java.util.ArrayList;
 import org.json.JSONObject;
 
@@ -51,8 +52,8 @@ public class SkeletonArmored extends BaseSkeleton{
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 30;
 
-        AttackRange = new Circle(x, y, 40);
-        TargetRange = new Circle(x, y, 300);
+        AttackRange = new Circle(x, y, 40* Options.aspectRatio);
+        TargetRange = new Circle(x, y, 300* Options.aspectRatio);
         
         castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.slash);
         walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);

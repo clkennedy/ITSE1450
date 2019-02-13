@@ -91,7 +91,7 @@ public class Stab extends Skill{
                 , target.x - (caster.getX() + caster.getWidth())) * 180.0d / Math.PI);
         BaseActor b = new Stab(caster.getX() + caster.getWidth() /2,caster.getY() + caster.getHeight() /2 , 
                 BaseActor.getMainStage()).isProjectile()
-                .setProjectileSpeed(500)
+                .setProjectileAcceleration(500)
                 .setProjectileRotation(degrees)
                 .setDirection(degrees)
                 .setFrom(from).setDamage(damage);

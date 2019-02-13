@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.dslayer.content.Rooms.RoomPanels;
+import com.dslayer.content.options.Options;
 
 /**
  *
@@ -20,7 +21,7 @@ import com.dslayer.content.Rooms.RoomPanels;
 public class DungeonPanels extends RoomPanels{
     
     public static TextureRegion[][] Panels = load("Rooms/Dungeon/DungeonStarter.png",17,6);
-    public static final int defaultSize = 50;
+    
     
     //Texture texture;
     
@@ -33,10 +34,6 @@ public class DungeonPanels extends RoomPanels{
         return temp;
     }
     
-    protected static BaseActor DefaultSize(BaseActor t){
-        t.setSize(defaultSize, defaultSize);
-        return t;
-    }
     
     public static BaseActor UpperLeftWall(){
         BaseActor t = new DungeonPanels();

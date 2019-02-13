@@ -6,11 +6,18 @@
 package com.dslayer.content.Rooms;
 
 import com.atkinson.game.engine.BaseActor;
+import com.dslayer.content.options.Options;
 
 /**
  *
  * @author cameron.kennedy
  */
 public class RoomPanels extends BaseActor{
+    public static final float defaultSize = 50;
     
+    
+    protected static BaseActor DefaultSize(BaseActor t){
+        t.setSize(defaultSize * Options.aspectRatio, defaultSize*Options.aspectRatio);
+        return t;
+    }
 }

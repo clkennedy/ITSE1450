@@ -23,6 +23,7 @@ import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.LPC;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import java.util.ArrayList;
 import org.json.JSONObject;
 
@@ -57,8 +58,8 @@ public class BlueGolem extends BaseGolem{
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 60;
 
-        AttackRange = new Circle(x, y, 100);
-        TargetRange = new Circle(x, y, 500);
+        AttackRange = new Circle(x, y, 100* Options.aspectRatio);
+        TargetRange = new Circle(x, y, 500* Options.aspectRatio);
         
         castAnimList = Avatars.loadMulti(attack, 4, 7, .2f, false);
         walkAnimList = Avatars.loadMulti(walk, 4, 7, .5f, true);

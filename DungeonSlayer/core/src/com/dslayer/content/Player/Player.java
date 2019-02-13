@@ -127,7 +127,7 @@ public class Player extends BaseActor{
        // setSize(Unlocks.currentAvatar.getWidth() * Options.aspectRatio, Unlocks.currentAvatar.getHeight() * Options.aspectRatio);
         setBoundaryPolygon(8);
         
-        setMaxSpeed(100);
+        setMaxSpeed(100 * Options.aspectRatio);
         setDeceleration(250);
         
         healthBar = new Rectangle(this.getStage().getCamera().viewportWidth - maxHealth - 20, 10, maxHealth, 20);

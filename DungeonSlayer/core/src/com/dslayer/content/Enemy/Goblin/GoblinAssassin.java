@@ -20,6 +20,7 @@ import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.*;
 import com.dslayer.content.options.LPC;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import java.util.ArrayList;
 import org.json.JSONObject;
 
@@ -47,8 +48,8 @@ public class GoblinAssassin extends BaseGoblin{
         health = maxHealth;
         healthBar = new Rectangle(x, y, maxHealth , 5);
         
-        AttackRange = new Circle(x, y, 30);
-        TargetRange = new Circle(x, y, 500);
+        AttackRange = new Circle(x, y, 30* Options.aspectRatio);
+        TargetRange = new Circle(x, y, 500* Options.aspectRatio);
         
         castAnimList = LPC.loadMulti(attack , 4, 4, .1f, false);
         walkAnimList = LPC.loadMulti(walk , 4, 7, .1f, true);

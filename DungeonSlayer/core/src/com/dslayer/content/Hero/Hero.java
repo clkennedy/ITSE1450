@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatar;
+import com.dslayer.content.options.Options;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -36,7 +37,7 @@ public abstract class Hero extends Avatar{
     protected BaseActor caster;
     protected Vector2 target;
     
-    protected float size = 32;
+    protected float size = 32 * Options.aspectRatio;
     
     public static enum heros{ClassicHero, VikingHero, ArcherHero}
     protected String heroName;

@@ -21,6 +21,7 @@ import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import java.util.List;
 
 /**
@@ -48,8 +49,8 @@ public class BaseSkeleton extends BaseEnemy{
     public BaseSkeleton(float x, float y, Stage s){
         super(x,y,s);
         
-        AttackRange = new Circle(x, y, 100);
-        TargetRange = new Circle(x, y, 100);
+        AttackRange = new Circle(x, y, 100* Options.aspectRatio);
+        TargetRange = new Circle(x, y, 100* Options.aspectRatio);
         
         moveTo = new Vector2();
         moveTo.x = MathUtils.random(Difficulty.worldWidth);
@@ -129,5 +130,45 @@ public class BaseSkeleton extends BaseEnemy{
         
         setAnimation(walkAnimList.get(currentDirection.ordinal()));
         setSize(size, size);
+    }
+    
+    @Override
+    public boolean remove(){
+        
+        if(dieAnim != null){
+            for(int i = 0; i < (int)(dieAnim.getAnimationDuration() / dieAnim.getFrameDuration()); i++){
+                if(dieAnim.getKeyFrame(i) != null)
+                 dieAnim.getKeyFrame(i).getTexture().dispose();
+            }
+        }
+        
+        if(slashAnimList != null){
+            for(int h = 0; h < slashAnimList.size(); h ++){
+                for(int i = 0; i < (int)(slashAnimList.get(h).getAnimationDuration() / slashAnimList.get(h).getFrameDuration()); i++){
+                    if(slashAnimList.get(h).getKeyFrame(i) != null)
+                     slashAnimList.get(h).getKeyFrame(i).getTexture().dispose();
+                }
+            }
+        }
+        
+        if( castAnimList!= null){
+            for(int h = 0; h < castAnimList.size(); h ++){
+                for(int i = 0; i < (int)(castAnimList.get(h).getAnimationDuration() / castAnimList.get(h).getFrameDuration()); i++){
+                    if(castAnimList.get(h).getKeyFrame(i) != null)
+                     castAnimList.get(h).getKeyFrame(i).getTexture().dispose();
+                }
+            }
+        }
+        
+        if( walkAnimList!= null){
+            for(int h = 0; h < walkAnimList.size(); h ++){
+                for(int i = 0; i < (int)(walkAnimList.get(h).getAnimationDuration() / walkAnimList.get(h).getFrameDuration()); i++){
+                    if(walkAnimList.get(h).getKeyFrame(i) != null)
+                     walkAnimList.get(h).getKeyFrame(i).getTexture().dispose();
+                }
+            }
+        }
+        
+        return super.remove();
     }
 }

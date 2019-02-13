@@ -18,6 +18,7 @@ import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.*;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.LPC;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 
 /**
@@ -39,17 +40,14 @@ public class VikingHero extends Hero{
     public VikingHero(){
         super();
         texture = new Texture(Gdx.files.internal(vikingHero));
-        Down = Avatars.load(DefaultPlayerDown, 1, 4, .2f, true);
-        Up = Avatars.load(DefaultPlayerUP, 1, 4, .2f, true);
-        Left = Avatars.load(DefaultPlayerLeft, 1, 4, .2f, true);
-        Right = Avatars.load(DefaultPlayerRight, 1, 4, .2f, true);
-        setAnimation(Right);
-        setBoundaryRectangle();
+        
         heroName = "Björn";
         
         walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
         castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.slash, .05f);
         dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);
+        setAnimation(playRight());
+        setBoundaryRectangle();
         
     }
 
@@ -88,8 +86,8 @@ public class VikingHero extends Hero{
         altSkill.player = player;
         //basicSkill.setIconPosition((int)(BaseActor.getUiStage().getCamera().viewportWidth /2),(int)(BaseActor.getUiStage().getCamera().viewportHeight /2));
         if(player.isLocalPlayer){
-        altSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 + 30),(20));
-        basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30),(20));
+        altSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 + 30*Options.aspectRatio) ,(20));
+        basicSkill.setupIcon((BaseActor.getUiStage().getCamera().viewportWidth /2 - 30*Options.aspectRatio),(20));
         basicSkill.setIconSize(40);
         altSkill.setIconSize(40);
         }

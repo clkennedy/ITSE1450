@@ -23,6 +23,7 @@ import com.dslayer.content.Skills.Slash;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.LPC;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import java.util.ArrayList;
 import org.json.JSONObject;
 
@@ -52,8 +53,8 @@ public class SkeletonMage extends BaseSkeleton{
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 30;
 
-        AttackRange = new Circle(x, y, 300);
-        TargetRange = new Circle(x, y, 500);
+        AttackRange = new Circle(x, y, 300* Options.aspectRatio);
+        TargetRange = new Circle(x, y, 500* Options.aspectRatio);
         
         skill = new FireBall();
         skill.setDamage(40);

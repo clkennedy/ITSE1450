@@ -14,6 +14,7 @@ import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.Dungeon.DungeonObject;
 import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
 import static com.dslayer.content.projectiles.Spells.Projectiles.*;
@@ -141,10 +142,10 @@ public class ArrowShot extends Skill{
     public ArrowShot isProjectile(){
         isAction = true;
         loadTexture(Arrow);
-        setScale(.1f);
+        setScale(.1f * Options.aspectRatio);
         baseSpeed = 700;
         alreadyHit = new ArrayList<BaseActor>();
-        setSpeed(baseSpeed);
+        setProjectileSpeed(baseSpeed);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setPosition(getX() - (getWidth() /2) , getY() - (getHeight() / 2));

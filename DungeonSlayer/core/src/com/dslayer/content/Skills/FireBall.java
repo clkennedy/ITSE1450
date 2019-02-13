@@ -98,7 +98,7 @@ public class FireBall extends Skill{
         
         BaseActor b = new FireBall(caster.getX() + caster.getWidth() / 2,caster.getY() + caster.getHeight() / 2 , 
                 BaseActor.getMainStage()).isProjectile()
-                .setProjectileSpeed(300).
+                .setProjectileAcceleration(300).
                 setProjectileRotation(degrees).
                 setDirection(degrees)
                 .setFrom(from);

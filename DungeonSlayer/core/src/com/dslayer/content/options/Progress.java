@@ -34,6 +34,7 @@ public class Progress {
     
     public static void Load(){
         prefs = Gdx.app.getPreferences("SavedData");
+        
         //int i = prefs.getInteger("HighScore", Unlocks.getHighScore());
         //Unlocks.Unlock(i);
         //Unlocks.setSelects(prefs.getInteger("selectedAvatar", Unlocks.getCurrentAvatarIndex()),
