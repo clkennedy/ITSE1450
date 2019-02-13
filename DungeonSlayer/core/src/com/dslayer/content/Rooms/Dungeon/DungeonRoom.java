@@ -21,26 +21,22 @@ import com.dslayer.content.options.Options;
  * @author ARustedKnight
  */
 public class DungeonRoom extends Room{
-
+    protected enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight, URIWall, ULIWall, LRIWall, LLIWall, Empty}
     
-
-    private enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight, URIWall, ULIWall, LRIWall, LLIWall, Empty}
+    public DungeonRoom(){
+        super(0,0, 14, 10);
+    }
+    
+    public DungeonRoom(int x, int y, int width, int height){
+        super(x,y, width, height);
+    }
     
     @Override
     public Room generateRoom() {
-        this._layout = new int[][]{{1,2,2,2,2,2,2,2,2,2,2,2,2,3},
-                                 {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
-                                {4,0,0,10,9,0,0,0,0,0,0,0,0,5},
-                                {4,0,0,12,11,0,0,0,0,0,0,0,0,5},
-                                {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
-                                {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
-                                {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
-                                {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
-                                {4,0,0,0,0,0,0,0,0,0,0,0,0,5},
-                                {6,7,7,7,7,7,7,7,7,7,7,7,7,8}};
+        this.generateRoom(roomWidth, roomHeight);
         
-        this.roomWidth = 14 * DungeonPanels.defaultSize;
-        this.roomHeight = 10 * DungeonPanels.defaultSize;
+        this.roomWidthPixels = _layout.length * DungeonPanels.defaultSize;
+        this.roomHeightPixels = _layout[0].length * DungeonPanels.defaultSize;
         return null;
     }
 
@@ -75,8 +71,8 @@ public class DungeonRoom extends Room{
             }
             //System.out.println();
         }
-        this.roomWidth = width * DungeonPanels.defaultSize * Options.aspectRatio;
-        this.roomHeight = height * DungeonPanels.defaultSize* Options.aspectRatio;
+        this.roomWidthPixels = width * DungeonPanels.defaultSize * Options.aspectRatio;
+        this.roomHeightPixels = height * DungeonPanels.defaultSize* Options.aspectRatio;
         this._layout = temp;
         return this;
     }
@@ -100,8 +96,8 @@ public class DungeonRoom extends Room{
             b.setPosition(-50, -50);
             while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
                    b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                float x = MathUtils.random(DungeonPanels.defaultSize, roomWidth - DungeonPanels.defaultSize - b.getWidth());
-                float y = MathUtils.random(DungeonPanels.defaultSize, roomHeight - DungeonPanels.defaultSize - b.getHeight());
+                float x = MathUtils.random(DungeonPanels.defaultSize, roomWidthPixels - DungeonPanels.defaultSize - b.getWidth());
+                float y = MathUtils.random(DungeonPanels.defaultSize, roomHeightPixels - DungeonPanels.defaultSize - b.getHeight());
                 b.setPosition(x, y);
                 for(BaseActor obj : roomObjects){
                     if(b.overlaps(obj)){

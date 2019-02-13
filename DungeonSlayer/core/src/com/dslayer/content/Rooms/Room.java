@@ -19,8 +19,24 @@ public abstract class Room {
     private Room _room;
     protected int[][] _layout;
     
-    protected float roomWidth;
-    protected float roomHeight;
+    protected int roomWidth;
+    protected int roomHeight;
+    protected int roomX;
+    protected int roomY;
+    
+    protected float roomWidthPixels;
+    protected float roomHeightPixels;
+    
+    public Room(){
+        
+    }
+    
+    public Room(int x, int y, int width, int height){
+        roomX = x;
+        roomY = y;
+        roomWidth = width;
+        roomHeight = height;
+    }
     
     protected List<BaseActor> roomObjects = new ArrayList();
     
@@ -33,11 +49,11 @@ public abstract class Room {
     
     public abstract void Draw(Stage mainStage);
     
-    public float getRoomWidth(){
-        return roomWidth;
+    public float getRoomWidthPixels(){
+        return roomWidthPixels;
     }
-    public float getRoomHeight(){
-        return roomHeight;
+    public float getRoomHeightPixels(){
+        return roomHeightPixels;
     }
     
     public Room getRoom(){
@@ -46,4 +62,24 @@ public abstract class Room {
     public int[][] getLayout(){
         return _layout;
     }    
+    
+    public boolean overlaps(Room r){
+        if((this.roomX + this.roomWidth > r.roomX)  && (this.roomX + this.roomWidth < r.roomX + r.roomWidth) 
+                && (this.roomY + this.roomHeight > r.roomY)&& (this.roomY + this.roomHeight < r.roomY + r.roomHeight))
+            return true;
+        
+        if((this.roomX > r.roomX)  && (this.roomX < r.roomX + r.roomWidth) 
+                && (this.roomY> r.roomY)&& (this.roomY < r.roomY + r.roomHeight))
+            return true;
+        
+        if((this.roomX + this.roomWidth  > r.roomX)  && (this.roomX + this.roomWidth  < r.roomX + r.roomWidth) 
+                && (this.roomY> r.roomY)&& (this.roomY < r.roomY + r.roomHeight))
+            return true;
+        
+        if((this.roomX> r.roomX)  && (this.roomX< r.roomX + r.roomWidth) 
+                && (this.roomY + this.roomHeight> r.roomY)&& (this.roomY  + this.roomHeight< r.roomY + r.roomHeight))
+            return true;
+        
+        return false;
+    }
 }

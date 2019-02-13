@@ -150,8 +150,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         Room dr = new DungeonRoom();
         dr.generateRoom(30,40);
         
-        Difficulty.worldHeight = dr.getRoomHeight();
-        Difficulty.worldWidth = dr.getRoomWidth();
+        Difficulty.worldHeight = dr.getRoomHeightPixels();
+        Difficulty.worldWidth = dr.getRoomWidthPixels();
         Difficulty.newGame();
         
         dr.Draw(mainStage);
