@@ -318,6 +318,15 @@ io.on('connection', function(socket){
            //log("syning Enemies");
        }  
    })
+   
+   socket.on('setupGeneratedRoom', function(data){
+       player = players.find(p => p.id == socket.id);
+       room = rooms.find(r => r.name == player.roomName);
+       if(room != null){
+           socket.to(room.name).emit('setupGeneratedRoom', data);
+           //log("syning Enemies");
+       }  
+   })
 })
 
 function Room(name){

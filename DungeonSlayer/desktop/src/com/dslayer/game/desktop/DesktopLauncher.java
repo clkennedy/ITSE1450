@@ -16,6 +16,7 @@ public class DesktopLauncher {
     cfg.title = "Ironside";
     cfg.width = (int)Difficulty.worldWidth;
     cfg.height = (int)Difficulty.worldHeight;
+    //cfg.resizable = false;
     //cfg.fullscreen = true;
     //cfg.vSyncEnabled = true;
     

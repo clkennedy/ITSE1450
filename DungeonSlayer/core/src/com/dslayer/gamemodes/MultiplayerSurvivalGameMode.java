@@ -16,7 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.dslayer.content.Enemy.BaseEnemy;
+import com.dslayer.content.Enemy.Goblin.GoblinAssassin;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
+import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.GameMessage.GameMessage;
@@ -90,6 +92,9 @@ public class MultiplayerSurvivalGameMode extends GameMode{
     
     private float GolemSpawnTimer = 40f;
     private float GolemSpawnTime = 0;
+    
+    private float GoblinSpawn = 15f;
+    private float GoblinSpawnTimer = 0;
     
     private float increaseEnemyTimer = 10f;
     private float increaseEnemyTime = 0f;
@@ -308,6 +313,12 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             if(e instanceof BlueGolem){
                 gm.AddMessage("Blue Golem Appeared");
             }
+            if(e instanceof SkeletonArmored){
+                gm.AddMessage("An Armored Skeleton has Risen");
+            }
+            if(e instanceof GoblinAssassin){
+                gm.AddMessage("Goblin Assassin has Scurried in");
+            }
             gameObjects.put(enemy.id, e);
         }
         enemiesToSpawn.clear();
@@ -408,8 +419,14 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             if(MathUtils.randomBoolean(.4f)){
                 b = new SkeletonMage(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
            }
+            else if(MathUtils.randomBoolean(.95f)){
+                b = new SkeletonWarrior(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                        MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize), mainStage);
+            }
             else{
-                b = new SkeletonWarrior(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
+                 b = new SkeletonArmored(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                        MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize), mainStage);
+                 gm.AddMessage("An Armored Skeleton has Risen");
             }
             spawnTime= 0;
             while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
@@ -434,6 +451,24 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                 gameObjects.put(b.network_id, b);
             }
             GolemSpawnTime = 0;
+        }
+        
+        GoblinSpawnTimer += dt;
+        if(GoblinSpawnTimer > GoblinSpawn){
+            GoblinSpawnTimer = 0;
+            BaseActor b = null;
+            if(MathUtils.randomBoolean(.1f)){
+                b = new GoblinAssassin(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                            MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize), mainStage);
+            }
+            if(b != null){
+                    gm.AddMessage("Goblin Assassin has Scurried in");
+                    while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
+                        b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
+                        b.setPosition(MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldWidth - DungeonPanels.defaultSize), 
+                            MathUtils.random(DungeonPanels.defaultSize,Difficulty.worldHeight - DungeonPanels.defaultSize));
+                    }
+                }
         }
         
         increaseEnemyTime += dt;

@@ -78,6 +78,12 @@ public class MainMenuScreen extends BaseScreen {
     public static boolean loaded = false;
     private static boolean musicPlaying = false;
     Label multi;
+    
+    private BitmapFont fontPoint;
+    private BitmapFont fontTitle;
+    private BitmapFont fontButton;
+    private BitmapFont fontMenu;
+    
     public void initialize()
     {
         Multiplayer.restartNetworkid();
@@ -104,18 +110,18 @@ public class MainMenuScreen extends BaseScreen {
         parameter.size = 100;
         parameter.borderColor = Color.WHITE;
         parameter.borderWidth = 1f;
-        BitmapFont fontTitle = generator.generateFont(parameter); // font size 12 pixels
+        fontTitle = generator.generateFont(parameter); // font size 12 pixels
         
         parameter.size = 80;
-        BitmapFont fontMenu = generator.generateFont(parameter);
+        fontMenu = generator.generateFont(parameter);
         
         parameter.size = 40;
         parameter.borderColor = Color.WHITE;
         parameter.borderWidth = 0f;
-        BitmapFont fontButton = generator.generateFont(parameter);
+        fontButton = generator.generateFont(parameter);
         
         parameter.size = 15;
-        BitmapFont fontPoint = generator.generateFont(parameter);
+        fontPoint = generator.generateFont(parameter);
         generator.dispose();
         
         titleStyle = new LabelStyle(fontTitle, Color.BROWN);
@@ -169,12 +175,32 @@ public class MainMenuScreen extends BaseScreen {
         
         mainStage.addActor(multi);
         
+        mainStage.addActor(play);
+        
+        Label options = new Label("Options", menuStyle);
+        options.setSize((options.getWidth() * 1.2f) * Options.aspectRatio, (options.getHeight() *1.2f) * Options.aspectRatio);
+        options.setOriginX(options.getWidth() / 2);
+        options.setOriginY(options.getHeight()/ 2);
+        options.setPosition((options.getWidth()/ 2) - (options.getWidth()/2), (multi.getY() - multi.getHeight()/2) - 30);
+        options.setOrigin(options.getWidth()/2, options.getHeight()/2);
+        options.setAlignment(Align.center);
+        multi.addListener(new Hover(){
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                optionScreen();
+            }
+
+        });
+        
+        mainStage.addActor(options);
+        
         
         Label quit = new Label("Quit", menuStyle);
         quit.setSize((quit.getWidth() * 1.2f) * Options.aspectRatio, (quit.getHeight() *1.2f) * Options.aspectRatio);
         quit.setOriginX(quit.getWidth() / 2);
         quit.setOriginY(quit.getHeight()/ 2);
-        quit.setPosition((mainStage.getWidth()/ 2) - (quit.getWidth()/2), (multi.getY() - multi.getHeight()));
+        quit.setPosition((mainStage.getWidth()/ 2) - (quit.getWidth()/2), (options.getY() - options.getHeight()));
         quit.setAlignment(Align.center);
         quit.addListener(new Hover(){
             
@@ -308,4 +334,19 @@ public class MainMenuScreen extends BaseScreen {
         }
     } 
     
+    
+    @Override
+    public void dispose(){
+        
+        if(fontButton != null)
+            fontButton.dispose();
+        if(fontMenu !=  null)
+            fontMenu.dispose();
+        if(fontPoint != null)
+            fontPoint.dispose();
+        if(fontTitle != null)
+            fontTitle.dispose();
+        
+        super.dispose();
+    }
 }

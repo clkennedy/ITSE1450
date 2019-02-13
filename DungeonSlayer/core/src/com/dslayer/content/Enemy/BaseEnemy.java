@@ -100,6 +100,7 @@ public abstract class BaseEnemy extends BaseActor{
     public BaseEnemy(float x, float y, Stage s){
         super(x,y,s);
         size = 50;
+        moveTo = new Vector2();
         healthBar = new Rectangle(x, y, maxHealth , 5);
     }
     
