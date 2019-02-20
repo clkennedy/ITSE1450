@@ -157,7 +157,7 @@ public class GroundSlam extends Skill{
         isAction = true;
         setAnimation(Projectiles.getShatterAnim());
         setAnimationPaused(true);
-        setSize(300,300);
+        setSize(300* Options.aspectRatio,300* Options.aspectRatio);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setBoundaryPolygon(12);

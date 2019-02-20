@@ -48,7 +48,7 @@ public class SkeletonMage extends BaseSkeleton{
         healthBar = new Rectangle(x, y, maxHealth , 5);
         
         setSize(size,size);
-        setBoundaryPolygon(8);
+        setBoundaryPolygonLong(10);
         setMaxSpeed(50);
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 30;

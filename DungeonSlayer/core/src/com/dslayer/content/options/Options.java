@@ -51,6 +51,7 @@ public class Options extends BaseScreen{
         
         Label musicVol = new Label("Music Volume", MainMenuScreen.buttonStyle);
         musicVol.setSize(musicVol.getWidth() * Options.aspectRatio, musicVol.getHeight()  * Options.aspectRatio);
+        musicVol.setFontScale(1f * Options.aspectRatio);
         musicVol.setOriginX(musicVol.getWidth() / 2);
         musicVol.setOriginY(musicVol.getHeight()/ 2);
         musicVol.setAlignment(Align.center);
@@ -60,6 +61,7 @@ public class Options extends BaseScreen{
         
         Label musicVolDec = new Label("-", MainMenuScreen.buttonStyle);
         musicVolDec.setSize(musicVolDec.getWidth()  * Options.aspectRatio, musicVolDec.getHeight() * Options.aspectRatio);
+        musicVolDec.setFontScale(1f * Options.aspectRatio);
         musicVolDec.setOriginX(musicVolDec.getWidth() / 2);
         musicVolDec.setOriginY(musicVolDec.getHeight()/ 2);
         musicVolDec.setAlignment(Align.center);
@@ -83,15 +85,16 @@ public class Options extends BaseScreen{
         lMusicVol.setOriginX(lMusicVol.getWidth() / 2);
         lMusicVol.setOriginY(lMusicVol.getHeight()/ 2);
         lMusicVol.setAlignment(Align.center);
-        lMusicVol.setPosition((((musicVolDec.getX() + musicVolDec.getWidth())  + 35)* Options.aspectRatio),musicVolDec.getY());
+        lMusicVol.setPosition((((musicVolDec.getX() + musicVolDec.getWidth()) ) + (40* Options.aspectRatio)),musicVolDec.getY() + musicVolDec.getOriginY());
         mainStage.addActor(lMusicVol);
         
         Label musicVolInc = new Label("+", MainMenuScreen.buttonStyle);
         musicVolInc.setSize(musicVolInc.getWidth() * Options.aspectRatio, musicVolInc.getHeight() * Options.aspectRatio);
+        musicVolInc.setFontScale(1f * Options.aspectRatio);
         musicVolInc.setOriginX(musicVolInc.getWidth() / 2);
         musicVolInc.setOriginY(musicVolInc.getHeight()/ 2);
         musicVolInc.setAlignment(Align.center);
-        musicVolInc.setPosition(Gdx.graphics.getWidth() / 4, 470 * Options.aspectRatio);
+        musicVolInc.setPosition(lMusicVol.getX() + 40 * Options.aspectRatio, 470 * Options.aspectRatio);
         musicVolInc.addListener(new Hover(){
             
             @Override
@@ -105,6 +108,7 @@ public class Options extends BaseScreen{
         //Sound Options
         Label soundVol = new Label("Sound Volume", MainMenuScreen.buttonStyle);
         soundVol.setSize(soundVol.getWidth() * Options.aspectRatio, soundVol.getHeight() * Options.aspectRatio);
+        soundVol.setFontScale(1f * Options.aspectRatio);
         soundVol.setOriginX(soundVol.getWidth() / 2);
         soundVol.setOriginY(soundVol.getHeight()/ 2);
         soundVol.setAlignment(Align.center);
@@ -114,6 +118,7 @@ public class Options extends BaseScreen{
         
         Label soundVolDec = new Label("-", MainMenuScreen.buttonStyle);
         soundVolDec.setSize(soundVolDec.getWidth() * Options.aspectRatio, soundVolDec.getHeight() * Options.aspectRatio);
+        soundVolDec.setFontScale(1f * Options.aspectRatio);
         soundVolDec.setOriginX(soundVolDec.getWidth() / 2);
         soundVolDec.setOriginY(soundVolDec.getHeight()/ 2);
         soundVolDec.setPosition(Gdx.graphics.getWidth() / 8,soundVol.getY() - soundVol.getHeight());
@@ -135,7 +140,7 @@ public class Options extends BaseScreen{
         lSoundVol.setOriginX(lMusicVol.getWidth() / 2);
         lSoundVol.setOriginY(lMusicVol.getHeight()/ 2);
         lSoundVol.setAlignment(Align.center);
-        lSoundVol.setPosition((((soundVolDec.getX() + soundVolDec.getWidth())  + 35)* Options.aspectRatio),soundVolDec.getY());
+        lSoundVol.setPosition((((soundVolDec.getX() + soundVolDec.getWidth()) ) + (40* Options.aspectRatio)),soundVolDec.getY() + soundVolDec.getOriginY());
         mainStage.addActor(lSoundVol);
         
         Label soundVolInc = new Label("+", MainMenuScreen.buttonStyle);
@@ -144,7 +149,7 @@ public class Options extends BaseScreen{
         soundVolInc.setOriginX(soundVolInc.getWidth() / 2);
         soundVolInc.setOriginY(soundVolInc.getHeight()/ 2);
         soundVolInc.setAlignment(Align.center);
-        soundVolInc.setPosition(Gdx.graphics.getWidth() / 4,soundVolDec.getY());
+        soundVolInc.setPosition(lMusicVol.getX() + 40 * Options.aspectRatio, 400 * Options.aspectRatio);
         soundVolInc.addListener(new Hover(){
             
             @Override

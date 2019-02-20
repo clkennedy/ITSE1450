@@ -17,7 +17,7 @@ public class Progress {
     private static Preferences prefs;
     
     public static void Save(){
-        prefs = Gdx.app.getPreferences("SavedData");
+        prefs = Gdx.app.getPreferences("IronSideSavedData");
         //prefs.putInteger("HighScore", Unlocks.getHighScore());
        // prefs.putInteger("selectedAvatar", Unlocks.getCurrentAvatarIndex());
         //prefs.putInteger("selectedEnemy", Unlocks.getCurrentEnemyIndex());
@@ -33,7 +33,7 @@ public class Progress {
     }
     
     public static void Load(){
-        prefs = Gdx.app.getPreferences("SavedData");
+        prefs = Gdx.app.getPreferences("IronSideSavedData");
         
         //int i = prefs.getInteger("HighScore", Unlocks.getHighScore());
         //Unlocks.Unlock(i);

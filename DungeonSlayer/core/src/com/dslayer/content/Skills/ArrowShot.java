@@ -149,7 +149,7 @@ public class ArrowShot extends Skill{
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setPosition(getX() - (getWidth() /2) , getY() - (getHeight() / 2));
-        setBoundaryPolygonHalfLong(12);
+        setBoundaryPolygonLong(12);
         damage = 50;
         return this;
     }

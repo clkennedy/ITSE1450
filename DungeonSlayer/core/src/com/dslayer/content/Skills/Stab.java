@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
 import java.util.ArrayList;
@@ -106,6 +107,7 @@ public class Stab extends Skill{
         isAction = true;
         alreadyHit = new ArrayList<BaseActor>();
         setAnimation(Projectiles.getSlashAnim());
+        setScale(1f * Options.aspectRatio);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setPosition(getX() - (getWidth() /2) , getY() - (getHeight() / 2));

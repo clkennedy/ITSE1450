@@ -8,6 +8,7 @@ package com.dslayer.content.Rooms.Dungeon;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.options.Options;
 
 /**
  *
@@ -16,12 +17,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 public class DungeonPillar extends DungeonPanels{
     
     private static String dPillar = "Rooms/Dungeon/DungeonPillar.png";
+    private static float tSize = 80;
     
     public DungeonPillar(){
         super();
         //texture = new Texture(Gdx.files.internal(dHole));
         loadTexture(dPillar);
-        setSize(80,80);
+        //setSize(80,80);
+        setSize(tSize * Options.aspectRatio, tSize * Options.aspectRatio);
         setOrigin(getWidth() / 2, getHeight() / 2);
         setBoundaryRectangle();
         
@@ -31,7 +34,8 @@ public class DungeonPillar extends DungeonPanels{
         //texture = new Texture(Gdx.files.internal(dHole));
         loadTexture(dPillar);
         setPosition(x, y);
-        setSize(80,80);
+        //setSize(80,80);
+        setSize(tSize * Options.aspectRatio, tSize * Options.aspectRatio);
         setOrigin(getWidth() / 2, getHeight() / 2);
         setBoundaryRectangle();
         

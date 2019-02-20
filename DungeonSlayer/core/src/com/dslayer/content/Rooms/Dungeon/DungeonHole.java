@@ -8,6 +8,7 @@ package com.dslayer.content.Rooms.Dungeon;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.options.Options;
 
 /**
  *
@@ -21,6 +22,7 @@ public class DungeonHole extends DungeonObject{
         super();
         //texture = new Texture(Gdx.files.internal(dHole));
         loadTexture(dHole);
+        setSize(getWidth() * Options.aspectRatio, getHeight() * Options.aspectRatio);
         setOrigin(getWidth() / 2, getHeight() / 2);
         setBoundaryPolygon(8);
         
@@ -29,6 +31,7 @@ public class DungeonHole extends DungeonObject{
     public DungeonHole(float x, float y, Stage stage){
         //texture = new Texture(Gdx.files.internal(dHole));
         loadTexture(dHole);
+        setSize(getWidth() * Options.aspectRatio, getHeight() * Options.aspectRatio);
         setPosition(x, y);
         setOrigin(getWidth() / 2, getHeight() / 2);
         setBoundaryPolygon(8);

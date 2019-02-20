@@ -41,7 +41,7 @@ public class BaseActor extends Group {
     public String network_id;
     
     //debugging stuff (custom)
-    protected static boolean debug = false;
+    protected static boolean debug = true;
     protected ShapeRenderer sRend;
     // Animation support
     protected Animation<TextureRegion> animation;
@@ -98,7 +98,7 @@ public class BaseActor extends Group {
         
         s.addActor(this);
         
-        setScale(1f * Options.aspectRatio);
+        //setScale(1f * Options.aspectRatio);
         
         animation = null;
         elapsedTime = 0;
@@ -407,6 +407,40 @@ public class BaseActor extends Group {
         return anim;        
     }
     
+     public Animation<TextureRegion> loadAnimationFromSheetWithTrim(String fileName, int rows, int cols, float frameDuration, boolean loop, int trim) {
+        int totalframes = (rows * cols) - trim;
+        int countFrames = 0;
+        texture = new Texture(Gdx.files.internal(fileName), true);
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        int frameWidth = texture.getWidth() / cols;
+        int frameHeight = texture.getHeight() / rows;
+        TextureRegion[][] temp = TextureRegion.split(texture, frameWidth, frameHeight);
+        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < cols; c++) {
+                textureArray.add(temp[r][c]);
+                countFrames++;
+                if(countFrames == totalframes)
+                    break;
+            }
+            if(countFrames == totalframes)
+                    break;
+        }
+        Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);        
+        if(loop) {
+            anim.setPlayMode(Animation.PlayMode.LOOP);
+        }
+        else {
+            anim.setPlayMode(Animation.PlayMode.NORMAL);
+        }
+        
+        if(animation == null) {
+            setAnimation(anim);
+        }
+        
+        return anim;        
+    }
+    
     /**
     * Loads a single texture to be used as the sprite in the BaseActor
     * 
@@ -442,6 +476,14 @@ public class BaseActor extends Group {
             return false;
         }
         return animation.isAnimationFinished(elapsedTime);
+    }
+    
+    /**
+    * Resets the elapsed time of the animation
+    * 
+    */
+    public void replayAnimation() {
+        elapsedTime = 0;
     }
     
     /**

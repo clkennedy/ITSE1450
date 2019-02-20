@@ -21,6 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.options.Multiplayer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  The Base for Setting up Levels and Displays in the <br>
@@ -34,6 +36,8 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     protected Table uiTable;
     protected boolean playing;
     
+    private static List<Stage> toDispose = new ArrayList();
+    
     protected EscapeMenu esmenu = null;
     protected boolean gameover = false;
     
@@ -46,6 +50,14 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     * <p>
     */
     public BaseScreen() {
+        
+        if(BaseActor.getMainStage() != null){
+            toDispose.add(BaseActor.getMainStage());
+        }
+        if(BaseActor.getUiStage() != null){
+            toDispose.add(BaseActor.getUiStage());
+        }
+        
         mainStage = new Stage();
         uiStage = new Stage();
         uiTable = new Table();
@@ -174,6 +186,23 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     
     public boolean isTouchDownEvent(Event e) {
         return (e instanceof InputEvent) && ((InputEvent)e).getType().equals(Type.touchDown);
+    }
+    
+    public static void cleanUp(){
+        for(int i = 0; i < toDispose.size(); i++){
+            if(toDispose.get(i) != null){
+                for(Actor b : toDispose.get(i).getActors()){
+                    b.remove();
+                }
+            }
+            try{
+                toDispose.remove(i).dispose();
+            }catch(Exception e){
+                
+            }
+            
+        }
+        toDispose.clear();
     }
     
 }

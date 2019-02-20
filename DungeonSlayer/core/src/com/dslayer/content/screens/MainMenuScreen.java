@@ -86,6 +86,8 @@ public class MainMenuScreen extends BaseScreen {
     
     public void initialize()
     {
+        BaseScreen.cleanUp();
+        
         Multiplayer.restartNetworkid();
         paused = false;
         

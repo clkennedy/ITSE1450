@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
 import static com.dslayer.content.projectiles.Spells.Projectiles.*;
@@ -193,14 +194,14 @@ public class BearTrap extends Skill{
     public BearTrap isProjectile(){
         isAction = true;
         loadAnimationFromSheet(BearTrap, 1, 4, .02f, false);
-        setScale(1.5f);
+        setScale(1.5f* Options.aspectRatio);
         setAnimationPaused(true);
         //alreadyHit = new ArrayList<BaseActor>();
         setZIndex(1200);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setPosition(getX() - (getWidth() /2) , getY() - (getHeight()));
-        setBoundaryPolygonHalfLong(12);
+        setBoundaryPolygonWide(12);
         damage = 20;
         return this;
     }

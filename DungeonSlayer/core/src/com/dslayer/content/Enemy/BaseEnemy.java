@@ -27,6 +27,7 @@ import com.dslayer.content.Player.Player;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import java.util.ArrayList;
 import org.json.JSONObject;
 
@@ -99,7 +100,7 @@ public abstract class BaseEnemy extends BaseActor{
     
     public BaseEnemy(float x, float y, Stage s){
         super(x,y,s);
-        size = 50;
+        size = 50 * Options.aspectRatio;
         moveTo = new Vector2();
         healthBar = new Rectangle(x, y, maxHealth , 5);
     }

@@ -12,8 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
+import static com.dslayer.content.projectiles.Spells.Projectiles.IceNova;
 
 /**
  *
@@ -111,8 +113,8 @@ public class IceNova extends Skill{
     
     public IceNova isProjectile(){
         isAction = true;
-        setAnimation(Projectiles.getIceNovaAnim());
-        setSize(400,400);
+        loadAnimationFromSheetWithTrim(IceNova, 10, 10, .05f, true, 14);
+        setSize(400* Options.aspectRatio,400* Options.aspectRatio);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setBoundaryPolygon(12);

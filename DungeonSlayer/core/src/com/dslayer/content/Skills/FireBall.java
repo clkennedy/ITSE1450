@@ -14,6 +14,7 @@ import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.Dungeon.DungeonObject;
 import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
 import static com.dslayer.content.projectiles.Spells.Projectiles.FireBall;
@@ -112,6 +113,7 @@ public class FireBall extends Skill{
     public FireBall isProjectile(){
         isAction = true;
         loadAnimationFromSheet(FireBall, 8, 8, .05f, true);
+        setScale(1f * Options.aspectRatio);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setPosition(getX() - (getWidth() /2) , getY() - (getHeight() / 2));

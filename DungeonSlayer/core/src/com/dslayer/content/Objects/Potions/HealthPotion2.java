@@ -12,6 +12,7 @@ import com.dslayer.content.Objects.Potion;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import org.json.JSONObject;
 
 /**
@@ -27,7 +28,7 @@ public class HealthPotion2 extends Potion{
         super(x, y, s);
         recoverAmount = 50;
         loadTexture(potionSprites[0][9]);
-        setSize(20,20);
+        setSize(20* Options.aspectRatio,20* Options.aspectRatio);
         //enableDespawnTimer(30);
         if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
             this.network_id = Integer.toString(Multiplayer.getNextID());

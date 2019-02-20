@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.screens.MainMenuScreen;
 
 /**
@@ -45,7 +46,7 @@ public class EscapeMenu extends BaseActor{
         Animation<TextureRegion> scrollAnim = Avatars.load(scroll, .05f, false);
         setAnimation(scrollAnim);
         
-        setSize(400, 400);
+        setSize(400 * Options.aspectRatio, 400 * Options.aspectRatio);
         
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("HumbleFonts/compass/CompassPro.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -59,6 +60,7 @@ public class EscapeMenu extends BaseActor{
         Label.LabelStyle mm = new Label.LabelStyle(fontmm, Color.BROWN);
         
         Label mainMenu = new Label("MainMenu", mm);
+        mainMenu.setFontScale(1f * Options.aspectRatio);
         mainMenu.setAlignment(Align.center);
         mainMenu.addListener(new Hover(){
             
@@ -68,7 +70,7 @@ public class EscapeMenu extends BaseActor{
             }
         
         });
-        mainMenu.setPosition((getWidth()/ 2 - mainMenu.getWidth()/2), getHeight() - (mainMenu.getHeight() * 2));
+        mainMenu.setPosition((getWidth()/ 2 - mainMenu.getWidth()/2), getHeight() - (mainMenu.getHeight() * 2* Options.aspectRatio) );
         
         setPosition((s.getCamera().viewportWidth /2) - (getWidth()/2),(s.getCamera().viewportHeight /2)- (getHeight()/2));
         this.addActor(mainMenu);

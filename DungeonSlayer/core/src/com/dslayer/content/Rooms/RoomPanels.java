@@ -17,7 +17,9 @@ public class RoomPanels extends BaseActor{
     
     
     protected static BaseActor DefaultSize(BaseActor t){
+        t.setScale(1f);
         t.setSize(defaultSize * Options.aspectRatio, defaultSize*Options.aspectRatio);
+        
         return t;
     }
 }

@@ -79,6 +79,7 @@ public class DungeonRoom extends Room{
     
     @Override
     public Room fillRoomWithObjects(int num) {
+        System.out.println(roomWidthPixels);
         for(int i = 0; i < num; i++){
             BaseActor b = null;
             switch(MathUtils.random(1)){
@@ -94,10 +95,12 @@ public class DungeonRoom extends Room{
             }
             
             b.setPosition(-50, -50);
-            while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
-                   b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                float x = MathUtils.random(DungeonPanels.defaultSize, roomWidthPixels - DungeonPanels.defaultSize - b.getWidth());
-                float y = MathUtils.random(DungeonPanels.defaultSize, roomHeightPixels - DungeonPanels.defaultSize - b.getHeight());
+            
+            while(b.getX() > roomWidthPixels || b.getX() < 0 ||
+                   b.getY() > roomHeightPixels || b.getY() < 0 ){
+                float x = MathUtils.random(DungeonPanels.defaultSize * Options.aspectRatio, roomWidthPixels - (DungeonPanels.defaultSize * Options.aspectRatio) - b.getWidth());
+                float y = MathUtils.random(DungeonPanels.defaultSize * Options.aspectRatio, roomHeightPixels - (DungeonPanels.defaultSize * Options.aspectRatio) - b.getHeight());
+                System.out.println("X: " + x + "|Y: "+ y);
                 b.setPosition(x, y);
                 for(BaseActor obj : roomObjects){
                     if(b.overlaps(obj)){
@@ -116,8 +119,8 @@ public class DungeonRoom extends Room{
         for(int i = 0; i < this._layout.length; i++){
             for(int j = 0; j < this._layout[i].length; j++){
                 temp = Map(Key.values()[this._layout[i][j]]);
-                //if(temp == null)
-                    //continue;
+                if(temp == null)
+                    continue;
                 temp.setPosition(j * temp.getWidth(),Difficulty.worldHeight - temp.getHeight() - (i * temp.getHeight()));
                 temp.getBoundaryPolygon();
                 mainStage.addActor(temp);
@@ -125,7 +128,7 @@ public class DungeonRoom extends Room{
         }
         for(BaseActor b: roomObjects){
             b.setZIndex(1200);
-            System.out.println(b.getX() + "|" + b.getY());
+            //System.out.println(b.getX() + "|" + b.getY());
             mainStage.addActor(b);
         }
     }

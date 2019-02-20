@@ -79,12 +79,11 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         configSocketEvents();
         
         Label createRoom = new Label("Create Room", MainMenuScreen.buttonStyle);
-        //createRoom.setFontScale(.5f);
+        createRoom.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         createRoom.setOriginX(createRoom.getWidth() / 2);
         createRoom.setOriginY(createRoom.getHeight()/ 2);
-        createRoom.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30), (mainStage.getHeight() - 100));
-        createRoom.setOrigin(createRoom.getWidth()/2, createRoom.getHeight()/2);
+        createRoom.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 50 * Options.aspectRatio), (mainStage.getHeight() - 100 * Options.aspectRatio));
         createRoom.setAlignment(Align.center);
         createRoom.addListener(new Hover(){
             
@@ -97,11 +96,11 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         mainStage.addActor(createRoom);
         
         Label mainMenu = new Label("Back", MainMenuScreen.buttonStyle);
-        //createRoom.setFontScale(.5f);
+        mainMenu.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         mainMenu.setOriginX(mainMenu.getWidth() / 2);
         mainMenu.setOriginY(mainMenu.getHeight()/ 2);
-        mainMenu.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30), (createRoom.getY() - 30));
+        mainMenu.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30 * Options.aspectRatio), (createRoom.getY() - 30 * Options.aspectRatio));
         mainMenu.setOrigin(mainMenu.getWidth()/2, mainMenu.getHeight()/2);
         mainMenu.setAlignment(Align.center);
         mainMenu.addListener(new Hover(){
@@ -117,11 +116,11 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         
         
         Label refreshRoomsButton = new Label("Refresh", MainMenuScreen.buttonStyle);
-        //createRoom.setFontScale(.5f);
+        refreshRoomsButton.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         refreshRoomsButton.setOriginX(refreshRoomsButton.getWidth() / 2);
         refreshRoomsButton.setOriginY(refreshRoomsButton.getHeight()/ 2);
-        refreshRoomsButton.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30), (mainMenu.getY() - 200));
+        refreshRoomsButton.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30 * Options.aspectRatio), (mainMenu.getY() - 200 * Options.aspectRatio));
         refreshRoomsButton.setAlignment(Align.center);
         refreshRoomsButton.addListener(new Hover(){
             
@@ -135,11 +134,11 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         mainStage.addActor(refreshRoomsButton);
         
         Label userName = new Label("UserName", MainMenuScreen.buttonStyle);
-        //createRoom.setFontScale(.5f);
+        userName.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         userName.setOriginX(userName.getWidth() / 2);
         userName.setOriginY(userName.getHeight()/ 2);
-        userName.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30), (refreshRoomsButton.getY() - 200));
+        userName.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30 * Options.aspectRatio), (refreshRoomsButton.getY() - 200 * Options.aspectRatio));
         userName.setAlignment(Align.center);
         mainStage.addActor(userName);
         
@@ -148,20 +147,20 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         MainMenuScreen.buttonStyle.fontColor = Color.WHITE;
         Label.LabelStyle usernStyle = new Label.LabelStyle(MainMenuScreen.buttonStyle);
         playerUserName = new Label(playerUserNameText, usernStyle);
-        //createRoom.setFontScale(.5f);
+        playerUserName.setFontScale(1f * Options.aspectRatio);
         playerUserName.setOriginX(playerUserName.getWidth() / 2);
         playerUserName.setOriginY(playerUserName.getHeight()/ 2);
-        playerUserName.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30), (userName.getY() - 30));
+        playerUserName.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30 * Options.aspectRatio), (userName.getY() - 30 * Options.aspectRatio));
         playerUserName.setAlignment(Align.center);
         mainStage.addActor(playerUserName);
         
         MainMenuScreen.buttonStyle.fontColor = Color.BROWN;
         Label changeUserName = new Label("Change", MainMenuScreen.buttonStyle);
-        //createRoom.setFontScale(.5f);
+        changeUserName.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         changeUserName.setOriginX(changeUserName.getWidth() / 2);
         changeUserName.setOriginY(changeUserName.getHeight()/ 2);
-        changeUserName.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30), (playerUserName.getY() - 30));
+        changeUserName.setPosition((mainStage.getWidth()) - (createRoom.getWidth() + 30 * Options.aspectRatio), (playerUserName.getY() - 30 * Options.aspectRatio));
         changeUserName.setAlignment(Align.center);
         changeUserName.addListener(new Hover(){
             
@@ -176,19 +175,19 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         //--------------------------------------------------------------------------------------------
         
         Label rooms = new Label("Rooms", MainMenuScreen.buttonStyle);
-        //createRoom.setFontScale(.5f);
+        rooms.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         rooms.setOriginX(createRoom.getWidth() / 2);
         rooms.setOriginY(createRoom.getHeight()/ 2);
-        rooms.setPosition(rooms.getWidth(), (mainStage.getHeight() - 50));
+        rooms.setPosition(rooms.getWidth(), (mainStage.getHeight() - 50 * Options.aspectRatio));
         rooms.setAlignment(Align.center);
         mainStage.addActor(rooms);
         
         scroll = new BaseActor();
-        scroll.setAnimation(Avatars.load(EscapeMenu.scroll, .1f, false));
-        scroll.setSize(500, 500);
+        scroll.loadAnimationFromFiles(EscapeMenu.scroll, .05f, false);
+        scroll.setSize(500 * Options.aspectRatio, 500 * Options.aspectRatio);
         scroll.setOrigin(scroll.getWidth()/2, scroll.getHeight() / 2);
-        scroll.setPosition(15, mainStage.getHeight() - scroll.getHeight() - 50);
+        scroll.setPosition(15, mainStage.getHeight() - scroll.getHeight() - 50 * Options.aspectRatio);
         
         mainStage.addActor(scroll);
         
@@ -260,10 +259,10 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         }
         
         if(refreshRooms){
-            scroll.setAnimationWithReset(Avatars.load(EscapeMenu.scroll, .1f, false));
-            scroll.setSize(500, 500);
-            scroll.setOrigin(scroll.getWidth()/2, scroll.getHeight() / 2);
-            scroll.setPosition(15, mainStage.getHeight() - scroll.getHeight() - 50);
+            scroll.replayAnimation();
+            //scroll.setSize(500 * Options.aspectRatio, 500 * Options.aspectRatio);
+            //scroll.setOrigin(scroll.getWidth()/2, scroll.getHeight() / 2);
+            //scroll.setPosition(15, mainStage.getHeight() - scroll.getHeight() - 50);
             if(roomTable != null){
                 roomTable.remove();
             }

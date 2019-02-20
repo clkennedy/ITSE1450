@@ -17,7 +17,7 @@ public class DungeonSlayer extends BaseGame {
     public void create()
     {
         super.create();
-        //Progress.Load();
+        Progress.Load();
         setActiveScreen( new MainMenuScreen() );
     }
 }

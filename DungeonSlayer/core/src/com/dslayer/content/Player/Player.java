@@ -125,7 +125,7 @@ public class Player extends BaseActor{
         setOrigin(getWidth() /2, getHeight() / 2);
         
        // setSize(Unlocks.currentAvatar.getWidth() * Options.aspectRatio, Unlocks.currentAvatar.getHeight() * Options.aspectRatio);
-        setBoundaryPolygon(8);
+        setBoundaryPolygonLong(10);
         
         setMaxSpeed(100 * Options.aspectRatio);
         setDeceleration(250);

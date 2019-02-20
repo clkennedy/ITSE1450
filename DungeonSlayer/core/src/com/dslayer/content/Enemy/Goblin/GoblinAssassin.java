@@ -59,7 +59,7 @@ public class GoblinAssassin extends BaseGoblin{
         setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
         
         setSize(size,size);
-        setBoundaryPolygon(8);
+        setBoundaryPolygonLong(10);
         setMaxSpeed(150);
         setAcceleration(3000);
         setDeceleration(1500);

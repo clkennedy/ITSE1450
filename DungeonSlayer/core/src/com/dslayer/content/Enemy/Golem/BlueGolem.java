@@ -51,9 +51,9 @@ public class BlueGolem extends BaseGolem{
         health = maxHealth;
         healthBar = new Rectangle(x, y, maxHealth , 5);
         
-        size= 75;
+        size= 75 * Options.aspectRatio;
         setSize(size,size);
-        setBoundaryPolygon(8);
+        setBoundaryPolygonLong(10);
         setMaxSpeed(25);
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 60;
