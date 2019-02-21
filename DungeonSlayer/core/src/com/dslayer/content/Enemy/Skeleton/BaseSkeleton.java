@@ -112,7 +112,7 @@ public class BaseSkeleton extends BaseEnemy{
     protected void moveTowardTarget2(){
         if(!canMove)
             return;
-        setAcceleration(100);
+        setAcceleration(100 * Options.aspectRatio);
         if(Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle())){
             return;
         }

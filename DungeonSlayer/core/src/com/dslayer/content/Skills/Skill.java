@@ -65,12 +65,12 @@ public abstract class Skill extends BaseActor{
     
     
     public Skill setProjectileAcceleration(float speed){
-        setAcceleration(speed * Options.aspectRatio);
+        setAcceleration(speed);
         return this;
     }
     
     public Skill setProjectileSpeed(float speed){
-        setSpeed(speed * Options.aspectRatio);
+        setSpeed(speed);
         return this;
     }
     

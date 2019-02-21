@@ -60,9 +60,9 @@ public class GoblinAssassin extends BaseGoblin{
         
         setSize(size,size);
         setBoundaryPolygonLong(10);
-        setMaxSpeed(150);
-        setAcceleration(3000);
-        setDeceleration(1500);
+        setMaxSpeed(150 * Options.aspectRatio);
+        setAcceleration(3000 * Options.aspectRatio);
+        setDeceleration(1500 * Options.aspectRatio);
         alwaysApplyDecerlation = true;
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 50;

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.dslayer.content.options.Progress;
 import com.dslayer.content.screens.LoadScreen;
+import com.dslayer.content.screens.LogoScreen;
 import com.dslayer.content.screens.MainMenuScreen;
 import com.dslayer.content.screens.MultipTest;
 
@@ -18,6 +19,6 @@ public class DungeonSlayer extends BaseGame {
     {
         super.create();
         Progress.Load();
-        setActiveScreen( new MainMenuScreen() );
+        setActiveScreen( new LogoScreen() );
     }
 }

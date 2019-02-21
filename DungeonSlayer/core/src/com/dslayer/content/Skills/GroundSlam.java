@@ -169,14 +169,14 @@ public class GroundSlam extends Skill{
     @Override
     protected void loadCDTexture() {
         //baIcon.loadTexture(icoCD);
-        baIcon.setAnimation(Avatars.load(icoCD));
-        baIcon.setSize(iconSize, iconSize);
+        baIcon.loadTexture(icoCD);
+        baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
     @Override
     protected void loadCastTexture() {
         //baIcon.loadTexture(ico);
-        baIcon.setAnimation(Avatars.load(ico));
-        baIcon.setSize(iconSize, iconSize);
+        baIcon.loadTexture(ico);
+        baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
         
 }

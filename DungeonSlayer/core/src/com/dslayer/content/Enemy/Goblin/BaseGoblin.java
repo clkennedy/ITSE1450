@@ -24,6 +24,7 @@ import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import java.util.List;
 
 /**
@@ -126,7 +127,7 @@ public class BaseGoblin extends BaseEnemy{
             return;
         
         if(Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle())){
-            setSpeed(20);
+            setSpeed(20 * Options.aspectRatio);
         }
         
         //setAcceleration(100);

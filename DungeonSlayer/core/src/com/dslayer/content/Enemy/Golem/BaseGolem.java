@@ -131,7 +131,7 @@ public class BaseGolem extends BaseEnemy{
         if(!canMove)
             return;
         
-        setAcceleration(100);
+        setAcceleration(100 * Options.aspectRatio);
         float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
         accelerateAtAngle(degrees);
         

@@ -210,13 +210,13 @@ public class BearTrap extends Skill{
     protected void loadCDTexture() {
         //baIcon.loadTexture(icoCD);
         baIcon.loadTexture(icoCD);
-        baIcon.setSize(iconSize, iconSize);
+        baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
     @Override
     protected void loadCastTexture() {
         //baIcon.loadTexture(ico);
         baIcon.loadTexture(ico);
-        baIcon.setSize(iconSize, iconSize);
+        baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
 
     @Override

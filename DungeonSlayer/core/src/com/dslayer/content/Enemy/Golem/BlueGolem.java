@@ -54,7 +54,7 @@ public class BlueGolem extends BaseGolem{
         size= 75 * Options.aspectRatio;
         setSize(size,size);
         setBoundaryPolygonLong(10);
-        setMaxSpeed(25);
+        setMaxSpeed(25 * Options.aspectRatio);
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 60;
 

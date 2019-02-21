@@ -100,6 +100,8 @@ public class ArrowShot extends Skill{
             for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                 if(overlaps(enemy) && !alreadyHit.contains(enemy)){
                     float d = damage * (getSpeed() /  baseSpeed) * ((float)pierce / 3f);
+                    System.out.println(damage);
+                    System.out.println(getSpeed());
                     ((BaseEnemy)enemy).takeDamage((int)d, player);
                     alreadyHit.add(enemy);
                     pierce--;
@@ -143,7 +145,7 @@ public class ArrowShot extends Skill{
         isAction = true;
         loadTexture(Arrow);
         setScale(.1f * Options.aspectRatio);
-        baseSpeed = 700;
+        baseSpeed = 700 * Options.aspectRatio;
         alreadyHit = new ArrayList<BaseActor>();
         setProjectileSpeed(baseSpeed);
         setOriginX(getWidth() / 2);
@@ -154,17 +156,17 @@ public class ArrowShot extends Skill{
         return this;
     }
     
-    @Override
+   @Override
     protected void loadCDTexture() {
         //baIcon.loadTexture(icoCD);
-        baIcon.setAnimation(Avatars.load(icoCD));
-        baIcon.setSize(iconSize, iconSize);
+        baIcon.loadTexture(icoCD);
+        baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
     @Override
     protected void loadCastTexture() {
         //baIcon.loadTexture(ico);
-        baIcon.setAnimation(Avatars.load(ico));
-        baIcon.setSize(iconSize, iconSize);
+        baIcon.loadTexture(ico);
+        baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
 
 }

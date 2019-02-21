@@ -92,7 +92,7 @@ public class Stab extends Skill{
                 , target.x - (caster.getX() + caster.getWidth())) * 180.0d / Math.PI);
         BaseActor b = new Stab(caster.getX() + caster.getWidth() /2,caster.getY() + caster.getHeight() /2 , 
                 BaseActor.getMainStage()).isProjectile()
-                .setProjectileAcceleration(500)
+                .setProjectileAcceleration(500 * Options.aspectRatio)
                 .setProjectileRotation(degrees)
                 .setDirection(degrees)
                 .setFrom(from).setDamage(damage);
@@ -106,7 +106,7 @@ public class Stab extends Skill{
     public Stab isProjectile(){
         isAction = true;
         alreadyHit = new ArrayList<BaseActor>();
-        setAnimation(Projectiles.getSlashAnim());
+        loadTexture(Projectiles.Slash);
         setScale(1f * Options.aspectRatio);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
@@ -120,14 +120,14 @@ public class Stab extends Skill{
     @Override
     protected void loadCDTexture() {
         //baIcon.loadTexture(icoCD);
-        baIcon.setAnimation(Avatars.load(icoCD));
-        baIcon.setSize(iconSize, iconSize);
+        baIcon.loadTexture(icoCD);
+        baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
     @Override
     protected void loadCastTexture() {
         //baIcon.loadTexture(ico);
-        baIcon.setAnimation(Avatars.load(ico));
-        baIcon.setSize(iconSize, iconSize);
+        baIcon.loadTexture(ico);
+        baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
 
 }

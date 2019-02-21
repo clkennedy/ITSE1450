@@ -99,7 +99,7 @@ public class FireBall extends Skill{
         
         BaseActor b = new FireBall(caster.getX() + caster.getWidth() / 2,caster.getY() + caster.getHeight() / 2 , 
                 BaseActor.getMainStage()).isProjectile()
-                .setProjectileAcceleration(300).
+                .setProjectileAcceleration(300 * Options.aspectRatio).
                 setProjectileRotation(degrees).
                 setDirection(degrees)
                 .setFrom(from);
@@ -126,14 +126,14 @@ public class FireBall extends Skill{
     @Override
     protected void loadCDTexture() {
         //baIcon.loadTexture(icoCD);
-        baIcon.setAnimation(Avatars.load(icoCD));
-        baIcon.setSize(iconSize, iconSize);
+        baIcon.loadTexture(icoCD);
+        baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
     @Override
     protected void loadCastTexture() {
         //baIcon.loadTexture(ico);
-        baIcon.setAnimation(Avatars.load(ico));
-        baIcon.setSize(iconSize, iconSize);
+        baIcon.loadTexture(ico);
+        baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
 
 }
