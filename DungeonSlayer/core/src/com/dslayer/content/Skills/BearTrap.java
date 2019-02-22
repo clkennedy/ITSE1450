@@ -158,12 +158,6 @@ public class BearTrap extends Skill{
                 }
             }
         }
-        
-        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels")){
-            if(wall.boundaryPolygon == null)
-                continue;
-            preventOverlap(wall);
-        }
      }
 
     @Override

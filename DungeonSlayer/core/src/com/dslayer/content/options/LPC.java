@@ -108,8 +108,8 @@ public class LPC {
     }
     
     public static Animation<TextureRegion> LoadFromFullSheet(Texture filename,LPCAnims anim){
-        List<Animation<TextureRegion>> anims = Avatars.loadMulti(filename, 21, 13, .5f, true);
-        Animation<TextureRegion> rtnAnim = anims.get(anim.ordinal());;
+        List<Animation<TextureRegion>> anims = loadMulti(filename, 21, 13, .5f, true);
+        Animation<TextureRegion> rtnAnim = anims.get(anim.ordinal());
         int trim=0;
         switch (anim) {
             case castUp:

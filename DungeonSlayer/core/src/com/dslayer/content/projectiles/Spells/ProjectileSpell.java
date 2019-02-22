@@ -27,8 +27,8 @@ public class ProjectileSpell extends BaseActor{
         super(x,y,s);
     }
     
-    public ProjectileSpell fireBall(){
-        setAnimation(Projectiles.getFireBallAnim());
+    /*public ProjectileSpell fireBall(){
+        //setAnimation(Projectiles.getFireBallAnim());
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setBoundaryPolygonHalfLong(12);
@@ -59,5 +59,5 @@ public class ProjectileSpell extends BaseActor{
     public ProjectileSpell setDirection(float degrees){
         direction = degrees;
         return this;
-    }
+    }*/
 }

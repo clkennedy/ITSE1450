@@ -100,8 +100,6 @@ public class ArrowShot extends Skill{
             for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                 if(overlaps(enemy) && !alreadyHit.contains(enemy)){
                     float d = damage * (getSpeed() /  baseSpeed) * ((float)pierce / 3f);
-                    System.out.println(damage);
-                    System.out.println(getSpeed());
                     ((BaseEnemy)enemy).takeDamage((int)d, player);
                     alreadyHit.add(enemy);
                     pierce--;
@@ -111,13 +109,14 @@ public class ArrowShot extends Skill{
             }
         }
         
-        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels")){
+        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomWall")){
             if(wall.boundaryPolygon == null || (wall instanceof DungeonObject))
                 continue;
-            preventOverlap(wall);
             if(overlaps(wall)){
                 setSpeed(0);
             }
+            preventOverlap(wall);
+            
         }
      }
 

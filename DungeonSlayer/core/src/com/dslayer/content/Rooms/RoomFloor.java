@@ -12,6 +12,6 @@ import com.atkinson.game.engine.BaseActor;
  *
  * @author cameron.kennedy
  */
-public class RoomObject extends RoomPanels{
+public class RoomFloor extends RoomPanels{
     
 }

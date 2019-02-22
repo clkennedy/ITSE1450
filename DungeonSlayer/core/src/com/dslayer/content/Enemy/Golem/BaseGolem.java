@@ -56,7 +56,7 @@ public class BaseGolem extends BaseEnemy{
     public BaseGolem(float x, float y, Stage s){
         super(x,y,s);
         
-        dieAnim = Avatars.load(DieAnimPath, 1, 6, .2f, false);
+        //dieAnim = Avatars.load(DieAnimPath, 1, 6, .2f, false);
         
         AttackRange = new Circle(x, y, 100 * Options.aspectRatio);
         TargetRange = new Circle(x, y, 100* Options.aspectRatio);
@@ -112,7 +112,7 @@ public class BaseGolem extends BaseEnemy{
     @Override
     public void die() {
         setSpeed(0);
-        setAnimationWithReset(Avatars.load(DieAnimPath, 1, 6, .2f, false));
+        setAnimationWithReset(dieAnim);
         setSize(size, size);
         isDying = true;
     }

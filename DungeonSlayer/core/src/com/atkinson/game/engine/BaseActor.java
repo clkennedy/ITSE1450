@@ -914,7 +914,7 @@ public class BaseActor extends Group {
     }
     @Override
     public boolean remove(){
-        
+        System.out.println(this);
         if(sRend != null){
             sRend.dispose();
             sRend = null;

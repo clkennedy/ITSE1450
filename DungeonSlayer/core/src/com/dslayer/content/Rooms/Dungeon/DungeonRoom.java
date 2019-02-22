@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Rooms.Dungeon.DungeonHole;
 import com.dslayer.content.Rooms.Dungeon.DungeonPillar;
 import com.dslayer.content.Rooms.Room;
+import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Options;
 
@@ -35,8 +36,8 @@ public class DungeonRoom extends Room{
     public Room generateRoom() {
         this.generateRoom(roomWidth, roomHeight);
         
-        this.roomWidthPixels = _layout.length * DungeonPanels.defaultSize;
-        this.roomHeightPixels = _layout[0].length * DungeonPanels.defaultSize;
+        this.roomWidthPixels = _layout.length * RoomPanels.defaultSize;
+        this.roomHeightPixels = _layout[0].length * RoomPanels.defaultSize;
         return null;
     }
 
@@ -71,15 +72,15 @@ public class DungeonRoom extends Room{
             }
             //System.out.println();
         }
-        this.roomWidthPixels = width * DungeonPanels.defaultSize * Options.aspectRatio;
-        this.roomHeightPixels = height * DungeonPanels.defaultSize* Options.aspectRatio;
+        this.roomWidthPixels = width * RoomPanels.defaultSize * Options.aspectRatio;
+        this.roomHeightPixels = height * RoomPanels.defaultSize* Options.aspectRatio;
         this._layout = temp;
         return this;
     }
     
     @Override
     public Room fillRoomWithObjects(int num) {
-        System.out.println(roomWidthPixels);
+        //System.out.println(roomWidthPixels);
         for(int i = 0; i < num; i++){
             BaseActor b = null;
             switch(MathUtils.random(1)){
@@ -98,9 +99,9 @@ public class DungeonRoom extends Room{
             
             while(b.getX() > roomWidthPixels || b.getX() < 0 ||
                    b.getY() > roomHeightPixels || b.getY() < 0 ){
-                float x = MathUtils.random(DungeonPanels.defaultSize * Options.aspectRatio, roomWidthPixels - (DungeonPanels.defaultSize * Options.aspectRatio) - b.getWidth());
-                float y = MathUtils.random(DungeonPanels.defaultSize * Options.aspectRatio, roomHeightPixels - (DungeonPanels.defaultSize * Options.aspectRatio) - b.getHeight());
-                System.out.println("X: " + x + "|Y: "+ y);
+                float x = MathUtils.random(RoomPanels.defaultSize * Options.aspectRatio, roomWidthPixels - (RoomPanels.defaultSize * Options.aspectRatio) - b.getWidth());
+                float y = MathUtils.random(RoomPanels.defaultSize * Options.aspectRatio, roomHeightPixels - (RoomPanels.defaultSize * Options.aspectRatio) - b.getHeight());
+                //System.out.println("X: " + x + "|Y: "+ y);
                 b.setPosition(x, y);
                 for(BaseActor obj : roomObjects){
                     if(b.overlaps(obj)){
@@ -115,7 +116,7 @@ public class DungeonRoom extends Room{
 
     @Override
     public void Draw(Stage mainStage) {
-        BaseActor temp = new DungeonPanels();
+        BaseActor temp = new RoomPanels();
         for(int i = 0; i < this._layout.length; i++){
             for(int j = 0; j < this._layout[i].length; j++){
                 temp = Map(Key.values()[this._layout[i][j]]);
@@ -136,31 +137,31 @@ public class DungeonRoom extends Room{
     private BaseActor Map(Key i){
         switch(i) {
             case Floor:
-            return DungeonPanels.Floor();
+            return new DungeonFloor();
             case UpperLeft:
-            return DungeonPanels.UpperLeftWall();
+            return new DungeonWall().UpperLeft();
             case UpperRight:
-            return DungeonPanels.UpperRightWall();
+            return new DungeonWall().UpperRight();
             case Upper:
-            return DungeonPanels.UpperWall();
+            return new DungeonWall().Upper();
             case Left:
-            return DungeonPanels.LeftWall();
+            return new DungeonWall().Left();
             case Right:
-            return DungeonPanels.RightWall(); 
+            return new DungeonWall().Right(); 
             case LowerRight:
-            return DungeonPanels.LowerRightWall();
+            return new DungeonWall().LowerRight();
             case Lower:
-            return DungeonPanels.LowerWall(); 
+            return new DungeonWall().Lower(); 
             case LowerLeft:
-            return DungeonPanels.LowerLeftWall();
+            return new DungeonWall().LowerLeft();
             case URIWall:
-            return DungeonPanels.UpperRightInvertedWall();
+            return new DungeonWall().UpperLeft();
             case ULIWall:
-            return DungeonPanels.UpperLeftInvertedWall();
+            return new DungeonWall().UpperLeft();
             case LRIWall:
-            return DungeonPanels.LowerRightInvertedWall();
+            return new DungeonWall().UpperLeft();
             case LLIWall:
-            return DungeonPanels.LowerLeftInvertedWall();
+            return new DungeonWall().UpperLeft();
             default:
                 return null;
         }

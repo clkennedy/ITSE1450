@@ -28,6 +28,7 @@ import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import java.util.ArrayList;
 import com.dslayer.content.Hero.*;
 import com.dslayer.content.Rooms.Dungeon.DungeonObject;
+import com.dslayer.content.Rooms.RoomFloor;
 import com.dslayer.content.Rooms.RoomObject;
 import com.dslayer.content.screens.HeroSelectionScreen;
 import com.dslayer.content.screens.MultiplayerHeroSelectionScreen;
@@ -555,7 +556,7 @@ public class Player extends BaseActor{
         //wall Collison
         ArrayList<BaseActor> allRoomObjects = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels");
         for(BaseActor obj: allRoomObjects){
-            if(obj.boundaryPolygon == null || (ignoreRoomObjects && obj instanceof RoomObject)){
+            if(obj.boundaryPolygon == null || (ignoreRoomObjects && obj instanceof RoomObject) || (obj instanceof RoomFloor)){
                 continue;
             }
             preventOverlap(obj);

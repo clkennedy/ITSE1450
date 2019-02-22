@@ -155,7 +155,8 @@ public class GroundSlam extends Skill{
     
     public GroundSlam isProjectile(){
         isAction = true;
-        setAnimation(Projectiles.getShatterAnim());
+        //setAnimation(Projectiles.getShatterAnim());
+        loadAnimationFromFiles(Projectiles.Shatter, .1f, false);
         setAnimationPaused(true);
         setSize(300* Options.aspectRatio,300* Options.aspectRatio);
         setOriginX(getWidth() / 2);

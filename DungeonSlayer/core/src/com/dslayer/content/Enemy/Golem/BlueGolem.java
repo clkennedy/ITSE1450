@@ -61,9 +61,9 @@ public class BlueGolem extends BaseGolem{
         AttackRange = new Circle(x, y, 100* Options.aspectRatio);
         TargetRange = new Circle(x, y, 500* Options.aspectRatio);
         
-        castAnimList = Avatars.loadMulti(attack, 4, 7, .2f, false);
-        walkAnimList = Avatars.loadMulti(walk, 4, 7, .5f, true);
-        dieAnim = Avatars.loadMulti(die, 2, 7, .3f, false).get(1);
+        castAnimList = LPC.loadMulti(attack, 4, 7, .2f, false);
+        walkAnimList = LPC.loadMulti(walk, 4, 7, .5f, true);
+        dieAnim = LPC.loadMulti(die, 2, 7, .3f, false).get(1);
         
         currentDirection = WalkDirection.down;
         setAnimation(this.walkAnimList.get(currentDirection.ordinal()));

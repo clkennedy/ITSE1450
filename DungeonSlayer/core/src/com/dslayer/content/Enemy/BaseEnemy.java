@@ -24,6 +24,7 @@ import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.Rooms.RoomFloor;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
@@ -275,7 +276,7 @@ public abstract class BaseEnemy extends BaseActor{
         //wall Collison
         ArrayList<BaseActor> allRoomObjects = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels");
         for(BaseActor wall: allRoomObjects){
-            if(wall.boundaryPolygon == null)
+            if(wall.boundaryPolygon == null || (wall instanceof RoomFloor))
                 continue;
             if(overlaps(wall)){
                 hitWall = true;

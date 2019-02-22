@@ -11,7 +11,6 @@ import com.dslayer.content.options.Progress;
 import com.dslayer.content.screens.LoadScreen;
 import com.dslayer.content.screens.LogoScreen;
 import com.dslayer.content.screens.MainMenuScreen;
-import com.dslayer.content.screens.MultipTest;
 
 public class DungeonSlayer extends BaseGame {
     

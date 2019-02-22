@@ -43,8 +43,9 @@ public class EscapeMenu extends BaseActor{
          
         super( (s.getCamera().viewportWidth /2),(s.getCamera().viewportHeight /2), s);
         
-        Animation<TextureRegion> scrollAnim = Avatars.load(scroll, .05f, false);
-        setAnimation(scrollAnim);
+        //Animation<TextureRegion> scrollAnim = Avatars.load(scroll, .05f, false);
+        //setAnimation(scrollAnim);
+        loadAnimationFromFiles(scroll, .05f, false);
         
         setSize(400 * Options.aspectRatio, 400 * Options.aspectRatio);
         

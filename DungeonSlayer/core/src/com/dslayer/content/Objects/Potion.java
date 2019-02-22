@@ -6,6 +6,8 @@
 package com.dslayer.content.Objects;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.options.Avatars;
@@ -19,6 +21,7 @@ import org.json.JSONObject;
 public class Potion extends BaseActor{
     
     protected String potionsPath = "Potions/potions.png";
+    protected Texture potions;
     protected TextureRegion[][] potionSprites;
     protected boolean despawnable = false;
     protected float despawnTimer = 0f;
@@ -26,7 +29,9 @@ public class Potion extends BaseActor{
     
     public Potion(float x, float y, Stage s){
         super(x,y,s);
-        potionSprites = Avatars.loadTextures(potionsPath, 10, 10);
+        
+        potions = new Texture(Gdx.files.internal(potionsPath));
+        potionSprites = Avatars.loadTextures(potions, 10, 10);
     }
     
     public void enableDespawnTimer(float timer){
@@ -53,5 +58,12 @@ public class Potion extends BaseActor{
                 remove();
             }
         }
+    }
+    
+    @Override
+    public boolean remove(){
+        potions.dispose();
+        
+        return super.remove();
     }
 }

@@ -69,8 +69,9 @@ public abstract class BaseGame extends Game {
         * @param    s the new scene to display
         */
     public static void setActiveScreen(BaseScreen s) {
-        if(game.getScreen() != null)
-            game.getScreen().dispose();
         game.setScreen(s);
+        if(game.getScreen() != null){
+            BaseScreen.toDispose.add(((BaseScreen)game.getScreen()));
+        }
     }
 }

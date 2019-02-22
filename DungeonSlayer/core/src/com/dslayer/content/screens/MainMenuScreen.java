@@ -32,7 +32,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.dslayer.content.Rooms.Dungeon.DungeonPanels;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
 import java.awt.Desktop.Action;
@@ -87,6 +86,7 @@ public class MainMenuScreen extends BaseScreen {
     public void initialize()
     {
         BaseScreen.cleanUp();
+        gc();
         
         Multiplayer.restartNetworkid();
         paused = false;
@@ -339,14 +339,14 @@ public class MainMenuScreen extends BaseScreen {
     @Override
     public void dispose(){
         Progress.Save();
-        /*if(fontButton != null)
+        if(fontButton != null)
             fontButton.dispose();
         if(fontMenu !=  null)
             fontMenu.dispose();
         if(fontPoint != null)
             fontPoint.dispose();
         if(fontTitle != null)
-            fontTitle.dispose();*/
+            fontTitle.dispose();
         
         super.dispose();
     }

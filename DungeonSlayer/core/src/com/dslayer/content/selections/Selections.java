@@ -20,7 +20,7 @@ public class Selections {
     public static String Purple = "Selections/selectionPurple.png";
     public static String Blue = "Selections/selectionBlue.png";
     
-    public static Animation<TextureRegion> Green(){
+    /*public static Animation<TextureRegion> Green(){
         return Avatars.load(Green);
     }
     public static Animation<TextureRegion> Red(){
@@ -31,6 +31,6 @@ public class Selections {
     }
     public static Animation<TextureRegion> Blue(){
         return Avatars.load(Blue);
-    }
+    }*/
     
 }

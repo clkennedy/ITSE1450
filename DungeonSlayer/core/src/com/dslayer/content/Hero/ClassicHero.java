@@ -39,10 +39,10 @@ public class ClassicHero extends Hero{
     public ClassicHero(){
         super();
         texture = new Texture(Gdx.files.internal(ClassicHero));
-        Down = Avatars.load(DefaultPlayerDown, 1, 4, .2f, true);
-        Up = Avatars.load(DefaultPlayerUP, 1, 4, .2f, true);
-        Left = Avatars.load(DefaultPlayerLeft, 1, 4, .2f, true);
-        Right = Avatars.load(DefaultPlayerRight, 1, 4, .2f, true);
+        //Down = Avatars.load(DefaultPlayerDown, 1, 4, .2f, true);
+        //Up = Avatars.load(DefaultPlayerUP, 1, 4, .2f, true);
+        //Left = Avatars.load(DefaultPlayerLeft, 1, 4, .2f, true);
+        //Right = Avatars.load(DefaultPlayerRight, 1, 4, .2f, true);
         setAnimation(Right);
         setBoundaryRectangle();
         heroName = "William";

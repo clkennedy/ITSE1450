@@ -83,7 +83,7 @@ public class FireBall extends Skill{
             }
         }
         
-        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels")){
+        for(BaseActor wall: BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomWall")){
             if(wall.boundaryPolygon == null  || (wall instanceof DungeonObject))
                 continue;
             if(overlaps(wall)){

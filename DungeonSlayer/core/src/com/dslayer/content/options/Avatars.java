@@ -19,12 +19,12 @@ import java.util.List;
  */
 public class Avatars {
     
-    public static Animation<TextureRegion> load(String fileName) {
+    private static Animation<TextureRegion> load(String fileName) {
         String[] fileNames = new String[1];
         fileNames[0] = fileName;
         return load(fileNames, 1, true);
     }
-    public static Animation<TextureRegion> load(String fileName, int rows, int cols, float frameDuration, boolean loop) {
+    private static Animation<TextureRegion> load(String fileName, int rows, int cols, float frameDuration, boolean loop) {
         Texture texture = new Texture(Gdx.files.internal(fileName), true);
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         int frameWidth = texture.getWidth() / cols;
@@ -47,7 +47,7 @@ public class Avatars {
         return anim;        
     }
     
-    public static Animation<TextureRegion> loadWithTrim(String fileName, int rows, int cols, float frameDuration, boolean loop, int trim) {
+    private static Animation<TextureRegion> loadWithTrim(String fileName, int rows, int cols, float frameDuration, boolean loop, int trim) {
         int totalframes = (rows * cols) - trim;
         int countFrames = 0;
         Texture texture = new Texture(Gdx.files.internal(fileName), true);
@@ -77,8 +77,8 @@ public class Avatars {
         return anim;        
     }
     
-    public static TextureRegion[][] loadTextures(String fileName, int rows, int cols) {
-        Texture texture = new Texture(Gdx.files.internal(fileName), true);
+    public static TextureRegion[][] loadTextures(Texture texture, int rows, int cols) {
+        //Texture texture = new Texture(Gdx.files.internal(fileName), true);
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         int frameWidth = texture.getWidth() / cols;
         int frameHeight = texture.getHeight() / rows;
@@ -87,7 +87,7 @@ public class Avatars {
         return temp;        
     }
     
-    public static List<Animation<TextureRegion>> loadMulti(Texture texture, int rows, int cols, float frameDuration, boolean loop) {
+    private static List<Animation<TextureRegion>> loadMulti(Texture texture, int rows, int cols, float frameDuration, boolean loop) {
         
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         int frameWidth = texture.getWidth() / cols;
@@ -114,7 +114,7 @@ public class Avatars {
         return animList;        
     }
     
-    public static Animation<TextureRegion> load(String[] fileNames, float frameDuration, boolean loop) {
+    private static Animation<TextureRegion> load(String[] fileNames, float frameDuration, boolean loop) {
         int fileCount = fileNames.length;
         Array<TextureRegion> textureArray = new Array<TextureRegion>();
         

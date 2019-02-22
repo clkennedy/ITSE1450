@@ -16,10 +16,10 @@ public class RoomPanels extends BaseActor{
     public static final float defaultSize = 50;
     
     
-    protected static BaseActor DefaultSize(BaseActor t){
-        t.setScale(1f);
-        t.setSize(defaultSize * Options.aspectRatio, defaultSize*Options.aspectRatio);
+    protected BaseActor DefaultSize(){
+        setScale(1f);
+        setSize(defaultSize * Options.aspectRatio, defaultSize*Options.aspectRatio);
         
-        return t;
+        return this;
     }
 }

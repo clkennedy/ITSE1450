@@ -31,12 +31,12 @@ import java.util.List;
  */
 public abstract class BaseScreen implements Screen, InputProcessor {
     
-    protected Stage mainStage;
-    protected Stage uiStage;
+    public Stage mainStage;
+    public Stage uiStage;
     protected Table uiTable;
     protected boolean playing;
     
-    private static List<Stage> toDispose = new ArrayList();
+    public static List<BaseScreen> toDispose = new ArrayList();
     
     protected EscapeMenu esmenu = null;
     protected boolean gameover = false;
@@ -51,12 +51,12 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     */
     public BaseScreen() {
         
-        if(BaseActor.getMainStage() != null){
+        /*if(BaseActor.getMainStage() != null){
             toDispose.add(BaseActor.getMainStage());
         }
         if(BaseActor.getUiStage() != null){
             toDispose.add(BaseActor.getUiStage());
-        }
+        }*/
         
         mainStage = new Stage();
         uiStage = new Stage();
@@ -190,17 +190,28 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     
     public static void cleanUp(){
         for(int i = 0; i < toDispose.size(); i++){
+            System.out.println(toDispose.get(i));
             if(toDispose.get(i) != null){
-                for(Actor b : toDispose.get(i).getActors()){
+                for(Actor b : toDispose.get(i).mainStage.getActors()){
+                    System.out.println(b);
+                    b.remove();
+                }
+                for(Actor b : toDispose.get(i).uiStage.getActors()){
+                    System.out.println(b);
                     b.remove();
                 }
             }
             try{
-                toDispose.remove(i).dispose();
+                toDispose.get(i).mainStage.dispose();
+                toDispose.get(i).uiStage.dispose();
             }catch(Exception e){
                 
             }
-            
+            try{
+                toDispose.get(i).dispose();
+            }catch(Exception e){
+                
+            }
         }
         toDispose.clear();
     }

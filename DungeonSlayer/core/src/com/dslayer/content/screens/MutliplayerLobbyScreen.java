@@ -35,7 +35,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.dslayer.content.Rooms.Dungeon.DungeonPanels;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
 import java.awt.Desktop.Action;
@@ -95,7 +94,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
     public void initialize()
     {
        checkmark = new BaseActor();
-       checkmark.setAnimation(Avatars.load("check.png"));
+       checkmark.loadTexture("check.png");
        checkmark.setSize(40,40);
        checkmark.setOrigin(checkmark.getWidth() / 2, checkmark.getHeight() / 2);
        
@@ -198,7 +197,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         mainStage.addActor(rooms);
         
         scroll = new BaseActor();
-        scroll.setAnimation(Avatars.load(EscapeMenu.scroll, .1f, false));
+        scroll.loadAnimationFromFiles(EscapeMenu.scroll, .1f, false);
         scroll.setSize(500, 500);
         scroll.setOrigin(scroll.getWidth()/2, scroll.getHeight() / 2);
         scroll.setPosition(15, mainStage.getHeight() - scroll.getHeight() - 50);
@@ -228,10 +227,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         //redraw names
         if(redraw){
             playerNames.clear();
-            scroll.setAnimationWithReset(Avatars.load(EscapeMenu.scroll, .1f, false));
-            scroll.setSize(500, 500);
-            scroll.setOrigin(scroll.getWidth()/2, scroll.getHeight() / 2);
-            scroll.setPosition(15, mainStage.getHeight() - scroll.getHeight() - 50);
+            scroll.replayAnimation();
             if(roomTable != null){
                 roomTable.remove();
             }
@@ -254,7 +250,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
                        checkmark = playersChecks.get(player);
                 }else{
                     checkmark = new BaseActor();
-                    checkmark.setAnimation(Avatars.load("check.png"));
+                    checkmark.loadTexture("check.png");
                     checkmark.setSize(40,40);
                     checkmark.setOrigin(checkmark.getWidth() / 2, checkmark.getHeight() / 2);
                 }
