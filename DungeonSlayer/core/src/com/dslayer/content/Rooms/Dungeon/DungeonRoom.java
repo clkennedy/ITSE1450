@@ -134,7 +134,7 @@ public class DungeonRoom extends Room{
         }
     }
     
-    private BaseActor Map(Key i){
+    public BaseActor Map(Key i){
         switch(i) {
             case Floor:
             return new DungeonFloor();
