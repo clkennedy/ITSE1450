@@ -5,10 +5,13 @@
  */
 package com.dslayer.content.LevelGenerator;
 
+import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
+import com.dslayer.content.Rooms.RoomPanels;
 import com.sun.javafx.scene.traversal.Direction;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,8 @@ public class LevelGenerator {
     protected int mapWidth;
     protected int mapHeight;
     
+    Room _room;
+    
     
    public LevelGenerator(int width, int height){
        _rooms = new ArrayList();
@@ -42,6 +47,24 @@ public class LevelGenerator {
        mapRegions = new Integer[width][height];
        mapWidth = width;
        mapHeight = height;
+   }
+   
+   public void setRoom(Room r){
+       _room = r;
+   }
+   
+   public void draw(Stage stage){
+       BaseActor temp = new RoomPanels();
+        for(int i = 0; i < this.mapLayout.length; i++){
+            for(int j = 0; j < this.mapLayout[i].length; j++){
+                temp = _room.Map(this.mapLayout[i][j]);
+                if(temp == null)
+                    continue;
+                temp.setPosition(j * temp.getWidth(),mapHeight - temp.getHeight() - (i * temp.getHeight()));
+                temp.getBoundaryPolygon();
+                stage.addActor(temp);
+            }
+        }
    }
    
    public void generateMap(){
@@ -66,8 +89,8 @@ public class LevelGenerator {
            int x = MathUtils.random(mapWidth - width);
            int y = MathUtils.random(mapHeight - height);   
            
-           Room room = new DungeonRoom(x,y, width, height);
-           room.generateRoom();
+           Room room = _room.generateNewRoom(x,y, width, height);
+           //room.generateRoom();
            
            boolean overlaps = false;
            for(Room g : _rooms){

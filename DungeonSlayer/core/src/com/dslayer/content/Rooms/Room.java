@@ -7,6 +7,7 @@ package com.dslayer.content.Rooms;
 
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,10 +43,13 @@ public abstract class Room {
     
     public enum Size{Small, Medium, Large};
     
+    public abstract BaseActor Map(int i);
+    public abstract int getFillerObjectKey();
     public abstract Room generateRoom();
     public abstract Room generateRoom(Size size);
     public abstract Room fillRoomWithObjects(int num);
     public abstract Room generateRoom(int length, int height);
+    public abstract Room generateNewRoom(int x, int y, int length, int height);
     
     public abstract void Draw(Stage mainStage);
     

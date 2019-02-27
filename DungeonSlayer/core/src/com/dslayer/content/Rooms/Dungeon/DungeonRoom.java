@@ -22,7 +22,7 @@ import com.dslayer.content.options.Options;
  * @author ARustedKnight
  */
 public class DungeonRoom extends Room{
-    protected enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight, URIWall, ULIWall, LRIWall, LLIWall, Empty}
+    protected enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight, URIWall, ULIWall, LRIWall, LLIWall, Empty, Pillar}
     
     public DungeonRoom(){
         super(0,0, 14, 10);
@@ -30,6 +30,11 @@ public class DungeonRoom extends Room{
     
     public DungeonRoom(int x, int y, int width, int height){
         super(x,y, width, height);
+    }
+    
+    @Override
+    public int getFillerObjectKey(){
+        return Key.Pillar.ordinal();
     }
     
     @Override
@@ -79,6 +84,12 @@ public class DungeonRoom extends Room{
     }
     
     @Override
+    public Room generateNewRoom(int x, int y, int width, int height){
+        DungeonRoom room = new DungeonRoom(x, y, width, height);
+        return room.generateRoom();
+    }
+    
+    @Override
     public Room fillRoomWithObjects(int num) {
         //System.out.println(roomWidthPixels);
         for(int i = 0; i < num; i++){
@@ -119,7 +130,7 @@ public class DungeonRoom extends Room{
         BaseActor temp = new RoomPanels();
         for(int i = 0; i < this._layout.length; i++){
             for(int j = 0; j < this._layout[i].length; j++){
-                temp = Map(Key.values()[this._layout[i][j]]);
+                temp = Map(this._layout[i][j]);
                 if(temp == null)
                     continue;
                 temp.setPosition(j * temp.getWidth(),Difficulty.worldHeight - temp.getHeight() - (i * temp.getHeight()));
@@ -134,8 +145,10 @@ public class DungeonRoom extends Room{
         }
     }
     
-    public BaseActor Map(Key i){
-        switch(i) {
+    @Override
+    public BaseActor Map(int key){
+        Key k = Key.values()[key];
+        switch(k) {
             case Floor:
             return new DungeonFloor();
             case UpperLeft:
@@ -162,6 +175,8 @@ public class DungeonRoom extends Room{
             return new DungeonWall().UpperLeft();
             case LLIWall:
             return new DungeonWall().UpperLeft();
+            case Pillar:
+            return new DungeonPillar();
             default:
                 return null;
         }
