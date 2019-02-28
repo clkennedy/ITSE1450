@@ -559,7 +559,7 @@ public class Player extends BaseActor{
             if(obj.boundaryPolygon == null || (ignoreRoomObjects && obj instanceof RoomObject) || (obj instanceof RoomFloor)){
                 continue;
             }
-            preventOverlap(obj);
+            //preventOverlap(obj);
         }
     }
     

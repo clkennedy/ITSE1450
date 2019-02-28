@@ -27,6 +27,7 @@ import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.screens.HeroSelectionScreenDungeon;
 import com.dslayer.content.screens.MainMenuScreen;
 import java.util.List;
 
@@ -73,21 +74,26 @@ public class DungeonCrawlGameMode extends GameMode{
         
         Multiplayer.host = true;
         
-        LevelGenerator lg = new LevelGenerator(100, 100);
+        LevelGenerator lg = new LevelGenerator(31, 31);
+        lg.setRoom(new DungeonRoom());
+        lg.generateMap();
         
         //Room dr = new DungeonRoom();
         //dr.generateRoom(30,40);
         //dr.fillRoomWithObjects(14);
-        
-        //Difficulty.worldHeight = dr.getRoomHeightPixels();
-        //Difficulty.worldWidth = dr.getRoomWidthPixels();
-       // Difficulty.newGame();
+        System.out.println("Done generating Dungeon");
+        Difficulty.worldHeight = lg.getPixelHeight();
+        Difficulty.worldWidth = lg.getPixelWidth();
+        Difficulty.newGame();
         
         //dr.Draw(mainStage);
-        
+        lg.draw(mainStage);
         Table pointTable = new Table();
-        player = new Player(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                        MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
+        //player = new Player(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
+                       // MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
+        
+         player = new Player(50,50, mainStage);
+        player.setHero(HeroSelectionScreenDungeon.currentSelection);
         Label u = new Label(player.hero.getName() +": ", MainMenuScreen.pointStyle);
         u.setAlignment(Align.left);
         pointTable.add(u);

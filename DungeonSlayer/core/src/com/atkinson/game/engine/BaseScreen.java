@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.options.Multiplayer;
+import static java.lang.System.gc;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,7 +191,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     
     public static void cleanUp(){
         for(int i = 0; i < toDispose.size(); i++){
-            System.out.println(toDispose.get(i));
+            //System.out.println(toDispose.get(i));
             if(toDispose.get(i) != null){
                 for(Actor b : toDispose.get(i).mainStage.getActors()){
                     System.out.println(b);
@@ -214,6 +215,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
             }
         }
         toDispose.clear();
+        gc();
     }
     
 }

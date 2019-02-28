@@ -68,21 +68,29 @@ public abstract class Room {
     }    
     
     public boolean overlaps(Room r){
-        if((this.roomX + this.roomWidth > r.roomX)  && (this.roomX + this.roomWidth < r.roomX + r.roomWidth) 
-                && (this.roomY + this.roomHeight > r.roomY)&& (this.roomY + this.roomHeight < r.roomY + r.roomHeight))
+       /* if((this.roomX + this.roomWidth >= r.roomX)  && (this.roomX + this.roomWidth <= r.roomX + r.roomWidth) 
+                && (this.roomY + this.roomHeight >= r.roomY)&& (this.roomY + this.roomHeight <= r.roomY + r.roomHeight))
             return true;
         
-        if((this.roomX > r.roomX)  && (this.roomX < r.roomX + r.roomWidth) 
-                && (this.roomY> r.roomY)&& (this.roomY < r.roomY + r.roomHeight))
+        if((this.roomX >= r.roomX)  && (this.roomX <= r.roomX + r.roomWidth) 
+                && (this.roomY>= r.roomY)&& (this.roomY <= r.roomY + r.roomHeight))
             return true;
         
-        if((this.roomX + this.roomWidth  > r.roomX)  && (this.roomX + this.roomWidth  < r.roomX + r.roomWidth) 
-                && (this.roomY> r.roomY)&& (this.roomY < r.roomY + r.roomHeight))
+        if((this.roomX + this.roomWidth  >= r.roomX)  && (this.roomX + this.roomWidth  <= r.roomX + r.roomWidth) 
+                && (this.roomY>= r.roomY)&& (this.roomY <= r.roomY + r.roomHeight))
             return true;
         
-        if((this.roomX> r.roomX)  && (this.roomX< r.roomX + r.roomWidth) 
-                && (this.roomY + this.roomHeight> r.roomY)&& (this.roomY  + this.roomHeight< r.roomY + r.roomHeight))
-            return true;
+        if((this.roomX>= r.roomX)  && (this.roomX<= r.roomX + r.roomWidth) 
+                && (this.roomY + this.roomHeight>= r.roomY)&& (this.roomY  + this.roomHeight<= r.roomY + r.roomHeight))
+            return true;*/
+        
+        for(int row = this.roomX; row < this.roomX+this.roomWidth; row++){
+            for(int col = this.roomY; col < this.roomY+this.roomHeight; col++){
+                if(row >= r.roomX && row <= r.roomX + r.roomWidth && col >= r.roomY && col <= r.roomY + r.roomHeight){
+                    return true;
+                }
+            }
+        }
         
         return false;
     }

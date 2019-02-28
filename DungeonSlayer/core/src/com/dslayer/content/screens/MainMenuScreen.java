@@ -142,11 +142,27 @@ public class MainMenuScreen extends BaseScreen {
 
         //TextButton tb = new TextButton("Play", );
         
+        Label playDungeon = new Label("Dungeon", menuStyle);
+        playDungeon.setSize((playDungeon.getWidth() * 1.2f) * Options.aspectRatio, (playDungeon.getHeight() *1.2f) * Options.aspectRatio);
+        playDungeon.setOriginX(playDungeon.getWidth() / 2);
+        playDungeon.setOriginY(playDungeon.getHeight()/ 2);
+        playDungeon.setPosition((mainStage.getWidth()/ 2) - (playDungeon.getWidth()/2), (l.getY() - l.getHeight()/2) - 100);
+        playDungeon.setOrigin(playDungeon.getWidth()/2, playDungeon.getHeight()/2);
+        playDungeon.setAlignment(Align.center);
+        playDungeon.addListener(new Hover(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                startGameDungeon();
+            }
+        
+        });
+        mainStage.addActor(playDungeon);
+        
         Label play = new Label("Survival", menuStyle);
         play.setSize((play.getWidth() * 1.2f) * Options.aspectRatio, (play.getHeight() *1.2f) * Options.aspectRatio);
         play.setOriginX(play.getWidth() / 2);
         play.setOriginY(play.getHeight()/ 2);
-        play.setPosition((mainStage.getWidth()/ 2) - (play.getWidth()/2), (l.getY() - l.getHeight()/2) - 100);
+        play.setPosition((mainStage.getWidth()/ 2) - (play.getWidth()/2), (playDungeon.getY() - playDungeon.getHeight()/2) - 30);
         play.setOrigin(play.getWidth()/2, play.getHeight()/2);
         play.setAlignment(Align.center);
         play.addListener(new Hover(){
@@ -262,6 +278,12 @@ public class MainMenuScreen extends BaseScreen {
         //backgroundMusic.stop();
         //musicPlaying = false;
         BaseGame.setActiveScreen(new HeroSelectionScreen());   
+    }
+    public void startGameDungeon(){
+        removeButtons();
+        //backgroundMusic.stop();
+        //musicPlaying = false;
+        BaseGame.setActiveScreen(new HeroSelectionScreenDungeon());   
     }
     public void quitGame(){
         removeButtons();

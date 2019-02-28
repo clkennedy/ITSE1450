@@ -43,7 +43,7 @@ public class DungeonRoom extends Room{
         
         this.roomWidthPixels = _layout.length * RoomPanels.defaultSize;
         this.roomHeightPixels = _layout[0].length * RoomPanels.defaultSize;
-        return null;
+        return this;
     }
 
     @Override
@@ -176,7 +176,7 @@ public class DungeonRoom extends Room{
             case LLIWall:
             return new DungeonWall().UpperLeft();
             case Pillar:
-            return new DungeonPillar();
+            return new DungeonPillar(RoomPanels.defaultSize);
             default:
                 return null;
         }

@@ -28,7 +28,16 @@ public class DungeonPillar extends RoomWall{
         setSize(tSize * Options.aspectRatio, tSize * Options.aspectRatio);
         setOrigin(getWidth() / 2, getHeight() / 2);
         setBoundaryRectangle();
-        
+    }
+    
+    public DungeonPillar(float size){
+        super();
+        //texture = new Texture(Gdx.files.internal(dHole));
+        loadTexture(dPillar);
+        //setSize(80,80);
+        setSize(size * Options.aspectRatio, size * Options.aspectRatio);
+        setOrigin(getWidth() / 2, getHeight() / 2);
+        setBoundaryRectangle();
     }
     
     /*public DungeonPillar(float x, float y, Stage stage){
