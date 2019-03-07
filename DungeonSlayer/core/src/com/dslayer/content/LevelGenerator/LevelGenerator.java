@@ -17,6 +17,7 @@ import com.sun.javafx.scene.traversal.Direction;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -213,13 +214,13 @@ public class LevelGenerator {
    }
    
    private void connectRegions(){
-       Map<String, List<Integer>> connectorRegions = new HashMap();
+       Map<String, Set<Integer>> connectorRegions = new HashMap();
        Map<String, Vector2> connectorRegionsPos = new HashMap();
        for(int r = 0; r < mapRegions.length; r++){
            for (int c = 0; c < mapRegions[r].length; c++) {
                if(mapLayout[r][c] == 00 || mapLayout[r][c] == _room.getFillerObjectKey()) continue;
                
-               List<Integer> regions = new ArrayList();
+               Set<Integer> regions = new HashSet<Integer>() ;
                
                for(int i = 0; i < Directions.size(); i++){
                    Vector2 region = new Vector2(r,c).add(Directions.get(i));
@@ -236,41 +237,49 @@ public class LevelGenerator {
            }
         }
            
-           int[] merged = new int[_currentRegion];
-           List<Integer> openRegions = new ArrayList();
+           Map<String,Integer> merged = new HashMap();
+           Set<Integer> openRegions = new HashSet();
            for(int i = 0; i< _currentRegion; i ++){
-               merged[i]=i;
+               merged.put(Integer.toString(i),i);
                openRegions.add(i);
            }
            
-           Set keySet = connectorRegions.keySet();
-           
+           Set connectors = connectorRegions.keySet();
+           System.out.println(_currentRegion);
            while(openRegions.size() > 1){
-               System.out.println("SeySet Size: " + keySet.size());
-               int rand = MathUtils.random(keySet.size() - 1);
+               
+               System.out.println("KeySet Size: " + connectors.size());
+               int rand = MathUtils.random(connectors.size() - 1);
                System.out.println(rand);
-               Object obj = keySet.toArray()[rand];
-               Integer connector = connectorRegions.get(obj).get(0);
+               
+               Object obj = connectors.toArray()[rand];
+               Object connector = connectorRegions.get(obj).toArray()[0];
                Vector2 pos = connectorRegionsPos.get(obj);
                
                mapLayout[(int)pos.x][(int)pos.y] = 0;
                
-               List<Integer>regions = connectorRegions.get(obj);
+               
+               List<Integer>regions = new ArrayList();
+               for(Integer value : connectorRegions.get(obj)){
+                    regions.add(merged.get(value));
+               }
                Integer dest = regions.get(0);
+               
                List<Integer> sources = regions.subList(1, regions.size() - 1);
                
                
                for(int i = 0; i < _currentRegion; i ++){
-                   if(sources.contains(merged[i])){
-                       merged[i] = dest;
+                   if(sources.contains(merged.get(i))){
+                       merged.put(Integer.toString(i), dest);
                    }
                }
                openRegions.removeAll(sources);
                
+               
                for(String key: connectorRegionsPos.keySet()){
                    Vector2 connPos = connectorRegionsPos.get(key);
                    if(pos.sub(connPos).isZero(2)){
-                       keySet.remove(key);
+                       connectors.remove(key);
                    }
                   // if()
                }

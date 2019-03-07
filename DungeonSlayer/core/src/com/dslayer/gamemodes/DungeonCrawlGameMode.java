@@ -76,6 +76,7 @@ public class DungeonCrawlGameMode extends GameMode{
         
         LevelGenerator lg = new LevelGenerator(31, 31);
         lg.setRoom(new DungeonRoom());
+
         lg.generateMap();
         
         //Room dr = new DungeonRoom();
