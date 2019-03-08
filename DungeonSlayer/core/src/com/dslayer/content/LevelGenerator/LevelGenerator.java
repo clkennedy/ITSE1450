@@ -18,9 +18,11 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  *
@@ -123,6 +125,9 @@ public class LevelGenerator {
        for(int i = 0; i < 200; i++){
            int width = MathUtils.random(minimumRoomSize, maximumRoomSize);
            int height = MathUtils.random(minimumRoomSize, maximumRoomSize);
+           
+           if(width % 2 == 0) width += 1;
+           if(height % 2 == 0) height += 1;
            
            int x = MathUtils.random(mapWidth - 1 - width);
            int y = MathUtils.random(mapHeight - 1 - height);   
@@ -245,12 +250,13 @@ public class LevelGenerator {
            }
            
            Set connectors = connectorRegions.keySet();
-           System.out.println(_currentRegion);
+           System.out.println("Current Regionis : " + _currentRegion);
            while(openRegions.size() > 1){
                
-               System.out.println("KeySet Size: " + connectors.size());
+               //System.out.println("KeySet Size: " + connectors.size());
+               //System.out.println("openRegions Size: " + openRegions.size());
                int rand = MathUtils.random(connectors.size() - 1);
-               System.out.println(rand);
+               //System.out.println(rand);
                
                Object obj = connectors.toArray()[rand];
                Object connector = connectorRegions.get(obj).toArray()[0];
@@ -259,21 +265,46 @@ public class LevelGenerator {
                mapLayout[(int)pos.x][(int)pos.y] = 0;
                
                
+               
                List<Integer>regions = new ArrayList();
                for(Integer value : connectorRegions.get(obj)){
-                    regions.add(merged.get(value));
+                   //System.out.println(value);
+                   regions.add((Integer)merged.get(value.toString()));
                }
+               
+               System.out.println("Current Regions");
+               for(Integer i : regions){
+                   System.out.println(i);
+               }
+               
                Integer dest = regions.get(0);
                
-               List<Integer> sources = regions.subList(1, regions.size() - 1);
+               List<Integer> sources = regions.subList(0, regions.size() - 1);
                
                
                for(int i = 0; i < _currentRegion; i ++){
-                   if(sources.contains(merged.get(i))){
+                   if(sources.contains(merged.get(Integer.toString(i)))){
                        merged.put(Integer.toString(i), dest);
                    }
                }
-               openRegions.removeAll(sources);
+               
+               Iterator t = openRegions.iterator();
+               
+               System.out.println("Current open Regions");
+               while(t.hasNext()){
+                   Object i = t.next();
+                   System.out.println(i);
+               }
+               System.out.println("Current Sources");
+               for(Integer i : sources){
+                   System.out.println(i);
+               }
+               
+               for(Integer i : sources){
+                   openRegions.remove(i);
+               }
+               
+               
                
                
                for(String key: connectorRegionsPos.keySet()){
