@@ -1,0 +1,1 @@
+java -Xss8m -jar "desktop-1.0.jar" -Xmx1g
