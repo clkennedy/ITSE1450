@@ -6,6 +6,8 @@
 package com.dslayer.content.Objects.Potions;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Objects.Potion;
@@ -23,7 +25,7 @@ public class HealthPotion2 extends Potion{
     
     protected float recoverAmount;
     
-    
+    private Sound gulp = Gdx.audio.newSound(Gdx.files.internal("Sounds/Gulp.mp3"));
     public HealthPotion2(float x, float y, Stage s) {
         super(x, y, s);
         recoverAmount = 50;
@@ -51,6 +53,7 @@ public class HealthPotion2 extends Potion{
         
         for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
             if(overlaps(player)){
+                gulp.play(Options.soundVolume);
                 if(((Player)player).isLocalPlayer){
                     ((Player)player).recover((int)recoverAmount);
                     remove();

@@ -31,7 +31,7 @@ public class VikingHero extends Hero{
     final static public String DefaultPlayerLeft = "Player\\Deafult Player\\Character_Left.png";
     final static public String DefaultPlayerRight = "Player\\Deafult Player\\Character_Right.png";
     
-    final static public String vikingHero = "Player/Viking/Bjorn.png";
+    final static public String vikingHero = "Player/Viking/Bjorn2.png";
 
     public VikingHero(Animation<TextureRegion> animation) {
         super(animation);

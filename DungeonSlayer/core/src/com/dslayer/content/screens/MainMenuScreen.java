@@ -72,10 +72,10 @@ public class MainMenuScreen extends BaseScreen {
     
     static int currentMenuIndex = -1;
     
-    static Music backgroundMusic;
+    public static Music backgroundMusic;
     
     public static boolean loaded = false;
-    private static boolean musicPlaying = false;
+    public static boolean musicPlaying = false;
     Label multi;
     
     private BitmapFont fontPoint;
@@ -100,11 +100,11 @@ public class MainMenuScreen extends BaseScreen {
         BaseActor.setMainStage(mainStage);
         
         if(!musicPlaying){
-            //backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Shatter Me.mp3"));
-            //backgroundMusic.setLooping(true);
-            //backgroundMusic.setVolume(Options.musicVolume);
-            //backgroundMusic.play();
-            //musicPlaying = true;
+            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/8BitDungTitle.wav"));
+            backgroundMusic.setLooping(true);
+            backgroundMusic.setVolume(Options.musicVolume);
+            backgroundMusic.play();
+            musicPlaying = true;
         }   
         
         
@@ -266,8 +266,8 @@ public class MainMenuScreen extends BaseScreen {
     
     public void multiplayerGame(){
         removeButtons();
-        //backgroundMusic.stop();
-        //musicPlaying = false;
+        backgroundMusic.stop();
+        musicPlaying = false;
         //multiplayerRoomScreen.rejoined = true;
         Multiplayer.baseScreen = new multiplayerRoomScreen();
         Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
@@ -287,8 +287,8 @@ public class MainMenuScreen extends BaseScreen {
     }
     public void quitGame(){
         removeButtons();
-        //backgroundMusic.stop();
-        //musicPlaying = false;
+        backgroundMusic.stop();
+        musicPlaying = false;
         Progress.Save();
         gc();
         Gdx.app.exit();

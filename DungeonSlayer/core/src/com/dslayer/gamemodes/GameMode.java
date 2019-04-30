@@ -6,8 +6,11 @@
 package com.dslayer.gamemodes;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.options.Options;
 
 /**
  *
@@ -19,6 +22,9 @@ public abstract class GameMode {
     
     protected Player player;
     protected Stage mainStage;
+    
+    private static boolean musicPlaying;
+    private static Music gameMusic;
     
     public GameMode(Stage s){
         mainStage = s;
@@ -41,6 +47,30 @@ public abstract class GameMode {
     public boolean isGameOver(){
         return gameOver;
     }
+    
+    public static void playMusic(String songName){
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/" + songName));
+        gameMusic.setLooping(true);
+        gameMusic.setVolume(Options.musicVolume);
+        gameMusic.play();
+        musicPlaying = true;
+    }
+    
+    public static void playMusicOnce(String songName){
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/" + songName));
+        gameMusic.setLooping(false);
+        gameMusic.setVolume(Options.musicVolume);
+        gameMusic.play();
+        //musicPlaying = true;
+    }
+    
+    public static void stopMusic(){
+        if(musicPlaying){
+            gameMusic.stop();
+            musicPlaying = false;
+        }
+    }
+    
     public abstract void setup();
     public abstract void update(float dt);
 }

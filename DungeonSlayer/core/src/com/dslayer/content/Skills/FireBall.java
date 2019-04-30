@@ -6,6 +6,7 @@
 package com.dslayer.content.Skills;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -62,6 +63,12 @@ public class FireBall extends Skill{
         super.act(dt);
         if(!isAction)
             return;
+        if(!isCast && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+            Sound s = Gdx.audio.newSound(Gdx.files.internal("Sounds/FireBallCast.mp3"));
+            s.play(Options.soundVolume);
+            skillHit = Gdx.audio.newSound(Gdx.files.internal("Sounds/BasicDamage.mp3"));
+            isCast = true;
+        }
         getBoundaryPolygon();
         accelerateAtAngle(direction);
         applyPhysics(dt);
@@ -70,6 +77,7 @@ public class FireBall extends Skill{
             for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
                 if(overlaps(player)){
                     ((Player)player).takeDamage((int)damage);
+                    skillHit.play(Options.soundVolume);
                     remove();
                 }
             }
@@ -78,6 +86,7 @@ public class FireBall extends Skill{
             for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                 if(overlaps(enemy)){
                     ((BaseEnemy)enemy).takeDamage((int)damage, player);
+                    skillHit.play(Options.soundVolume);
                     remove();
                 }
             }
@@ -106,8 +115,8 @@ public class FireBall extends Skill{
                 canCast = false;
         if(from == Skill.From.Player){
             ((Skill)b).player = ((Player)caster);
-        }
-                
+            
+        }     
     }
     
     public FireBall isProjectile(){

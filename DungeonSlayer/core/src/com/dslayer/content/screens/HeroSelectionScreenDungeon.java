@@ -167,6 +167,10 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
 	
     public void startGame(){
         LevelScreen l = new LevelScreen();
+        if(MainMenuScreen.musicPlaying){
+            MainMenuScreen.backgroundMusic.stop();
+            MainMenuScreen.musicPlaying = false;
+        }
         l.setGameMode(new DungeonCrawlGameMode());
         BaseGame.setActiveScreen(l);
     }

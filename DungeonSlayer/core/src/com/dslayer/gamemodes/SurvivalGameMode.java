@@ -100,6 +100,8 @@ public class SurvivalGameMode extends GameMode{
         BaseActor.getUiStage().addActor(pointTable);
         gm = new GameMessage();
         gm.AddMessage("Welcome");
+        
+        playMusic("8BitDungSurvival.wav");
     }
     @Override
     public void update(float dt) {
@@ -109,6 +111,8 @@ public class SurvivalGameMode extends GameMode{
                 gm.AddMessage("Game Over");
                 gm.AddMessage("Total Points: " + player.getPoints());
                 goSent = true;
+                stopMusic();
+                playMusicOnce("Death_Game_Over_.mp3");
             }
             if(player.isAnimationFinished() && gm.isEmpty()){
                 gameOver = true;

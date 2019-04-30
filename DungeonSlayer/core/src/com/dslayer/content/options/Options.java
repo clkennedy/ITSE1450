@@ -236,6 +236,10 @@ public class Options extends BaseScreen{
         if(musicVolume < 0){
             musicVolume = 0f;
         }
+        
+        if(MainMenuScreen.musicPlaying){
+            MainMenuScreen.backgroundMusic.setVolume(musicVolume);
+        }
         lMusicVol.setText(Integer.toString((int)(musicVolume * 10)));
     }
     
@@ -248,6 +252,11 @@ public class Options extends BaseScreen{
         if(musicVolume < 0){
             musicVolume = 0f;
         }
+        
+        if(MainMenuScreen.musicPlaying){
+            MainMenuScreen.backgroundMusic.setVolume(musicVolume);
+        }
+        
         lMusicVol.setText(Integer.toString((int)(musicVolume * 10)));
     }
     

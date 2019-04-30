@@ -28,6 +28,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -69,6 +70,10 @@ public class LogoScreen extends BaseScreen {
        Logo.centerAtPosition(Gdx.graphics.getWidth() / 2,Gdx.graphics.getHeight()/ 2);
        Logo.setOpacity(0);
        Logo.addAction(Actions.fadeIn(2f));
+       
+       Sound s = Gdx.audio.newSound(Gdx.files.internal("Sounds/Fire Crackers.wav"));
+       
+       s.play(Options.soundVolume);
        
        mainStage.addActor(Logo);
     }

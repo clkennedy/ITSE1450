@@ -34,6 +34,8 @@ import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Options;
 import com.dslayer.content.options.Unlocks;
 import static com.dslayer.content.options.Unlocks.currentAvatar;
+import static com.dslayer.content.screens.MainMenuScreen.backgroundMusic;
+import static com.dslayer.content.screens.MainMenuScreen.musicPlaying;
 import com.dslayer.gamemodes.GameMode;
 import com.dslayer.gamemodes.SurvivalGameMode;
 import java.util.List;
@@ -166,6 +168,10 @@ public class HeroSelectionScreen extends BaseScreen {
 	
     public void startGame(){
         LevelScreen l = new LevelScreen();
+        if(MainMenuScreen.musicPlaying){
+            MainMenuScreen.backgroundMusic.stop();
+            MainMenuScreen.musicPlaying = false;
+        }
         l.setGameMode(new SurvivalGameMode());
         BaseGame.setActiveScreen(l);
     }

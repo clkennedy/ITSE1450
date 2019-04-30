@@ -7,6 +7,7 @@ package com.dslayer.content.Skills;
 
 import com.atkinson.game.engine.BaseActor;
 import com.atkinson.game.engine.BaseGame;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -45,6 +46,10 @@ public abstract class Skill extends BaseActor{
     public boolean trackCD = true;
     
     public Player player;
+    
+    protected boolean isCast = false;
+    protected Sound skillSound;
+    protected Sound skillHit;
     
     public Skill(){
         super();

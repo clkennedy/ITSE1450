@@ -7,6 +7,7 @@ package com.dslayer.content.Enemy;
 
 import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -23,6 +24,7 @@ import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
+import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.RoomFloor;
 import com.dslayer.content.Skills.Skill;
@@ -78,6 +80,8 @@ public abstract class BaseEnemy extends BaseActor{
     
     protected boolean canMove = true;
     
+    private Sound footSteps;
+    
     public static BaseEnemy getNewEnemy(type en,float x,float y){
         switch (en) {
             case SkeletionWarrior:
@@ -104,6 +108,13 @@ public abstract class BaseEnemy extends BaseActor{
         size = 50 * Options.aspectRatio;
         moveTo = new Vector2();
         healthBar = new Rectangle(x, y, maxHealth , 5);
+        
+        footSteps = Gdx.audio.newSound(Gdx.files.internal("Sounds/footsteps_concrete_.mp3"));
+        footSteps.loop(Options.soundVolume * .3f);
+        footSteps.pause();
+        
+        EscapeMenu.addSoundToPause(footSteps);
+        
     }
     
     public void setCanMove(boolean b){
@@ -258,12 +269,20 @@ public abstract class BaseEnemy extends BaseActor{
     
     public boolean isDead(){
         return this.health - damageTaken <= 0;
+        
     }
     @Override
     public void act(float dt){
         super.act(dt);
         calculateHealth(dt);
+        if(isMoving() && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+            footSteps.resume();
+        }
+        else{
+            footSteps.pause();
+        }
         if(isDead() && !isDying){
+            footSteps.stop();
             die();
         }
         if(isDying && isAnimationFinished()){
@@ -287,6 +306,8 @@ public abstract class BaseEnemy extends BaseActor{
     }
     @Override
     public boolean remove(){
+        footSteps.stop();
+        EscapeMenu.removeSoundToPause(footSteps);
         if(attack != null)
             attack.dispose();
         if(walk != null)

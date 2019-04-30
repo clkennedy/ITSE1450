@@ -12,6 +12,7 @@ import com.atkinson.game.engine.PlayerControls;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -92,6 +93,8 @@ public class Player extends BaseActor{
     
     private int points = 0;
     
+    private Sound footSteps;
+    
     public Player(float x, float y, Stage s){
         super(x,y,s);
         
@@ -112,7 +115,9 @@ public class Player extends BaseActor{
         
         resetCoords = new Vector2(x, y);
         
-        
+        footSteps = Gdx.audio.newSound(Gdx.files.internal("Sounds/footsteps_concrete_.mp3"));
+        footSteps.loop(Options.soundVolume * .3f);
+        footSteps.pause();
        // setAnimation(Unlocks.currentAvatar.getAnim());\
         if(Multiplayer.socket != null && Multiplayer.socket.connected()){
             hero = MultiplayerHeroSelectionScreen.currentSelection;
@@ -406,6 +411,13 @@ public class Player extends BaseActor{
     public void act(float dt){
         super.act(dt);
         hero.act(dt);
+        
+        if(isMoving){
+            footSteps.resume();
+        }else{
+            footSteps.pause();
+        }
+        
         if(!isLocalPlayer){
             healthBar.x = (getX()) + ((getWidth()/2) - (healthBar.width /2));
             healthBar.y = getY() + getHeight();
@@ -559,8 +571,14 @@ public class Player extends BaseActor{
             if(obj.boundaryPolygon == null || (ignoreRoomObjects && obj instanceof RoomObject) || (obj instanceof RoomFloor)){
                 continue;
             }
-            //preventOverlap(obj);
+            preventOverlap(obj);
         }
+    }
+    
+    @Override
+    public boolean remove(){
+        footSteps.stop();
+        return super.remove();
     }
     
     public boolean directionChanged(){

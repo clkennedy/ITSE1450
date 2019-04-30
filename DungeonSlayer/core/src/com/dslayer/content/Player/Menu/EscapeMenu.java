@@ -9,6 +9,7 @@ import com.atkinson.game.engine.BaseActor;
 import com.atkinson.game.engine.BaseGame;
 import com.atkinson.game.engine.Hover;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -21,6 +22,9 @@ import com.badlogic.gdx.utils.Align;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Options;
 import com.dslayer.content.screens.MainMenuScreen;
+import com.dslayer.gamemodes.GameMode;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -30,6 +34,8 @@ public class EscapeMenu extends BaseActor{
     
     public static final String[] scroll = {"Scroll/scroll1.png", "Scroll/scroll2.png", "Scroll/scroll3.png", "Scroll/scroll4.png", "Scroll/scroll5.png"
     , "Scroll/scroll6.png", "Scroll/scroll7.png", "Scroll/scroll8.png", "Scroll/scroll9.png", "Scroll/scroll10.png", "Scroll/scroll11.png", "Scroll/scroll12.png"};
+    
+    private static List<Sound> soundsToPause = new ArrayList<Sound>();
     
     private EscapeMenu(){
         
@@ -76,10 +82,29 @@ public class EscapeMenu extends BaseActor{
         setPosition((s.getCamera().viewportWidth /2) - (getWidth()/2),(s.getCamera().viewportHeight /2)- (getHeight()/2));
         this.addActor(mainMenu);
         setZIndex(1000);
+        
+        for(Sound snd : soundsToPause){
+            snd.pause();
+        }
         //s.addActor(this);
     }
     
     private void mainMenu(){
+        GameMode.stopMusic();
         BaseGame.setActiveScreen(new MainMenuScreen());
+    }
+    @Override
+    public boolean remove(){
+        for(Sound s : soundsToPause){
+            s.resume();
+        }
+        return super.remove();
+    }
+    
+    public static boolean addSoundToPause(Sound s){
+        return soundsToPause.add(s);
+    }
+    public static boolean removeSoundToPause(Sound s){
+        return soundsToPause.remove(s);
     }
 }

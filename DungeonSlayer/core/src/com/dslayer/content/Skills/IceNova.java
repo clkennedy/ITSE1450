@@ -6,10 +6,13 @@
 package com.dslayer.content.Skills;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
+import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Options;
@@ -70,6 +73,14 @@ public class IceNova extends Skill{
         super.act(dt);
         if(!isAction)
             return;
+        
+        if(!isCast && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+            skillSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/IceStorm.wav"));
+            skillSound.play(Options.soundVolume);
+            EscapeMenu.addSoundToPause(skillSound);
+            isCast = true;
+        }
+        
         this.centerAtActor(caster);
         getBoundaryPolygon();
         setRotation( (getRotation() + 1 > 350)? 0 : getRotation() + 1);
@@ -93,6 +104,8 @@ public class IceNova extends Skill{
         }
         durationTimer += dt;
         if(durationTimer > duration){
+            skillSound.stop();
+            EscapeMenu.removeSoundToPause(skillSound);
             remove();
         }
         

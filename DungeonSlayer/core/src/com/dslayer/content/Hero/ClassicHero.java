@@ -30,7 +30,7 @@ public class ClassicHero extends Hero{
     final static public String DefaultPlayerLeft = "Player\\Deafult Player\\Character_Left.png";
     final static public String DefaultPlayerRight = "Player\\Deafult Player\\Character_Right.png";
     
-    final static public String ClassicHero = "Player/Classic Hero/William.png";
+    final static public String ClassicHero = "Player/Classic Hero/witch.png";
 
     public ClassicHero(Animation<TextureRegion> animation) {
         super(animation);
@@ -45,10 +45,10 @@ public class ClassicHero extends Hero{
         //Right = Avatars.load(DefaultPlayerRight, 1, 4, .2f, true);
         setAnimation(Right);
         setBoundaryRectangle();
-        heroName = "William";
+        heroName = "Keridwen";
         
         walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
-        castBasicAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.slash, .05f);
+        castBasicAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.thrust, .05f);
         castAltAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.cast, .15f);
         dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);
     }
