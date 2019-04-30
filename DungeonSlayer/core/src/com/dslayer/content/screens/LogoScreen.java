@@ -58,7 +58,7 @@ public class LogoScreen extends BaseScreen {
     
     BaseActor Logo;
     
-    float displayTime = 6f;
+    float displayTime = 4f;
     float timer = 0f;
     
     public void initialize()
