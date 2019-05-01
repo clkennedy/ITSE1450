@@ -53,7 +53,7 @@ public class HealthPotion2 extends Potion{
         
         for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
             if(overlaps(player)){
-                gulp.play(Options.soundVolume);
+                gulp.play(Options.soundVolume * 2f);
                 if(((Player)player).isLocalPlayer){
                     ((Player)player).recover((int)recoverAmount);
                     remove();

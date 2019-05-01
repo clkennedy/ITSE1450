@@ -78,6 +78,7 @@ public class IceNova extends Skill{
             skillSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/IceStorm.wav"));
             skillSound.play(Options.soundVolume);
             EscapeMenu.addSoundToPause(skillSound);
+            skillHit = Gdx.audio.newSound(Gdx.files.internal("Sounds/BasicDamage.mp3"));
             isCast = true;
         }
         
@@ -90,6 +91,7 @@ public class IceNova extends Skill{
                 for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
                     if(overlaps(player)){
                         ((Player)player).takeDamage((int)damage);
+                        skillHit.play(Options.soundVolume);
                     }
                 }
             }
@@ -97,6 +99,7 @@ public class IceNova extends Skill{
                 for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                     if(overlaps(enemy)){
                         ((BaseEnemy)enemy).takeDamage((int)damage, player);
+                        skillHit.play(Options.soundVolume);
                     }
                 }
             }
