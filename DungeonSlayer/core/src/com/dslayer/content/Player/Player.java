@@ -41,6 +41,8 @@ import org.json.JSONObject;
  */
 public class Player extends BaseActor{
     
+    private boolean ignoreRoomObjects = true;
+    
     public boolean isLocalPlayer = true;
     
     public String UserName;
@@ -83,7 +85,7 @@ public class Player extends BaseActor{
     
     private boolean isMoving = false;
     private Vector2 resetCoords;
-    private boolean ignoreRoomObjects = false;
+    
     
     public static enum direction{up, down, left, right};
     public direction dir;

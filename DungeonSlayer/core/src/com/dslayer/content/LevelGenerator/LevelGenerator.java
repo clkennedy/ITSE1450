@@ -228,10 +228,16 @@ public class LevelGenerator {
                Set<Integer> regions = new HashSet<Integer>() ;
                
                for(int i = 0; i < Directions.size(); i++){
-                   Vector2 region = new Vector2(r,c).add(Directions.get(i));
-                   if(region.x < 0 || region.y < 0 || region.x >= mapWidth || region.y >= mapHeight) continue;
+                   Vector2 region = new Vector2(r,c).add(Directions.get(i)).add(Directions.get(i));
+                   if(region.x < 0 || region.y < 0 || region.x >= mapWidth || region.y >= mapHeight){
+                       continue;
+                   }
                    if(mapRegions[(int)region.x][(int)region.y] != null){
                        regions.add(mapRegions[(int)region.x][(int)region.y]);
+                       region = region.sub(Directions.get(i));
+                       if(mapRegions[(int)region.x][(int)region.y] != null){
+                            regions.add(mapRegions[(int)region.x][(int)region.y]);
+                       }
                    }
                }
                
@@ -268,7 +274,7 @@ public class LevelGenerator {
                
                List<Integer>regions = new ArrayList();
                for(Integer value : connectorRegions.get(obj)){
-                   //System.out.println(value);
+                   System.out.println("value: " + value);
                    regions.add((Integer)merged.get(value.toString()));
                }
                
