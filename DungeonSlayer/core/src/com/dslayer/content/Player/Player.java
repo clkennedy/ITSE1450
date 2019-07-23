@@ -570,7 +570,7 @@ public class Player extends BaseActor{
         //wall Collison
         ArrayList<BaseActor> allRoomObjects = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels");
         for(BaseActor obj: allRoomObjects){
-            if(obj.boundaryPolygon == null || (ignoreRoomObjects && obj instanceof RoomObject) || (obj instanceof RoomFloor)){
+            if(obj.boundaryPolygon == null || (ignoreRoomObjects && (obj instanceof RoomObject || obj instanceof RoomFloor))){
                 continue;
             }
             preventOverlap(obj);

@@ -220,18 +220,38 @@ public class LevelGenerator {
        }
    }
    
+   private void drawMapRegions(){
+       for(int i = 0; i < this.mapLayout.length; i++){
+            System.out.print("[");
+            for(int j = 0; j < this.mapLayout[i].length; j++){
+                System.out.print(((mapRegions[i][j] == null)? "-" : mapRegions[i][j]) + " | ");
+            }
+            System.out.println("]");
+        }
+   }
+   private void drawMapLayout(){
+       for(int i = 0; i < this.mapLayout.length; i++){
+            System.out.print("[");
+            for(int j = 0; j < this.mapLayout[i].length; j++){
+                System.out.print(((mapLayout[i][j] == null)? "-" : String.format("%02d",mapLayout[i][j])) + " | ");
+            }
+            System.out.println("]");
+        }
+   }
+   
    private void connectRegions(){
        Map<String, Set<Integer>> connectorRegions = new HashMap();
        Map<String, Vector2> connectorRegionsPos = new HashMap();
        Map<String, Vector2> connectorRegionsDir = new HashMap();
-       for(int r = 0; r < mapRegions.length; r++){
-           for (int c = 0; c < mapRegions[r].length; c++) {
-               //if(mapLayout[r][c] != _room.getFillerObjectKey()) continue;
+       drawMapLayout();
+       for(int r = 1; r < mapRegions.length - 1; r++){
+           for (int c = 1; c < mapRegions[r].length - 1; c++) {
+               if(mapLayout[r][c] != 0 && mapLayout[r][c] != _room.getFillerObjectKey()) continue;
                
                Set<Integer> regions = new HashSet<Integer>() ;
                Vector2 dir = Directions.get(0);
                for(int i = 0; i < Directions.size(); i++){
-                   Vector2 region = new Vector2(r,c).add(Directions.get(i)).add(Directions.get(i));
+                   Vector2 region = new Vector2(r,c).add(Directions.get(i));
                    if(region.x < 0 || region.y < 0 || region.x >= mapWidth || region.y >= mapHeight){
                        continue;
                    }
@@ -263,8 +283,8 @@ public class LevelGenerator {
            System.out.println("Current Region is : " + _currentRegion);
            while(openRegions.size() > 1){
                
-               //System.out.println("KeySet Size: " + connectors.size());
-               //System.out.println("openRegions Size: " + openRegions.size());
+               System.out.println("KeySet Size: " + connectors.size());
+               System.out.println("openRegions Size: " + openRegions.size());
                int rand = MathUtils.random(connectors.size() - 1);
                //System.out.println("Selected Index: "+rand);
                
@@ -294,10 +314,10 @@ public class LevelGenerator {
                    regions.add((Integer)merged.get(value.toString()));
                }
                
-              /* System.out.println("Current Regions");
+               System.out.println("Current Regions");
                for(Integer i : regions){
                    System.out.println(i);
-               }*/
+               }
                
                Integer dest = regions.get(0);
                
@@ -312,7 +332,7 @@ public class LevelGenerator {
                
                Iterator t = openRegions.iterator();
                
-               /*System.out.println("Current open Regions");
+               System.out.println("Current open Regions");
                while(t.hasNext()){
                    Object i = t.next();
                    System.out.println(i);
@@ -324,7 +344,7 @@ public class LevelGenerator {
                
                for(Integer i : sources){
                    openRegions.remove(i);
-               }*/
+               }
                
                for(String key: connectorRegionsPos.keySet()){
                    Vector2 connPos = connectorRegionsPos.get(key);
