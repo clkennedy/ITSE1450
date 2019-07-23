@@ -90,9 +90,9 @@ public class LevelGenerator {
    public void draw(Stage stage){
        BaseActor temp = new RoomPanels();
         for(int i = 0; i < this.mapLayout.length; i++){
-            //System.out.print("[");
+            System.out.print("[");
             for(int j = 0; j < this.mapLayout[i].length; j++){
-                //System.out.print(mapLayout[i][j] + " | ");
+                System.out.print(((mapRegions[i][j] == null)? "-" : mapRegions[i][j]) + " | ");
                 temp = _room.Map(this.mapLayout[i][j]);
                 if(temp == null)
                     continue;
@@ -100,13 +100,13 @@ public class LevelGenerator {
                 temp.getBoundaryPolygon();
                 stage.addActor(temp);
             }
-            //System.out.println("]");
+            System.out.println("]");
         }
    }
    
    public void generateMap(){
        mapRooms();
-       System.out.println("Current R: " + _currentRegion);
+       System.out.println("Current Region: " + _currentRegion);
        for(int y = 1; y < mapHeight; y += 2 ){
            for(int x = 1; x < mapWidth; x += 2 ){
                if(mapLayout[x][y] != _room.getFillerObjectKey()){
@@ -116,7 +116,7 @@ public class LevelGenerator {
                mapMaze(x, y);
            }
        }
-       System.out.println("Current R: " + _currentRegion);
+       System.out.println("Current Region: " + _currentRegion);
        connectRegions();
        
    }
@@ -161,7 +161,7 @@ public class LevelGenerator {
                col = 0;
            }
        }
-       System.out.println("Rooms: " + _rooms.size());
+       System.out.println("Generated Rooms: " + _rooms.size());
    }
    
    private void mapMaze(int x, int y){
@@ -206,6 +206,8 @@ public class LevelGenerator {
                
                mapLayout[(int)(currentCell.x + dir.x)][(int)(currentCell.y + dir.y)] = 0;
                mapLayout[(int)(currentCell.x + dir.x * 2)][(int)(currentCell.y + dir.y * 2)] = 0;
+               mapRegions[(int)(currentCell.x + dir.x)][(int)(currentCell.y + dir.y)] = _currentRegion;
+               mapRegions[(int)(currentCell.x + dir.x * 2)][(int)(currentCell.y + dir.y * 2)] = _currentRegion;
                
                cells.add(new Vector2(currentCell.x + dir.x * 2, currentCell.y + dir.y * 2));
                lastDir = dir;
@@ -221,12 +223,13 @@ public class LevelGenerator {
    private void connectRegions(){
        Map<String, Set<Integer>> connectorRegions = new HashMap();
        Map<String, Vector2> connectorRegionsPos = new HashMap();
+       Map<String, Vector2> connectorRegionsDir = new HashMap();
        for(int r = 0; r < mapRegions.length; r++){
            for (int c = 0; c < mapRegions[r].length; c++) {
-               if(mapLayout[r][c] == 00 || mapLayout[r][c] == _room.getFillerObjectKey()) continue;
+               //if(mapLayout[r][c] != _room.getFillerObjectKey()) continue;
                
                Set<Integer> regions = new HashSet<Integer>() ;
-               
+               Vector2 dir = Directions.get(0);
                for(int i = 0; i < Directions.size(); i++){
                    Vector2 region = new Vector2(r,c).add(Directions.get(i)).add(Directions.get(i));
                    if(region.x < 0 || region.y < 0 || region.x >= mapWidth || region.y >= mapHeight){
@@ -234,10 +237,10 @@ public class LevelGenerator {
                    }
                    if(mapRegions[(int)region.x][(int)region.y] != null){
                        regions.add(mapRegions[(int)region.x][(int)region.y]);
-                       region = region.sub(Directions.get(i));
-                       if(mapRegions[(int)region.x][(int)region.y] != null){
-                            regions.add(mapRegions[(int)region.x][(int)region.y]);
-                       }
+                   }
+                   if(regions.size() >= 2){
+                       dir = Directions.get(i);
+                       break;
                    }
                }
                
@@ -245,6 +248,7 @@ public class LevelGenerator {
                
                connectorRegions.put(r + "," + c, regions);
                connectorRegionsPos.put(r + "," + c, new Vector2(r,c));
+               connectorRegionsDir.put(r + "," + c, dir);
            }
         }
            
@@ -256,32 +260,44 @@ public class LevelGenerator {
            }
            
            Set connectors = connectorRegions.keySet();
-           System.out.println("Current Regionis : " + _currentRegion);
+           System.out.println("Current Region is : " + _currentRegion);
            while(openRegions.size() > 1){
                
                //System.out.println("KeySet Size: " + connectors.size());
                //System.out.println("openRegions Size: " + openRegions.size());
                int rand = MathUtils.random(connectors.size() - 1);
-               //System.out.println(rand);
+               //System.out.println("Selected Index: "+rand);
                
                Object obj = connectors.toArray()[rand];
                Object connector = connectorRegions.get(obj).toArray()[0];
                Vector2 pos = connectorRegionsPos.get(obj);
+               Vector2 tmpPos = new Vector2(pos.x, pos.y);
+               Vector2 dir = connectorRegionsDir.get(obj);
                
-               mapLayout[(int)pos.x][(int)pos.y] = 0;
-               
-               
+               //System.out.println("Position: "+tmpPos);
+               mapLayout[(int)tmpPos.x][(int)tmpPos.y] = 0;
+               boolean foundFloor = false;
+               while(!foundFloor){
+                   tmpPos.add(dir);
+                   mapLayout[(int)tmpPos.x][(int)tmpPos.y] = 0;
+                   if((mapLayout[(int)tmpPos.x + 1][(int)tmpPos.y] == 0)
+                           || (mapLayout[(int)tmpPos.x - 1][(int)tmpPos.y] == 0)
+                           || (mapLayout[(int)tmpPos.x][(int)tmpPos.y + 1] == 0)
+                           || (mapLayout[(int)tmpPos.x][(int)tmpPos.y - 1] == 0)){
+                       foundFloor = true;
+                   }
+               }
                
                List<Integer>regions = new ArrayList();
                for(Integer value : connectorRegions.get(obj)){
-                   System.out.println("value: " + value);
+                   //System.out.println("value: " + value);
                    regions.add((Integer)merged.get(value.toString()));
                }
                
-               System.out.println("Current Regions");
+              /* System.out.println("Current Regions");
                for(Integer i : regions){
                    System.out.println(i);
-               }
+               }*/
                
                Integer dest = regions.get(0);
                
@@ -296,7 +312,7 @@ public class LevelGenerator {
                
                Iterator t = openRegions.iterator();
                
-               System.out.println("Current open Regions");
+               /*System.out.println("Current open Regions");
                while(t.hasNext()){
                    Object i = t.next();
                    System.out.println(i);
@@ -308,14 +324,12 @@ public class LevelGenerator {
                
                for(Integer i : sources){
                    openRegions.remove(i);
-               }
-               
-               
-               
+               }*/
                
                for(String key: connectorRegionsPos.keySet()){
                    Vector2 connPos = connectorRegionsPos.get(key);
-                   if(pos.sub(connPos).isZero(2)){
+                   tmpPos = new Vector2(pos.x, pos.y);
+                   if(tmpPos.sub(connPos).isZero(2)){
                        connectors.remove(key);
                    }
                   // if()
