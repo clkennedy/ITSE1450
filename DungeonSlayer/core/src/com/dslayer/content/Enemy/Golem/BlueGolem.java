@@ -77,8 +77,8 @@ public class BlueGolem extends BaseGolem{
             JSONObject data = new JSONObject();
             try{
                 data.put("id",this.network_id);
-                data.put("x", x);
-                data.put("y", y);
+                data.put("x", x / Options.aspectRatio);
+                data.put("y", y / Options.aspectRatio);
                 data.put("type", type.BlueGolem.ordinal());
                 Multiplayer.socket.emit("enemyCreated", data);
             }

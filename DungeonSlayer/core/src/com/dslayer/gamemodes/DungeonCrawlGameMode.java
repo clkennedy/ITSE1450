@@ -75,8 +75,9 @@ public class DungeonCrawlGameMode extends GameMode{
         Multiplayer.host = true;
         
         LevelGenerator lg = new LevelGenerator(31, 31);
+        lg.setDefaultSize(30);
         lg.setRoom(new DungeonRoom());
-
+        
         lg.generateMap();
         
         //Room dr = new DungeonRoom();
@@ -93,7 +94,15 @@ public class DungeonCrawlGameMode extends GameMode{
         //player = new Player(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
                        // MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
         
-         player = new Player(50,50, mainStage);
+        Room spawnRoom = lg.getRandomNonBossRoom();
+        
+        int spawnX = MathUtils.random((int)spawnRoom.getRoomX() + 1, (int)spawnRoom.getRoomX() + (int)spawnRoom.getRoomWidth() - 1);
+        int spawnY = MathUtils.random((int)spawnRoom.getRoomY() + 1, (int)spawnRoom.getRoomY() + (int)spawnRoom.getRoomHeight() - 1);
+        
+        spawnX *= (int)lg.getDefaultSize();
+        spawnY *= (int)lg.getDefaultSize();
+        
+        player = new Player(spawnX,spawnY, mainStage);
         player.setHero(HeroSelectionScreenDungeon.currentSelection);
         Label u = new Label(player.hero.getName() +": ", MainMenuScreen.pointStyle);
         u.setAlignment(Align.left);

@@ -6,6 +6,9 @@
 package com.dslayer.content.Rooms;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.dslayer.content.options.Options;
 
 /**
@@ -13,8 +16,8 @@ import com.dslayer.content.options.Options;
  * @author cameron.kennedy
  */
 public class RoomPanels extends BaseActor{
-    public static final float defaultSize = 50;
-    
+    private static final float originalDefaultSize = 50;
+    public static float defaultSize = 50;
     
     protected BaseActor DefaultSize(){
         setScale(1f);
@@ -22,4 +25,23 @@ public class RoomPanels extends BaseActor{
         
         return this;
     }
+    
+    public static void setDefaultSize(float size){
+        defaultSize = size;
+    }
+    public static float getDefaultSize(){
+        return defaultSize;
+    }
+     public static void resetDefaultSize(){
+        defaultSize = originalDefaultSize;
+    }
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+    }
+    @Override
+    public void act(float dt){
+         super.act(dt);
+    }
+     
 }

@@ -41,7 +41,7 @@ public class BaseActor extends Group {
     public String network_id;
     
     //debugging stuff (custom)
-    protected static boolean debug = false;
+    protected static boolean debug = true;
     protected ShapeRenderer sRend;
     // Animation support
     protected Animation<TextureRegion> animation;

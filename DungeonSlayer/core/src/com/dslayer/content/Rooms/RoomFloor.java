@@ -12,6 +12,8 @@ import com.atkinson.game.engine.BaseActor;
  *
  * @author cameron.kennedy
  */
-public class RoomFloor extends RoomPanels{
+public abstract class RoomFloor extends RoomPanels{
+    
+    public abstract String getFloorTexture();
     
 }

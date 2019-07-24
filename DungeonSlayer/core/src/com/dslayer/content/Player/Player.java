@@ -28,9 +28,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import java.util.ArrayList;
 import com.dslayer.content.Hero.*;
+import com.dslayer.content.Inventory.Backpack;
+import com.dslayer.content.Inventory.Items.Items;
 import com.dslayer.content.Rooms.Dungeon.DungeonObject;
 import com.dslayer.content.Rooms.RoomFloor;
 import com.dslayer.content.Rooms.RoomObject;
+import com.dslayer.content.Rooms.RoomPanels;
+import com.dslayer.content.Rooms.RoomWall;
 import com.dslayer.content.screens.HeroSelectionScreen;
 import com.dslayer.content.screens.MultiplayerHeroSelectionScreen;
 import org.json.JSONObject;
@@ -97,6 +101,8 @@ public class Player extends BaseActor{
     
     private Sound footSteps;
     
+    private Backpack _backpack;
+    
     public Player(float x, float y, Stage s){
         super(x,y,s);
         
@@ -145,6 +151,10 @@ public class Player extends BaseActor{
     
     public void setIgnoreRoomObjects(boolean b){
         ignoreRoomObjects = b;
+    }
+    
+    public boolean inventoryContains(Class<? extends Items> cls){
+        return _backpack.containsItem(cls);
     }
     
     public void takeDamage(int damage){
@@ -570,10 +580,10 @@ public class Player extends BaseActor{
         //wall Collison
         ArrayList<BaseActor> allRoomObjects = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels");
         for(BaseActor obj: allRoomObjects){
-            if(obj.boundaryPolygon == null || (ignoreRoomObjects && (obj instanceof RoomObject || obj instanceof RoomFloor))){
+            if(obj.boundaryPolygon == null || (ignoreRoomObjects && obj instanceof RoomObject)  || obj instanceof RoomFloor ){
                 continue;
             }
-            preventOverlap(obj);
+            //preventOverlap(obj);
         }
     }
     

@@ -17,15 +17,20 @@ import com.dslayer.content.options.Options;
  */
 public class DungeonFloor extends RoomFloor{
     
-    private static String dPillar = "Rooms/Dungeon/Floor.png";
+    private static String dFloor = "Rooms/Dungeon/Floor.png";
     
     public DungeonFloor(){
         super();
         //texture = new Texture(Gdx.files.internal(dHole));
-        loadTexture(dPillar);
+        loadTexture(dFloor);
         DefaultSize();
         setBoundaryRectangle();
         
+    }
+    
+    @Override
+    public String getFloorTexture(){
+        return dFloor;
     }
     
 }

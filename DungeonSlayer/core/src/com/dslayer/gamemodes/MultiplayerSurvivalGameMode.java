@@ -31,6 +31,7 @@ import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.screens.MainMenuScreen;
 import com.dslayer.content.screens.MutliplayerLobbyScreen;
 import com.dslayer.content.screens.multiplayerRoomScreen;
@@ -158,7 +159,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         
         Multiplayer.socket.emit("getRoomPlayersGame");
         
-        player = new Player(100, 100, mainStage);
+        player = new Player(100 * Options.aspectRatio, 100 * Options.aspectRatio, mainStage);
         player.network_id = Multiplayer.myID;
         player.UserName = Multiplayer.myUserName;
         
@@ -179,8 +180,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         //player = new Player(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
         JSONObject data = new JSONObject();
         try{
-            data.put("targetX", player.getX());
-            data.put("targetY", player.getY());
+            data.put("targetX", player.getX() / Options.aspectRatio);
+            data.put("targetY", player.getY() / Options.aspectRatio);
             data.put("dir", player.dir.ordinal());
             Multiplayer.socket.emit("updateHeroPosition", data);
         }catch(Exception e){
@@ -283,8 +284,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                 //p.updatePos(mv.x, mv.y);
                 f += dt;
                 float delta = MathUtils.clamp(updatePlayerTimer / f, 0, 1);
-                 p.updatePos(MathUtils.lerp(op.x, mv.x,  delta),
-                         MathUtils.lerp(op.y, mv.y,  delta));
+                 p.updatePos(MathUtils.lerp(op.x * Options.aspectRatio, mv.x * Options.aspectRatio,  delta),
+                         MathUtils.lerp(op.y * Options.aspectRatio, mv.y * Options.aspectRatio,  delta));
                  
                 f = MathUtils.clamp(f, 0, 1);
                 OtherPlayersTimer.put(id, f);
@@ -302,12 +303,12 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         }
         
         for(skillInfo info: heroCast){
-            OtherPlayers.get(info.id).cast(info.targetX, info.targetY, info.skill);
+            OtherPlayers.get(info.id).cast((int)(info.targetX * Options.aspectRatio), (int)(info.targetY * Options.aspectRatio), info.skill);
         }
         heroCast.clear();
         
         for(enemyInfo enemy : enemiesToSpawn){
-            BaseEnemy e = BaseEnemy.getNewEnemy(BaseEnemy.type.values()[enemy.type], enemy.X, enemy.Y);
+            BaseEnemy e = BaseEnemy.getNewEnemy(BaseEnemy.type.values()[enemy.type], enemy.X * Options.aspectRatio, enemy.Y * Options.aspectRatio);
             e.network_id = enemy.id;
             if(e instanceof BlueGolem){
                 gm.AddMessage("Blue Golem Appeared");
@@ -324,7 +325,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         
         
         for(enemyInfo enemy : healthPotsToSpawn){
-            BaseActor e = new HealthPotion2(enemy.X, enemy.Y, mainStage);
+            BaseActor e = new HealthPotion2(enemy.X * Options.aspectRatio, enemy.Y * Options.aspectRatio, mainStage);
             e.network_id = enemy.id;
             gameObjects.put(enemy.id, e);
         }
@@ -348,8 +349,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             updatePlayerTime = 0;
             JSONObject data = new JSONObject();
             try{
-                data.put("targetX", player.getX());
-                data.put("targetY", player.getY());
+                data.put("targetX", player.getX() / Options.aspectRatio);
+                data.put("targetY", player.getY() / Options.aspectRatio);
                 data.put("dir", player.dir.ordinal());
                 Multiplayer.socket.emit("updateHeroPosition", data);
             }catch(Exception e){
@@ -379,10 +380,10 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                     JSONObject d = new JSONObject();
                     try{
                         d.put("id", ((BaseEnemy) b).network_id);
-                        d.put("curX", ((BaseEnemy) b).getX());
-                        d.put("curY", ((BaseEnemy) b).getY());
-                        d.put("tarX", ((BaseEnemy) b).moveTo.x);
-                        d.put("tarY", ((BaseEnemy) b).moveTo.y);
+                        d.put("curX", ((BaseEnemy) b).getX() / Options.aspectRatio);
+                        d.put("curY", ((BaseEnemy) b).getY() / Options.aspectRatio);
+                        d.put("tarX", ((BaseEnemy) b).moveTo.x / Options.aspectRatio);
+                        d.put("tarY", ((BaseEnemy) b).moveTo.y / Options.aspectRatio);
                     }catch(Exception e){
                         System.out.println("Couldn't add enemey for Sync " + ((BaseEnemy) b).network_id + "| " + e.getMessage() + d.toString());
                     }

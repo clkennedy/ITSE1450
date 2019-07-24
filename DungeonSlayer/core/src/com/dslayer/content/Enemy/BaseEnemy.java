@@ -232,8 +232,8 @@ public abstract class BaseEnemy extends BaseActor{
             JSONObject data = new JSONObject();
             try{
                 data.put("id", this.network_id);
-                data.put("x", moveTo.x);
-                data.put("y", moveTo.y);
+                data.put("x", moveTo.x  / Options.aspectRatio);
+                data.put("y", moveTo.y  / Options.aspectRatio);
                 Multiplayer.socket.emit("enemyTargetChange", data);
             }catch(Exception e){
                 System.out.println("Failed to push target change" + e.getMessage());

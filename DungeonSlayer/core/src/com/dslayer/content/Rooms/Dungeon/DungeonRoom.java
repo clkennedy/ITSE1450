@@ -22,7 +22,8 @@ import com.dslayer.content.options.Options;
  * @author ARustedKnight
  */
 public class DungeonRoom extends Room{
-    protected enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight, URIWall, ULIWall, LRIWall, LLIWall, Empty, Pillar}
+
+    protected enum Key{Floor, UpperLeft, Upper, UpperRight,Left,Right,LowerLeft, Lower, LowerRight, URIWall, ULIWall, LRIWall, LLIWall, Empty, Pillar, Door, DoorLeft, DoorRight,DoorTop}
     
     public DungeonRoom(){
         super(0,0, 14, 10);
@@ -35,6 +36,27 @@ public class DungeonRoom extends Room{
     @Override
     public int getFillerObjectKey(){
         return Key.Pillar.ordinal();
+    }
+    
+    @Override
+    public int getDoor() {
+        return Key.Door.ordinal();
+    }
+
+    @Override
+    public int getDoorLeft() {
+        return Key.DoorLeft.ordinal();
+        
+    }
+
+    @Override
+    public int getDoorRight() {
+        return Key.DoorRight.ordinal();
+    }
+
+    @Override
+    public int getDoorTop() {
+        return Key.DoorTop.ordinal();
     }
     
     @Override
@@ -51,6 +73,10 @@ public class DungeonRoom extends Room{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+     @Override
+    public String getFloorTexture() {
+        return new DungeonFloor().getFloorTexture();
+    }
     @Override
     public Room generateRoom(int width, int height) {
         int[][] temp = new int[height][width];
@@ -177,6 +203,14 @@ public class DungeonRoom extends Room{
             return new DungeonWall().UpperLeft();
             case Pillar:
             return new DungeonPillar(RoomPanels.defaultSize);
+            case Door:
+            return new DungeonDoor().Bottom();
+            case DoorLeft:
+            return new DungeonDoor().Left();
+            case DoorRight:
+            return new DungeonDoor().Right();
+            case DoorTop:
+            return new DungeonDoor().Top();
             default:
                 return null;
         }
