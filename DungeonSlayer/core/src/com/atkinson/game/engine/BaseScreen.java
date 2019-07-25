@@ -132,7 +132,11 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     @Override
     public void resume()  {  }
     @Override
-    public void dispose() {  }
+    public void dispose() {  
+    mainStage.dispose();
+    uiStage.dispose();
+    
+    }
     
     @Override
     public void show() {

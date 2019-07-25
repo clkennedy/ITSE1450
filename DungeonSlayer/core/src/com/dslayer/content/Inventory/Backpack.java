@@ -5,7 +5,7 @@
  */
 package com.dslayer.content.Inventory;
 
-import com.dslayer.content.Inventory.Items.ItemKey;
+import com.dslayer.content.Inventory.Items.BossKey;
 import com.dslayer.content.Inventory.Items.Items;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class Backpack {
     
     private List<Items> _items;
     
-    Backpack(){
+    public Backpack(){
         _items = new ArrayList();
     }
     

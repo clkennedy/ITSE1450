@@ -13,7 +13,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
+import com.dslayer.content.GameMessage.GameMessage;
+import com.dslayer.content.Inventory.Items.BossKey;
 import com.dslayer.content.LevelGenerator.LevelGenerator;
+import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.Dungeon.DungeonDoor;
 
 /**
@@ -28,8 +31,14 @@ public abstract class RoomDoor extends RoomPanels{
     public abstract DungeonDoor Top();
     
     private Circle openDistance;
+    public static GameMessage gm;
     
     public static LevelGenerator lg;
+    private float messageCD = 7;
+    private float messageCDCount = 0;
+    private boolean canMessage = true;
+    
+    private boolean canPass = false;
     
     public RoomDoor(){
         openDistance = new Circle(getX() +(getWidth() / 2), getY()+(getHeight()/ 2), defaultSize * 2);
@@ -69,6 +78,9 @@ public abstract class RoomDoor extends RoomPanels{
         resetTriggerPoint();
         return super.DefaultSize();
     }
+    public boolean canPass(){
+        return canPass;
+    }
     
     @Override
     public void act(float dt){
@@ -76,8 +88,26 @@ public abstract class RoomDoor extends RoomPanels{
          
          for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
             if(Intersector.overlapConvexPolygons(this.getBoundaryPolygon(), player.getBoundaryPolygon())){
-                this.loadTexture(lg.getFloorTexture());
-                this.DefaultSize();
+                if(((Player)player).inventoryContains(BossKey.class)){
+                    this.loadTexture(lg.getFloorTexture());
+                    this.DefaultSize();
+                     canPass = true;
+                     if(gm != null && canMessage){
+                        gm.AddMessage("Unlocked");
+                    }
+                }else{
+                    if(gm != null && canMessage){
+                        gm.AddMessage("No Boss Key");
+                        canMessage = !canMessage;
+                    }
+                }
+                if(!canMessage){
+                    if(messageCDCount > messageCD){
+                        canMessage = !canMessage;
+                        messageCDCount = 0 - dt;
+                    }
+                    messageCDCount += dt;
+                }
             }
         }
     }

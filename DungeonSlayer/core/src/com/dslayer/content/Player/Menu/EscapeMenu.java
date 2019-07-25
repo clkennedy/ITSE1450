@@ -36,7 +36,7 @@ public class EscapeMenu extends BaseActor{
     , "Scroll/scroll6.png", "Scroll/scroll7.png", "Scroll/scroll8.png", "Scroll/scroll9.png", "Scroll/scroll10.png", "Scroll/scroll11.png", "Scroll/scroll12.png"};
     
     private static List<Sound> soundsToPause = new ArrayList<Sound>();
-    
+    BitmapFont fontmm;
     private EscapeMenu(){
         
     }
@@ -60,7 +60,7 @@ public class EscapeMenu extends BaseActor{
         parameter.size = 70;
         parameter.borderColor = Color.WHITE;
         parameter.borderWidth = 1f;
-        BitmapFont fontmm = generator.generateFont(parameter); // font size 12 pixels
+        fontmm = generator.generateFont(parameter); // font size 12 pixels
         
         generator.dispose();
         
@@ -98,6 +98,8 @@ public class EscapeMenu extends BaseActor{
         for(Sound s : soundsToPause){
             s.resume();
         }
+        fontmm.dispose();
+        
         return super.remove();
     }
     

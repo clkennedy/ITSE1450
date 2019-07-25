@@ -55,7 +55,9 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
     private BaseActor selectionBox;
 
     public ArrayList<BaseActor> heroSelections;
-    
+    BitmapFont fontTitle;
+    BitmapFont fontnames;
+    BitmapFont fontMenus;
     public void initialize() {
         
         BaseActor.setMainStage(mainStage);
@@ -69,13 +71,13 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
         parameter.size = 100;
         parameter.borderColor = Color.WHITE;
         parameter.borderWidth = 0f;
-        BitmapFont fontTitle = generator.generateFont(parameter); // font size 12 pixels
+        fontTitle = generator.generateFont(parameter); // font size 12 pixels
         
         parameter.size = 20;
-        BitmapFont fontnames = generator.generateFont(parameter);
+        fontnames = generator.generateFont(parameter);
         
         parameter.size = 60;
-        BitmapFont fontMenus = generator.generateFont(parameter);
+        fontMenus = generator.generateFont(parameter);
         generator.dispose();
         
         Label.LabelStyle title = new Label.LabelStyle(fontTitle, Color.BROWN);
@@ -172,13 +174,20 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
             MainMenuScreen.musicPlaying = false;
         }
         l.setGameMode(new DungeonCrawlGameMode());
+        cleanUpResources();
         BaseGame.setActiveScreen(l);
     }
     public void cancelGame(){
+        cleanUpResources();
         BaseGame.setActiveScreen( new MainMenuScreen());
     }
     
     
     public void update(float dt) {
+    }
+    private void cleanUpResources(){
+        fontMenus.dispose();
+        fontTitle.dispose();
+        fontnames.dispose();
     }
 }

@@ -6,6 +6,7 @@
 package com.dslayer.content.GameMessage;
 
 import com.atkinson.game.engine.BaseActor;
+import com.atkinson.game.engine.BaseScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -29,7 +30,7 @@ public class GameMessage extends BaseActor{
     private float durationTimer = 0f;
     
     private List<String> messages;
-    
+    BitmapFont fontTitle;
     public GameMessage(){
         messages = new ArrayList();
         
@@ -38,7 +39,7 @@ public class GameMessage extends BaseActor{
         parameter.size = 50;
         parameter.borderColor = Color.WHITE;
         parameter.borderWidth = 1f;
-        BitmapFont fontTitle = generator.generateFont(parameter); // font size 12 pixels
+        fontTitle = generator.generateFont(parameter); // font size 12 pixels
         
         generator.dispose();
         mStyle = new Label.LabelStyle(fontTitle, Color.BROWN);
@@ -77,4 +78,12 @@ public class GameMessage extends BaseActor{
         }
     }
     
+    
+    @Override
+    public boolean remove(){
+        
+        fontTitle.dispose();
+        
+        return super.remove();
+    }
 }

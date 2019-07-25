@@ -31,6 +31,7 @@ import com.dslayer.content.Hero.*;
 import com.dslayer.content.Inventory.Backpack;
 import com.dslayer.content.Inventory.Items.Items;
 import com.dslayer.content.Rooms.Dungeon.DungeonObject;
+import com.dslayer.content.Rooms.RoomDoor;
 import com.dslayer.content.Rooms.RoomFloor;
 import com.dslayer.content.Rooms.RoomObject;
 import com.dslayer.content.Rooms.RoomPanels;
@@ -147,6 +148,7 @@ public class Player extends BaseActor{
         healthBar = new Rectangle(this.getStage().getCamera().viewportWidth - maxHealth - 20, 10, maxHealth, 20);
         
         s.addActor(this);
+        _backpack = new Backpack();
     }
     
     public void setIgnoreRoomObjects(boolean b){
@@ -155,6 +157,9 @@ public class Player extends BaseActor{
     
     public boolean inventoryContains(Class<? extends Items> cls){
         return _backpack.containsItem(cls);
+    }
+    public boolean addToBackpack(Items item){
+        return _backpack.addItem(item);
     }
     
     public void takeDamage(int damage){
@@ -580,10 +585,11 @@ public class Player extends BaseActor{
         //wall Collison
         ArrayList<BaseActor> allRoomObjects = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels");
         for(BaseActor obj: allRoomObjects){
-            if(obj.boundaryPolygon == null || (ignoreRoomObjects && obj instanceof RoomObject)  || obj instanceof RoomFloor ){
+            if(obj.boundaryPolygon == null || (ignoreRoomObjects && obj instanceof RoomObject)  || obj instanceof RoomFloor 
+                    || (obj instanceof RoomDoor && ((RoomDoor)obj).canPass())){
                 continue;
             }
-            //preventOverlap(obj);
+            preventOverlap(obj);
         }
     }
     

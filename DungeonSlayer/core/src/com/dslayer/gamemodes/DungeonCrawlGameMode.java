@@ -19,11 +19,13 @@ import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.GameMessage.GameMessage;
+import com.dslayer.content.Inventory.Items.BossKey;
 import com.dslayer.content.LevelGenerator.LevelGenerator;
 import com.dslayer.content.Objects.Potions.HealthPotion2;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
+import com.dslayer.content.Rooms.RoomDoor;
 import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
@@ -57,8 +59,11 @@ public class DungeonCrawlGameMode extends GameMode{
     
     private boolean goSent = false;
     
-    Label points;
+    List<Room> nonBossRooms;
     
+    Label points;
+    private int dungeonWidth = 31;
+    private int dungeonHeight = 31;
     private GameMessage gm;
     
     public DungeonCrawlGameMode(Stage s){
@@ -74,8 +79,8 @@ public class DungeonCrawlGameMode extends GameMode{
         
         Multiplayer.host = true;
         
-        LevelGenerator lg = new LevelGenerator(31, 31);
-        lg.setDefaultSize(30);
+        LevelGenerator lg = new LevelGenerator(dungeonWidth, dungeonHeight);
+        lg.setDefaultSize(80);
         lg.setRoom(new DungeonRoom());
         
         lg.generateMap();
@@ -95,9 +100,10 @@ public class DungeonCrawlGameMode extends GameMode{
                        // MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
         
         Room spawnRoom = lg.getRandomNonBossRoom();
+        nonBossRooms = lg.getNonBossRooms();
         
-        int spawnX = MathUtils.random((int)spawnRoom.getRoomX() + 1, (int)spawnRoom.getRoomX() + (int)spawnRoom.getRoomWidth() - 1);
-        int spawnY = MathUtils.random((int)spawnRoom.getRoomY() + 1, (int)spawnRoom.getRoomY() + (int)spawnRoom.getRoomHeight() - 1);
+        int spawnX = MathUtils.random(((int)spawnRoom.getRoomX() + 1), (int)spawnRoom.getRoomX() + (int)spawnRoom.getRoomWidth() - 1);
+        int spawnY = MathUtils.random(dungeonHeight - ((int)spawnRoom.getRoomY() + (int)spawnRoom.getRoomHeight() - 2), dungeonHeight - (int)spawnRoom.getRoomY() );
         
         spawnX *= (int)lg.getDefaultSize();
         spawnY *= (int)lg.getDefaultSize();
@@ -117,8 +123,17 @@ public class DungeonCrawlGameMode extends GameMode{
         pointTable.setHeight(u.getHeight());
         pointTable.setPosition(pointTable.getWidth() / 2, BaseActor.getUiStage().getHeight() - pointTable.getHeight());
         BaseActor.getUiStage().addActor(pointTable);
+        
+        for(int i = 0; i < nonBossRooms.size(); i++){
+            Room r = nonBossRooms.get(i);
+            new SkeletonWarrior(((r.getRoomX() +3)) * RoomPanels.defaultSize ,
+                    (dungeonHeight - (r.getRoomY()+r.getRoomHeight() - 3)) * RoomPanels.defaultSize , mainStage).setRoom(r);
+        }
+        
         gm = new GameMessage();
+        RoomDoor.gm = gm;
         gm.AddMessage("Welcome");
+        player.addToBackpack(new BossKey());
     }
     @Override
     public void update(float dt) {

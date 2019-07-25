@@ -26,7 +26,9 @@ import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.Rooms.RoomFloor;
+import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
@@ -82,6 +84,8 @@ public abstract class BaseEnemy extends BaseActor{
     
     private Sound footSteps;
     
+    private Room _room;
+    
     public static BaseEnemy getNewEnemy(type en,float x,float y){
         switch (en) {
             case SkeletionWarrior:
@@ -101,6 +105,11 @@ public abstract class BaseEnemy extends BaseActor{
     
     public BaseEnemy() {
         
+    }
+    
+    public BaseEnemy setRoom(Room room){
+        this._room = room;
+        return this;
     }
     
     public BaseEnemy(float x, float y, Stage s){
@@ -172,6 +181,9 @@ public abstract class BaseEnemy extends BaseActor{
             if(player.boundaryPolygon == null)
                 continue;
             if(Intersector.overlaps(TargetRange,player.getBoundaryPolygon().getBoundingRectangle()) && !((Player)player).isDead()){
+                if(_room != null && !_room.isActorInRoom(player)){
+                    continue;
+                }
                 if(target == null)
                     target = player;
             }
@@ -181,8 +193,13 @@ public abstract class BaseEnemy extends BaseActor{
         }
         
         if(target == null && (hitWall || Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle()))){
-            moveTo.x = MathUtils.random(Difficulty.worldWidth);
-            moveTo.y = MathUtils.random(Difficulty.worldHeight);
+            if(_room != null){
+                moveTo.x = MathUtils.random(_room.getRoomX() * RoomPanels.defaultSize,(_room.getRoomX() + _room.getRoomWidth()) * RoomPanels.defaultSize);
+                moveTo.y = MathUtils.random(Difficulty.worldHeight - (_room.getRoomY() * RoomPanels.defaultSize),Difficulty.worldHeight - ((_room.getRoomY() + _room.getRoomHeight()) * RoomPanels.defaultSize)); 
+            }else{
+                moveTo.x = MathUtils.random(Difficulty.worldWidth);
+                moveTo.y = MathUtils.random(Difficulty.worldHeight); 
+            }
             if(hitWall)
                 setSpeed(0);
             hitWall = false;

@@ -85,6 +85,19 @@ public class LevelGenerator {
        }
        return _rooms.get(rand);
    }
+   
+   public List<Room> getNonBossRooms(){
+       List<Room> tempRooms = new ArrayList();
+       
+       for(Room r: _rooms){
+           if(!r.isBossRoom()){
+               tempRooms.add(r);
+           }
+       }
+       
+       return tempRooms;
+   }
+   
    public void setDefaultSize(float size){
        Room.setDefaultSize(size);
        mapWidthPixels = mapWidth * RoomPanels.defaultSize * Options.aspectRatio;
@@ -109,9 +122,9 @@ public class LevelGenerator {
    public void draw(Stage stage){
        BaseActor temp = new RoomPanels();
         for(int i = 0; i < this.mapLayout.length; i++){
-            System.out.print("[");
+            //System.out.print("[");
             for(int j = 0; j < this.mapLayout[i].length; j++){
-                System.out.print(((mapRegions[i][j] == null)? "-" : mapRegions[i][j]) + " | ");
+                //System.out.print(((mapRegions[i][j] == null)? "-" : mapRegions[i][j]) + " | ");
                 temp = _room.Map(this.mapLayout[i][j]);
                 if(temp == null)
                     continue;
@@ -119,7 +132,7 @@ public class LevelGenerator {
                 temp.getBoundaryPolygon();
                 stage.addActor(temp);
             }
-            System.out.println("]");
+            //System.out.println("]");
         }
    }
    

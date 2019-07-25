@@ -57,7 +57,9 @@ public class MultiplayerHeroSelectionScreen extends BaseScreen {
     private BaseActor selectionBox;
 
     public ArrayList<BaseActor> heroSelections;
-    
+    BitmapFont fontTitle;
+    BitmapFont fontnames;
+    BitmapFont fontMenus;
     public void initialize() {
         
         BaseActor.setMainStage(mainStage);
@@ -69,13 +71,13 @@ public class MultiplayerHeroSelectionScreen extends BaseScreen {
         parameter.size = 100;
         parameter.borderColor = Color.WHITE;
         parameter.borderWidth = 0f;
-        BitmapFont fontTitle = generator.generateFont(parameter); // font size 12 pixels
+        fontTitle = generator.generateFont(parameter); // font size 12 pixels
         
         parameter.size = 20;
-        BitmapFont fontnames = generator.generateFont(parameter);
+        fontnames = generator.generateFont(parameter);
         
         parameter.size = 60;
-        BitmapFont fontMenus = generator.generateFont(parameter);
+        fontMenus = generator.generateFont(parameter);
         generator.dispose();
         
         Label.LabelStyle title = new Label.LabelStyle(fontTitle, Color.BROWN);
@@ -183,5 +185,12 @@ public class MultiplayerHeroSelectionScreen extends BaseScreen {
     
     
     public void update(float dt) {
+    }
+    
+    @Override
+    public void dispose(){
+        fontMenus.dispose();
+        fontTitle.dispose();
+        fontnames.dispose();
     }
 }

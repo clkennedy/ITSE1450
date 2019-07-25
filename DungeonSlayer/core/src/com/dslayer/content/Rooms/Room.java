@@ -9,6 +9,7 @@ import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
+import com.dslayer.content.options.Difficulty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,5 +134,18 @@ public abstract class Room {
         }
         
         return false;
+    }
+    
+    public boolean isActorInRoom(BaseActor actor){
+       float bottom = Difficulty.worldHeight - ((roomY + roomHeight) * RoomPanels.defaultSize);
+       float top = Difficulty.worldHeight - ((roomY) * RoomPanels.defaultSize);
+       float leftWall = roomX * RoomPanels.defaultSize;
+       float rightWall = (roomX + roomWidth) * RoomPanels.defaultSize;
+       
+       if(actor.getX() >= bottom && actor.getY() >= leftWall && actor.getX() <= top && actor.getY() <= rightWall ){
+           return true;
+       }
+       
+       return false;
     }
 }

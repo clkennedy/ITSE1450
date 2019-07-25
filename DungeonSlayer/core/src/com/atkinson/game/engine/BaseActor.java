@@ -41,7 +41,7 @@ public class BaseActor extends Group {
     public String network_id;
     
     //debugging stuff (custom)
-    protected static boolean debug = true;
+    protected static boolean debug = false;
     protected ShapeRenderer sRend;
     // Animation support
     protected Animation<TextureRegion> animation;
@@ -330,10 +330,12 @@ public class BaseActor extends Group {
         
         for(int n = 0; n < fileCount; n++) {
             String fileName = fileNames[n];
+            if(texture != null){
+                texture.dispose();
+            }
             texture = new Texture(Gdx.files.internal(fileName));
             texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
             textureArray.add(new TextureRegion(texture));
-            //texture.dispose();
         }
         
         Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);
@@ -382,6 +384,9 @@ public class BaseActor extends Group {
     * @return the Converted Animation
     */
     public Animation<TextureRegion> loadAnimationFromSheet(String fileName, int rows, int cols, float frameDuration, boolean loop) {
+        if(texture != null){
+            texture.dispose();
+        }
         texture = new Texture(Gdx.files.internal(fileName), true);
         texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         int frameWidth = texture.getWidth() / cols;
@@ -914,7 +919,7 @@ public class BaseActor extends Group {
     }
     @Override
     public boolean remove(){
-        System.out.println(this);
+        //System.out.println(this);
         if(sRend != null){
             sRend.dispose();
             sRend = null;
