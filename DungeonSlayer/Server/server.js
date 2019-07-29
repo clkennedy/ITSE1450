@@ -1,13 +1,19 @@
-var app = require('express')();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+const http = require('http');
+const express = require('express');
+const socketio = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
+
+var port = 3000;
+
 var players = [];
 var nextPlayerNum = 1;
 var rooms = [];
 
-
-server.listen(8080, function(){
-    log("Server Running..");
+server.listen(port, function(){
+    log("\r\nListening on port: "+ port +"\r\n" +"Server Running..");
 })
 
 function getDateTime(){

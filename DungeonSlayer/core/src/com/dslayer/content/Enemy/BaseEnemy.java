@@ -82,6 +82,10 @@ public abstract class BaseEnemy extends BaseActor{
     
     protected boolean canMove = true;
     
+    protected boolean canSendMoveChangedEvent = true;
+    protected float movedChangedEventTimer = 1f;
+    protected float movedChangedEventTimerCount = 0f;
+    
     private Sound footSteps;
     
     private Room _room;
@@ -194,8 +198,9 @@ public abstract class BaseEnemy extends BaseActor{
         
         if(target == null && (hitWall || Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle()))){
             if(_room != null){
-                moveTo.x = MathUtils.random(_room.getRoomX() * RoomPanels.defaultSize,(_room.getRoomX() + _room.getRoomWidth()) * RoomPanels.defaultSize);
-                moveTo.y = MathUtils.random(Difficulty.worldHeight - (_room.getRoomY() * RoomPanels.defaultSize),Difficulty.worldHeight - ((_room.getRoomY() + _room.getRoomHeight()) * RoomPanels.defaultSize)); 
+                moveTo.x = MathUtils.random(_room.getRoomX() * RoomPanels.defaultSize* Options.aspectRatio,(_room.getRoomX() + _room.getRoomWidth()) * RoomPanels.defaultSize* Options.aspectRatio);
+                moveTo.y = MathUtils.random(Difficulty.worldHeight - (_room.getRoomY() * RoomPanels.defaultSize* Options.aspectRatio),
+                        Difficulty.worldHeight - ((_room.getRoomY() + _room.getRoomHeight()) * RoomPanels.defaultSize * Options.aspectRatio)); 
             }else{
                 moveTo.x = MathUtils.random(Difficulty.worldWidth);
                 moveTo.y = MathUtils.random(Difficulty.worldHeight); 
@@ -245,6 +250,9 @@ public abstract class BaseEnemy extends BaseActor{
     public abstract void attack(BaseActor player);
     
     protected void moveToChanged(){
+        if(!canSendMoveChangedEvent){
+            return;
+        }
         if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
             JSONObject data = new JSONObject();
             try{
@@ -256,6 +264,7 @@ public abstract class BaseEnemy extends BaseActor{
                 System.out.println("Failed to push target change" + e.getMessage());
             }
         }
+        canSendMoveChangedEvent = false;
     }
     
     public void setMoveTo(Vector2 v){
@@ -294,6 +303,14 @@ public abstract class BaseEnemy extends BaseActor{
         calculateHealth(dt);
         if(isMoving() && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
             footSteps.resume();
+        }
+        
+        if(!canSendMoveChangedEvent){
+            movedChangedEventTimerCount += dt;
+            if(movedChangedEventTimerCount > movedChangedEventTimer){
+                canSendMoveChangedEvent = true;
+                movedChangedEventTimerCount = 0;
+            }
         }
         else{
             footSteps.pause();

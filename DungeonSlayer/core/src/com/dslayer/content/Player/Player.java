@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import com.dslayer.content.Hero.*;
 import com.dslayer.content.Inventory.Backpack;
 import com.dslayer.content.Inventory.Items.Items;
+import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.Rooms.Dungeon.DungeonObject;
 import com.dslayer.content.Rooms.RoomDoor;
 import com.dslayer.content.Rooms.RoomFloor;
@@ -51,6 +52,8 @@ public class Player extends BaseActor{
     public boolean isLocalPlayer = true;
     
     public String UserName;
+    
+    public boolean connected = false;
     
     protected float attackCooldown = 2f;
     protected float attackCooldownTime = 0f;
@@ -127,6 +130,7 @@ public class Player extends BaseActor{
         footSteps = Gdx.audio.newSound(Gdx.files.internal("Sounds/footsteps_concrete_.mp3"));
         footSteps.loop(Options.soundVolume * .3f);
         footSteps.pause();
+        EscapeMenu.addSoundToPause(footSteps);
        // setAnimation(Unlocks.currentAvatar.getAnim());\
         if(Multiplayer.socket != null && Multiplayer.socket.connected()){
             hero = MultiplayerHeroSelectionScreen.currentSelection;
@@ -276,7 +280,7 @@ public class Player extends BaseActor{
     }
     
     public boolean isDead(){
-        return this.health + recoverAmount <= 0;
+        return this.health - damageTaken<= 0;
     }
     
     @Override
@@ -413,6 +417,7 @@ public class Player extends BaseActor{
     
     public boolean checkDying(){
         if(isDead()){
+            
             if(!hero.isDying())
             {
                 setAnimationWithReset(hero.playDie());
@@ -595,7 +600,10 @@ public class Player extends BaseActor{
     
     @Override
     public boolean remove(){
+        EscapeMenu.removeSoundToPause(footSteps);
+        footSteps.pause();
         footSteps.stop();
+        footSteps.dispose();
         return super.remove();
     }
     

@@ -14,7 +14,6 @@ import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.Rooms.RoomDoor;
 import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.options.Options;
-import com.sun.javafx.scene.traversal.Direction;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;

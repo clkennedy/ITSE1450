@@ -104,10 +104,10 @@ public class MultiplayerSurvivalGameMode extends GameMode{
     private GameMessage gm;
     private boolean reloadPlayers;
     private float updatePlayerTime = 0;
-    private float updatePlayerTimer = 60/60;
+    private float updatePlayerTimer = .2f;
     
     private float SyncEnemyTime = 0;
-    private float SyncEnemyTimer = 5f;
+    private float SyncEnemyTimer = 3f;
     
     private List<skillInfo> heroCast;
     private List<enemyInfo> enemiesToSpawn;
@@ -194,7 +194,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             BaseActor a = new HealthPotion2(300, 100, mainStage);
             gameObjects.put(a.network_id, a);
         }*/
-        
+        playMusic("8BitDungSurvival.mp3");
         gm = new GameMessage();
         gm.AddMessage("Welcome");
         BaseActor.setMainStage(mainStage);
@@ -214,6 +214,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             for(String id : OtherPlayers.keySet()){
                 Player op = new Player(100, 100, mainStage);
                 op.isLocalPlayer = false;
+                op.connected = true;
                 op.network_id = id;
                 op.UserName = OtherPlayersUserNames.get(id);
                 op.setHero(Hero.getNewHero(Hero.heros.values()[OtherPlayersHero.get(id)]));
@@ -283,7 +284,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                 //MathUtils.lerp(p.getX(), mv.x, p.getMaxSpeed() * f)
                 //p.updatePos(mv.x, mv.y);
                 f += dt;
-                float delta = MathUtils.clamp(updatePlayerTimer / f, 0, 1);
+                f = MathUtils.clamp(f, 0, 1);
+                float delta = MathUtils.clamp(f / updatePlayerTimer, 0, 1);
                  p.updatePos(MathUtils.lerp(op.x * Options.aspectRatio, mv.x * Options.aspectRatio,  delta),
                          MathUtils.lerp(op.y * Options.aspectRatio, mv.y * Options.aspectRatio,  delta));
                  
@@ -291,8 +293,9 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                 OtherPlayersTimer.put(id, f);
             }
         }
+        
         if(player.isDead()){
-            Player p = player;
+            Player p = null;
             for(Player b : OtherPlayers.values()){
                 if(!b.isDead()){
                     p = b;
@@ -343,9 +346,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         }
         enemiesAttack.clear();
         
-        
         updatePlayerTime += dt;
-        if((updatePlayerTime > updatePlayerTimer && player.canMove()) || player.directionChanged() || player.isMoving()){
+        if((updatePlayerTime > updatePlayerTimer && player.canMove()) || player.directionChanged()){
             updatePlayerTime = 0;
             JSONObject data = new JSONObject();
             try{
@@ -357,17 +359,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                  System.out.println("Failed to push player data " + e.getMessage());
             }
         }
-        /*if(player.isDead())
-        {
-            if(!goSent){
-                gm.AddMessage("Game Over");
-                goSent = true;
-            }
-            if(player.isAnimationFinished()){
-                gameOver = true;
-            }
-            return;
-        }*/
+        //----------------------------------------------------------------------------------------------------------------------------------------------
+       
         if(!Multiplayer.host)
             return;
         
@@ -485,6 +478,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                 public void call(Object... os) {
                                     JSONObject data = (JSONObject) os[0];
                                     try{
+                                        if(Multiplayer.host)
+                                            return;
                                         enemyInfo en = new enemyInfo();
                                         en.id = data.getString("id");
                                         en.X = data.getInt("x");
@@ -510,12 +505,14 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                 public void call(Object... os) {
                                     JSONObject data = (JSONObject) os[0];
                                     try{
-                                        enemyInfo en = new enemyInfo();
-                                        en.id = data.getString("id");
-                                        en.X = data.getInt("x");
-                                        en.Y = data.getInt("y");
-                                        en.type = data.getInt("type");
-                                        enemiesToSpawn.add(en);
+                                        if(!Multiplayer.host){
+                                            enemyInfo en = new enemyInfo();
+                                            en.id = data.getString("id");
+                                            en.X = data.getInt("x");
+                                            en.Y = data.getInt("y");
+                                            en.type = data.getInt("type");
+                                            enemiesToSpawn.add(en);
+                                        }
                                     }catch(Exception e){
                                         System.out.println("Failed Enemy Creation");
                                     }
@@ -525,6 +522,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                 public void call(Object... os) {
                                     JSONObject data = (JSONObject) os[0];
                                     try{
+                                        if(Multiplayer.host)
+                                            return;
                                         String netID = data.getString("id");
                                         int tarX = data.getInt("x");
                                         int tarY = data.getInt("y");
@@ -574,6 +573,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                 public void call(Object... os) {
                                     JSONArray array = (JSONArray) os[0];
                                     try{
+                                        if(Multiplayer.host)
+                                            return;
                                         for(int i = 0; i < array.length(); i++){
                                            JSONObject data = array.getJSONObject(i);
                                            String id = data.getString("id");
@@ -613,6 +614,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                     try{
                                         skillInfo info = new skillInfo();
                                         info.id = data.getString("id");
+                                        if(info.id.equals(player.network_id))
+                                            return;
                                         info.targetX= data.getInt("targetX");
                                         info.targetY = data.getInt("targetY");
                                         info.skill = data.getInt("skill");
@@ -627,6 +630,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                     JSONObject data = (JSONObject) os[0];
                                     try{
                                         String id = data.getString("id");
+                                        if(id.equals(player.network_id))
+                                            return;
                                         int damage = data.getInt("damage");
                                         OtherPlayers.get(id).multiplayerTakeDamage(damage);
                                     }catch(Exception e){
@@ -639,6 +644,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                     JSONObject data = (JSONObject) os[0];
                                     try{
                                         String id = data.getString("id");
+                                        if(id.equals(player.network_id))
+                                            return;
                                         int recover = data.getInt("recover");
                                         OtherPlayers.get(id).multiplayerRecover(recover);
                                     }catch(Exception e){

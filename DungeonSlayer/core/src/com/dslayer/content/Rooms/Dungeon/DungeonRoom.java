@@ -63,8 +63,8 @@ public class DungeonRoom extends Room{
     public Room generateRoom() {
         this.generateRoom(roomWidth, roomHeight);
         
-        this.roomWidthPixels = _layout.length * RoomPanels.defaultSize;
-        this.roomHeightPixels = _layout[0].length * RoomPanels.defaultSize;
+        this.roomWidthPixels = _layout.length * (RoomPanels.defaultSize * Options.aspectRatio);
+        this.roomHeightPixels = _layout[0].length * (RoomPanels.defaultSize* Options.aspectRatio);
         return this;
     }
 

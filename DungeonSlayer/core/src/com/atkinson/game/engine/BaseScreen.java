@@ -198,11 +198,11 @@ public abstract class BaseScreen implements Screen, InputProcessor {
             //System.out.println(toDispose.get(i));
             if(toDispose.get(i) != null){
                 for(Actor b : toDispose.get(i).mainStage.getActors()){
-                    System.out.println(b);
+                    //System.out.println(b);
                     b.remove();
                 }
                 for(Actor b : toDispose.get(i).uiStage.getActors()){
-                    System.out.println(b);
+                    //System.out.println(b);
                     b.remove();
                 }
             }

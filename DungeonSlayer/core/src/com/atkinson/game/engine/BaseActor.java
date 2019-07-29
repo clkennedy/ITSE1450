@@ -52,6 +52,7 @@ public class BaseActor extends Group {
     private Vector2 velocityVec;
     
     protected Texture texture;
+    protected Array<TextureRegion> textureArray;
     
     // Acceleration support
     private Vector2 accelerationVec;
@@ -69,6 +70,8 @@ public class BaseActor extends Group {
     
     protected boolean canMove = true;
     protected boolean alwaysApplyDecerlation;
+    
+    private BaseActor actorToFollow = null;
     
     /**
     * Constructor of the Base actor
@@ -113,7 +116,7 @@ public class BaseActor extends Group {
         
         sRend = new ShapeRenderer();
         
-        
+        actorToFollow = this;
     }
     
     public String getNetworkID(){
@@ -326,13 +329,12 @@ public class BaseActor extends Group {
     */
     public Animation<TextureRegion> loadAnimationFromFiles(String[] fileNames, float frameDuration, boolean loop) {
         int fileCount = fileNames.length;
-        Array<TextureRegion> textureArray = new Array<TextureRegion>();
-        
+        textureArray = new Array<TextureRegion>();
+        if(texture != null){
+            texture.dispose();
+        }
         for(int n = 0; n < fileCount; n++) {
             String fileName = fileNames[n];
-            if(texture != null){
-                texture.dispose();
-            }
             texture = new Texture(Gdx.files.internal(fileName));
             texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
             textureArray.add(new TextureRegion(texture));
@@ -351,10 +353,9 @@ public class BaseActor extends Group {
         setAnimation(anim);
         return anim;
     }
-    public Animation<TextureRegion> loadAnimationFromTexture(TextureRegion texture, float frameDuration, boolean loop) {
-       
-        Array<TextureRegion> textureArray = new Array<TextureRegion>();
-        textureArray.add(texture);
+    public Animation<TextureRegion> loadAnimationFromTexture(TextureRegion texturer, float frameDuration, boolean loop) {
+        textureArray = new Array<TextureRegion>();
+        textureArray.add(texturer);
         
         Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);
         if(loop) {
@@ -392,7 +393,7 @@ public class BaseActor extends Group {
         int frameWidth = texture.getWidth() / cols;
         int frameHeight = texture.getHeight() / rows;
         TextureRegion[][] temp = TextureRegion.split(texture, frameWidth, frameHeight);
-        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+        textureArray = new Array<TextureRegion>();
         for(int r = 0; r < rows; r++) {
             for(int c = 0; c < cols; c++) {
                 textureArray.add(temp[r][c]);
@@ -420,7 +421,8 @@ public class BaseActor extends Group {
         int frameWidth = texture.getWidth() / cols;
         int frameHeight = texture.getHeight() / rows;
         TextureRegion[][] temp = TextureRegion.split(texture, frameWidth, frameHeight);
-        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+        
+        textureArray = new Array<TextureRegion>();
         for(int r = 0; r < rows; r++) {
             for(int c = 0; c < cols; c++) {
                 textureArray.add(temp[r][c]);
@@ -850,8 +852,12 @@ public class BaseActor extends Group {
     public void alignCamera() {
         Camera cam = this.getStage().getCamera();
         Viewport v = this.getStage().getViewport();
+        //System.out.println(actorToFollow);
+        if(actorToFollow == null){
+            actorToFollow = this;
+        }
         // center camera on actor
-        cam.position.set( this.getX() + this.getOriginX(), this.getY() + this.getOriginY(), 0 );
+        cam.position.set( actorToFollow.getX() + actorToFollow.getOriginX(), actorToFollow.getY() + actorToFollow.getOriginY(), 0 );
         // bound camera to layout
         cam.position.x = MathUtils.clamp(cam.position.x,
             cam.viewportWidth/2,  worldBounds.width -  cam.viewportWidth/2);
@@ -861,16 +867,8 @@ public class BaseActor extends Group {
     }
     
     public void alignCameraOnOtherActor(BaseActor other) {
-        Camera cam = this.getStage().getCamera();
-        Viewport v = this.getStage().getViewport();
-        // center camera on actor
-        cam.position.set( other.getX() + other.getOriginX(), other.getY() + other.getOriginY(), 0 );
-        // bound camera to layout
-        cam.position.x = MathUtils.clamp(cam.position.x,
-            cam.viewportWidth/2,  worldBounds.width -  cam.viewportWidth/2);
-        cam.position.y = MathUtils.clamp(cam.position.y,
-            cam.viewportHeight/2, worldBounds.height - cam.viewportHeight/2);
-        cam.update();
+        this.actorToFollow = other;
+        alignCamera();
     }
     
     
@@ -920,6 +918,12 @@ public class BaseActor extends Group {
     @Override
     public boolean remove(){
         //System.out.println(this);
+        if(textureArray != null){
+            for(TextureRegion t : textureArray){
+                t.getTexture().dispose();
+            }
+        }
+        
         if(sRend != null){
             sRend.dispose();
             sRend = null;

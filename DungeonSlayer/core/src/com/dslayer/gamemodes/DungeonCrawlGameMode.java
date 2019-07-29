@@ -29,6 +29,7 @@ import com.dslayer.content.Rooms.RoomDoor;
 import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.screens.HeroSelectionScreenDungeon;
 import com.dslayer.content.screens.MainMenuScreen;
 import java.util.List;
@@ -105,8 +106,8 @@ public class DungeonCrawlGameMode extends GameMode{
         int spawnX = MathUtils.random(((int)spawnRoom.getRoomX() + 1), (int)spawnRoom.getRoomX() + (int)spawnRoom.getRoomWidth() - 1);
         int spawnY = MathUtils.random(dungeonHeight - ((int)spawnRoom.getRoomY() + (int)spawnRoom.getRoomHeight() - 2), dungeonHeight - (int)spawnRoom.getRoomY() );
         
-        spawnX *= (int)lg.getDefaultSize();
-        spawnY *= (int)lg.getDefaultSize();
+        spawnX = spawnX * (int)lg.getDefaultSize();
+        spawnY = spawnY * (int)lg.getDefaultSize();
         
         player = new Player(spawnX,spawnY, mainStage);
         player.setHero(HeroSelectionScreenDungeon.currentSelection);
@@ -126,8 +127,8 @@ public class DungeonCrawlGameMode extends GameMode{
         
         for(int i = 0; i < nonBossRooms.size(); i++){
             Room r = nonBossRooms.get(i);
-            new SkeletonWarrior(((r.getRoomX() +3)) * RoomPanels.defaultSize ,
-                    (dungeonHeight - (r.getRoomY()+r.getRoomHeight() - 3)) * RoomPanels.defaultSize , mainStage).setRoom(r);
+            new SkeletonWarrior(((r.getRoomX() +3)) * RoomPanels.defaultSize *Options.aspectRatio,
+                    (dungeonHeight - (r.getRoomY()+r.getRoomHeight() - 3)) * RoomPanels.defaultSize *Options.aspectRatio , mainStage).setRoom(r);
         }
         
         gm = new GameMessage();

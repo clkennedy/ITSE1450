@@ -27,7 +27,7 @@ public class RoomPanels extends BaseActor{
     }
     
     public static void setDefaultSize(float size){
-        defaultSize = size;
+        defaultSize = size* Options.aspectRatio;
     }
     public static float getDefaultSize(){
         return defaultSize;

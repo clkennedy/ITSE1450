@@ -26,6 +26,7 @@ import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
 import com.dslayer.content.screens.MainMenuScreen;
 import java.util.List;
 
@@ -83,8 +84,8 @@ public class SurvivalGameMode extends GameMode{
         dr.Draw(mainStage);
         
         Table pointTable = new Table();
-        player = new Player(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                        MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
+        player = new Player(MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldWidth - (RoomPanels.defaultSize * Options.aspectRatio)), 
+                        MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldHeight - (RoomPanels.defaultSize* Options.aspectRatio)), mainStage);
         Label u = new Label(player.hero.getName() +": ", MainMenuScreen.pointStyle);
         u.setAlignment(Align.left);
         pointTable.add(u);
@@ -101,7 +102,7 @@ public class SurvivalGameMode extends GameMode{
         gm = new GameMessage();
         gm.AddMessage("Welcome");
         
-        playMusic("8BitDungSurvival.wav");
+        playMusic("8BitDungSurvival.mp3");
     }
     @Override
     public void update(float dt) {
@@ -141,23 +142,23 @@ public class SurvivalGameMode extends GameMode{
         if(spawnTime > spawnTimer && enemies.size() < maxNumOfEnemies ){
             BaseActor b;
             if(MathUtils.randomBoolean(.4f)){
-                b = new SkeletonMage(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                        MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
+                b = new SkeletonMage(MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldWidth - (RoomPanels.defaultSize* Options.aspectRatio)), 
+                        MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldHeight - (RoomPanels.defaultSize* Options.aspectRatio)), mainStage);
            }
             else if(MathUtils.randomBoolean(.95f)){
-                b = new SkeletonWarrior(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                        MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
+                b = new SkeletonWarrior(MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldWidth - (RoomPanels.defaultSize* Options.aspectRatio)), 
+                        MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldHeight - (RoomPanels.defaultSize* Options.aspectRatio)), mainStage);
             }
             else{
-                 b = new SkeletonArmored(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                        MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
+                 b = new SkeletonArmored(MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldWidth - (RoomPanels.defaultSize* Options.aspectRatio)), 
+                        MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldHeight - (RoomPanels.defaultSize* Options.aspectRatio)), mainStage);
                  gm.AddMessage("An Armored Skeleton has Risen");
             }
             spawnTime= 0;
             while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
                 b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                b.setPosition(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                        MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize));
+                b.setPosition(MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldWidth - (RoomPanels.defaultSize* Options.aspectRatio)), 
+                        MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldHeight - (RoomPanels.defaultSize* Options.aspectRatio)));
             }
         }
         
@@ -165,14 +166,14 @@ public class SurvivalGameMode extends GameMode{
         if(GolemSpawnTime > GolemSpawnTimer ){
             BaseActor b = null;
             if(MathUtils.randomBoolean(.8f)){
-                b = new BlueGolem(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                            MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
+                b = new BlueGolem(MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldWidth - (RoomPanels.defaultSize* Options.aspectRatio)), 
+                        MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldHeight - (RoomPanels.defaultSize* Options.aspectRatio)), mainStage);
                 if(b != null){
                     gm.AddMessage("Blue Golem Appeared");
                     while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
                         b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                        b.setPosition(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                            MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize));
+                        b.setPosition(MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldWidth - (RoomPanels.defaultSize* Options.aspectRatio)), 
+                        MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldHeight - (RoomPanels.defaultSize* Options.aspectRatio)));
                     }
                 }
             }
@@ -184,15 +185,15 @@ public class SurvivalGameMode extends GameMode{
             GoblinSpawnTimer = 0;
             BaseActor b = null;
             if(MathUtils.randomBoolean(.1f)){
-                b = new GoblinAssassin(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                            MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
+                b = new GoblinAssassin(MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldWidth - (RoomPanels.defaultSize* Options.aspectRatio)), 
+                        MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldHeight - (RoomPanels.defaultSize* Options.aspectRatio)), mainStage);
             }
             if(b != null){
                     gm.AddMessage("Goblin Assassin has Scurried in");
                     while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
                         b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                        b.setPosition(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                            MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize));
+                        b.setPosition(MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldWidth - (RoomPanels.defaultSize* Options.aspectRatio)), 
+                        MathUtils.random(RoomPanels.defaultSize* Options.aspectRatio,Difficulty.worldHeight - (RoomPanels.defaultSize* Options.aspectRatio)));
                     }
                 }
         }

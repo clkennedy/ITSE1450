@@ -109,6 +109,9 @@ public class GroundSlam extends Skill{
                         }
                     }
                 }
+                if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                    skillHit.play(Options.soundVolume);
+                }
             }
             ticktimer = 1;
             durationTimer += dt;

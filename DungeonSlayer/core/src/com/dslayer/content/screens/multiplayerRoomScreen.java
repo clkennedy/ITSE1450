@@ -314,7 +314,9 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         try{
             //External: 75.81.145.66
             //internal: 192.168.1.46
-            Multiplayer.socket = IO.socket("http://75.81.145.66:8080");
+            //ec2-18-191-138-40.us-east-2.compute.amazonaws.com
+            //Multiplayer.socket = IO.socket("http://75.81.145.66:8080");
+            Multiplayer.socket = IO.socket("http://18.191.138.40:3000");
             Multiplayer.socket.connect();
             //Multiplayer.socket.emit("Connected", null);
             //System.out.println("Boo");

@@ -141,6 +141,9 @@ public class BearTrap extends Skill{
                 if(overlaps(player)&& !sprung){
                     sprung = true;
                     ((Player)player).takeDamage((int)damage);
+                    if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                        skillHit.play(Options.soundVolume);
+                    }
                     alreadyHit.add(player);
                     setAnimationPaused(false);
                 }
@@ -151,6 +154,9 @@ public class BearTrap extends Skill{
                 if(overlaps(enemy) && !sprung){
                     sprung = true;
                     ((BaseEnemy)enemy).takeDamage((int)damage, player);
+                    if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                        skillHit.play(Options.soundVolume);
+                    }
                     setAnimationPaused(false);
                     trappedEnemy = enemy;
                     enemy.setSpeed(0);

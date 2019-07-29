@@ -89,6 +89,9 @@ public class ArrowShot extends Skill{
             for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
                 if(overlaps(player) && !alreadyHit.contains(player)){
                     ((Player)player).takeDamage((int)damage);
+                    if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                        skillHit.play(Options.soundVolume);
+                    }
                     alreadyHit.add(player);
                     pierce--;
                     if(pierce == 0)
@@ -101,6 +104,9 @@ public class ArrowShot extends Skill{
                 if(overlaps(enemy) && !alreadyHit.contains(enemy)){
                     float d = damage * (getSpeed() /  baseSpeed) * ((float)pierce / 3f);
                     ((BaseEnemy)enemy).takeDamage((int)d, player);
+                    if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                        skillHit.play(Options.soundVolume);
+                    }
                     alreadyHit.add(enemy);
                     pierce--;
                     if(pierce == 0)

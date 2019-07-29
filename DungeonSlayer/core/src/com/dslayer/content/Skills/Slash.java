@@ -69,6 +69,9 @@ public class Slash extends Skill{
                 if(overlaps(player) && !alreadyHit.contains(player)){
                     ((Player)player).takeDamage((int)damage);
                     alreadyHit.add(player);
+                    if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                        skillHit.play(Options.soundVolume);
+                    }
                 }
             }
         }
@@ -77,6 +80,9 @@ public class Slash extends Skill{
                 if(overlaps(enemy) && !alreadyHit.contains(enemy)){
                     ((BaseEnemy)enemy).takeDamage((int)damage, player);
                     alreadyHit.add(enemy);
+                    if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                        skillHit.play(Options.soundVolume);
+                    }
                 }
             }
         }

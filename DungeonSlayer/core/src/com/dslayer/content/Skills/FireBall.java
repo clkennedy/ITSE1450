@@ -54,6 +54,7 @@ public class FireBall extends Skill{
         setBoundaryPolygonHalfWidth(12);
         setRotation(90);
         damage = 50;*/
+         skillHit = Gdx.audio.newSound(Gdx.files.internal("Sounds/BasicDamage.mp3"));
     }
     @Override
     public void setupIcon(float x, float y){
@@ -68,7 +69,7 @@ public class FireBall extends Skill{
         if(!isCast && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
             Sound s = Gdx.audio.newSound(Gdx.files.internal("Sounds/FireBallCast.mp3"));
             s.play(Options.soundVolume);
-            skillHit = Gdx.audio.newSound(Gdx.files.internal("Sounds/BasicDamage.mp3"));
+           
             isCast = true;
         }
         getBoundaryPolygon();
@@ -79,7 +80,9 @@ public class FireBall extends Skill{
             for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
                 if(overlaps(player)){
                     ((Player)player).takeDamage((int)damage);
-                    skillHit.play(Options.soundVolume);
+                    if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                        skillHit.play(Options.soundVolume);
+                    }
                     remove();
                 }
             }
@@ -88,7 +91,9 @@ public class FireBall extends Skill{
             for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                 if(overlaps(enemy)){
                     ((BaseEnemy)enemy).takeDamage((int)damage, player);
-                    skillHit.play(Options.soundVolume);
+                    if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                        skillHit.play(Options.soundVolume);
+                    }
                     remove();
                 }
             }

@@ -91,7 +91,9 @@ public class IceNova extends Skill{
                 for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
                     if(overlaps(player)){
                         ((Player)player).takeDamage((int)damage);
-                        skillHit.play(Options.soundVolume);
+                        if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                            skillHit.play(Options.soundVolume);
+                        }
                     }
                 }
             }
@@ -99,7 +101,9 @@ public class IceNova extends Skill{
                 for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                     if(overlaps(enemy)){
                         ((BaseEnemy)enemy).takeDamage((int)damage, player);
-                        skillHit.play(Options.soundVolume);
+                        if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                            skillHit.play(Options.soundVolume);
+                        }
                     }
                 }
             }

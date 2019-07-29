@@ -88,7 +88,7 @@ public abstract class RoomDoor extends RoomPanels{
          
          for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
             if(Intersector.overlapConvexPolygons(this.getBoundaryPolygon(), player.getBoundaryPolygon())){
-                if(((Player)player).inventoryContains(BossKey.class)){
+                if(((Player)player).inventoryContains(BossKey.class) && !canPass){
                     this.loadTexture(lg.getFloorTexture());
                     this.DefaultSize();
                      canPass = true;

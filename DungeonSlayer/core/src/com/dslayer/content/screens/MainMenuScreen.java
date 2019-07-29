@@ -100,7 +100,7 @@ public class MainMenuScreen extends BaseScreen {
         BaseActor.setMainStage(mainStage);
         
         if(!musicPlaying){
-            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/8BitDungTitle.wav"));
+            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/8BitDungTitle.mp3"));
             backgroundMusic.setLooping(true);
             backgroundMusic.setVolume(Options.musicVolume);
             backgroundMusic.play();
