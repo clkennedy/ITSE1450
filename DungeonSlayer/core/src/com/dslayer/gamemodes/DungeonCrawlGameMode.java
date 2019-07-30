@@ -81,7 +81,7 @@ public class DungeonCrawlGameMode extends GameMode{
         Multiplayer.host = true;
         
         LevelGenerator lg = new LevelGenerator(dungeonWidth, dungeonHeight);
-        lg.setDefaultSize(80);
+        lg.setDefaultSize(20);
         lg.setRoom(new DungeonRoom());
         
         lg.generateMap();
@@ -127,8 +127,8 @@ public class DungeonCrawlGameMode extends GameMode{
         
         for(int i = 0; i < nonBossRooms.size(); i++){
             Room r = nonBossRooms.get(i);
-            new SkeletonWarrior(((r.getRoomX() +3)) * RoomPanels.defaultSize *Options.aspectRatio,
-                    (dungeonHeight - (r.getRoomY()+r.getRoomHeight() - 3)) * RoomPanels.defaultSize *Options.aspectRatio , mainStage).setRoom(r);
+           // new SkeletonWarrior(((r.getRoomX() +3)) * RoomPanels.defaultSize *Options.aspectRatio,
+                    //(dungeonHeight - (r.getRoomY()+r.getRoomHeight() - 3)) * RoomPanels.defaultSize *Options.aspectRatio , mainStage).setRoom(r);
         }
         
         gm = new GameMessage();

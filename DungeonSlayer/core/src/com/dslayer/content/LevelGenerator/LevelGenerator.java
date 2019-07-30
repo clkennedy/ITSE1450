@@ -53,6 +53,7 @@ public class LevelGenerator {
     protected int mapHeight;
     protected float mapWidthPixels;
     protected float mapHeightPixels;
+    protected int bossRoomRegion = -1;
     
     Room _room;
     
@@ -137,7 +138,7 @@ public class LevelGenerator {
    
    public void generateMap(){
        mapRooms();
-       System.out.println("Current Region: " + _currentRegion);
+       //System.out.println("Current Region: " + _currentRegion);
        for(int y = 1; y < mapHeight; y += 2 ){
            for(int x = 1; x < mapWidth; x += 2 ){
                if(mapLayout[x][y] != _room.getFillerObjectKey() || mapRegions[x][y] != null){
@@ -147,7 +148,7 @@ public class LevelGenerator {
                mapMaze(x, y);
            }
        }
-       System.out.println("Current Region: " + _currentRegion);
+       //System.out.println("Current Region: " + _currentRegion);
        connectRegions();
        
    }
@@ -204,6 +205,7 @@ public class LevelGenerator {
        
        int rand = MathUtils.random(_rooms.size() - 1);
        _rooms.get(rand).setBossRoom(true);
+       bossRoomRegion = _rooms.get(rand).getRoomRegion();
        //System.out.println("Generated Rooms: " + _rooms.size());
    }
    
@@ -289,26 +291,43 @@ public class LevelGenerator {
    private void connectRegions(){
        Map<String, Set<Integer>> connectorRegions = new HashMap();
        Map<String, Vector2> connectorRegionsPos = new HashMap();
-       Map<String, Vector2> connectorRegionsDir = new HashMap();
+       Map<String, Set<Vector2>> connectorRegionsDir = new HashMap();
        
        drawMapRegions();
        
-       for(int r = 1; r < mapRegions.length - 1; r++){
-           for (int c = 1; c < mapRegions[r].length - 1; c++) {
-               if(mapLayout[r][c] != 0 && mapLayout[r][c] != _room.getFillerObjectKey()) continue;
+       for(int r = 1; r < mapRegions.length; r++){
+           for (int c = 1; c < mapRegions[r].length; c++) {
+               if(mapLayout[r][c] == 0 || mapLayout[r][c] != _room.getFillerObjectKey()) continue;
                
-               Set<Integer> regions = new HashSet<Integer>() ;
-               Vector2 dir = Directions.get(0);
+               Set<Integer> regions = new HashSet<Integer>();
+               Set<Vector2> dir = new HashSet<Vector2>();
+               boolean regionAdded = false;
+               if(mapRegions[(int)r][(int)c] != null){
+                       regions.add(mapRegions[(int)r][(int)c]);
+                       regionAdded = true;
+                }
+               int curRegion = (mapRegions[r][c] == null) ? -1 : mapRegions[r][c];
                for(int i = 0; i < Directions.size(); i++){
+                   regionAdded = false;
                    Vector2 region = new Vector2(r,c).add(Directions.get(i));
                    if(region.x < 0 || region.y < 0 || region.x >= mapWidth || region.y >= mapHeight){
                        continue;
                    }
                    if(mapRegions[(int)region.x][(int)region.y] != null){
                        regions.add(mapRegions[(int)region.x][(int)region.y]);
+                       regionAdded = true;
+                   }else{
+                        region = new Vector2(r,c).add(Directions.get(i)).add(Directions.get(i));
+                        if(region.x < 0 || region.y < 0 || region.x >= mapWidth || region.y >= mapHeight){
+                            continue;
+                        }
+                        if(mapRegions[(int)region.x][(int)region.y] != null){
+                            regions.add(mapRegions[(int)region.x][(int)region.y]);
+                            regionAdded = true;
+                        }
                    }
-                   if(regions.size() >= 2){
-                       //dir = Directions.get(i);
+                   if(regionAdded && mapRegions[(int)region.x][(int)region.y] != curRegion){
+                       dir.add( Directions.get(i));
                       // break;
                    }
                }
@@ -330,7 +349,7 @@ public class LevelGenerator {
            
            Set connectors = connectorRegions.keySet();
            System.out.println("Current Region is : " + _currentRegion);
-           while(openRegions.size() > 1){
+           while(openRegions.size() > 0){
                
                System.out.println("KeySet Size: " + connectors.size());
                System.out.println("openRegions Size: " + openRegions.size());
@@ -341,44 +360,74 @@ public class LevelGenerator {
                Object connector = connectorRegions.get(obj).toArray()[0];
                Vector2 pos = connectorRegionsPos.get(obj);
                Vector2 tmpPos = new Vector2(pos.x, pos.y);
-               Vector2 dir = connectorRegionsDir.get(obj);
+               //Vector2 dir = connectorRegionsDir.get(obj);
                
                //System.out.println("Position: "+tmpPos);
                mapLayout[(int)tmpPos.x][(int)tmpPos.y] = 0;
-               boolean foundFloor = false;
-                mapLayout[(int)tmpPos.x][(int)tmpPos.y] = 0;
+               
+                //mapLayout[(int)tmpPos.x][(int)tmpPos.y] = 0;
+                Set<Vector2> directions = connectorRegionsDir.get(obj);
+                System.out.println("Starting Pos: " + pos);
                 
-                if(mapRegions[(int)tmpPos.x + 1][(int)tmpPos.y] != mapRegions[(int)tmpPos.x][(int)tmpPos.y]
-                        && mapLayout[(int)tmpPos.x + 1][(int)tmpPos.y] != 0
-                        && tmpPos.x + 1 < mapWidth){
-                    mapLayout[(int)tmpPos.x + 1][(int)tmpPos.y] = 0;
-                }
-                if(mapRegions[(int)tmpPos.x - 1][(int)tmpPos.y] != mapRegions[(int)tmpPos.x][(int)tmpPos.y]
-                        && mapLayout[(int)tmpPos.x - 1][(int)tmpPos.y] != 0
-                        && tmpPos.x - 1 > 0){
-                    mapLayout[(int)tmpPos.x - 1][(int)tmpPos.y] = 0;
-                }
-                if(mapRegions[(int)tmpPos.x][(int)tmpPos.y + 1] != mapRegions[(int)tmpPos.x][(int)tmpPos.y]
-                        && mapLayout[(int)tmpPos.x][(int)tmpPos.y + 1] != 0
-                        && tmpPos.y + 1 < mapHeight){
-                    mapLayout[(int)tmpPos.x][(int)tmpPos.y + 1] = 0;
-                }
-                if(mapRegions[(int)tmpPos.x][(int)tmpPos.y - 1] != mapRegions[(int)tmpPos.x][(int)tmpPos.y]
-                        && mapLayout[(int)tmpPos.x][(int)tmpPos.y - 1] != 0
-                        && tmpPos.y - 1 > 0){
-                    mapLayout[(int)tmpPos.x][(int)tmpPos.y - 1] = 0;
+                for(Vector2 curDir: directions){
+                    System.out.println("Current Direction: " + curDir);
+                    Vector2 curPos = new Vector2(tmpPos.x, tmpPos.y);
+                    boolean foundFloor = false;
+                    while(!foundFloor){
+                        if((curPos.x + curDir.x >= mapWidth || curPos.x + curDir.x < 0 ||
+                                    curPos.y + curDir.y >= mapHeight || curPos.y + curDir.y < 0)
+                                || mapLayout[(int)(curPos.x + curDir.x)][(int)(curPos.y+curDir.y)] == 0){
+                            break;
+                        }
+                        System.out.println("Current Pos: " + curPos);
+                        if(mapLayout[(int)(curPos.x + curDir.x)][(int)(curPos.y+curDir.y)] != 0
+                            && (curPos.x + curDir.x < mapWidth && curPos.x + curDir.x > 0 &&
+                                curPos.y + curDir.y < mapHeight && curPos.y + curDir.y > 0)){
+                        mapLayout[(int)(curPos.x + curDir.x)][(int)(curPos.y+curDir.y)] = 0;
+                        
+                        if(mapLayout[(int)(curPos.x + curDir.y)][(int)(curPos.y+curDir.x)] == 0 ||
+                                mapLayout[(int)(curPos.x - curDir.y)][(int)(curPos.y-curDir.x)] == 0){
+                            foundFloor = true;
+                        }
+                        } 
+                        curPos.add(curDir);
+                    }
+                    curPos = new Vector2(tmpPos.x, tmpPos.y);
+                    if(mapLayout[(int)(curPos.x - curDir.x)][(int)(curPos.y-curDir.y)] != 0 && false){
+                        foundFloor = false;
+                        while(!foundFloor){
+                            if(mapLayout[(int)(curPos.x - curDir.x)][(int)(curPos.y-curDir.y)] == 0 ||
+                                    (curPos.x - curDir.x >= mapWidth || curPos.x - curDir.x < 0 ||
+                                    curPos.y - curDir.y >= mapHeight && curPos.y - curDir.y < 0)){
+                                break;
+                            }
+                            System.out.println("Current Pos: " + curPos);
+                            if(mapLayout[(int)(curPos.x - curDir.x)][(int)(curPos.y-curDir.y)] != 0
+                                && (curPos.x - curDir.x < mapWidth && curPos.x - curDir.x > 0 &&
+                                    curPos.y - curDir.y < mapHeight && curPos.y - curDir.y > 0)){
+                            mapLayout[(int)(curPos.x - curDir.x)][(int)(curPos.y-curDir.y)] = 0;
+
+                            if(mapLayout[(int)(curPos.x - curDir.y)][(int)(curPos.y-curDir.x)] == 0 ||
+                                    mapLayout[(int)(curPos.x + curDir.y)][(int)(curPos.y+curDir.x)] == 0){
+                                foundFloor = true;
+                            }
+                            } 
+                            curPos.sub(curDir);
+                        }
+                    }
                 }
                
                List<Integer>regions = new ArrayList();
+               System.out.println("---Regions---");
                for(Integer value : connectorRegions.get(obj)){
-                   System.out.println("value: " + value);
+                   System.out.println(value);
                    regions.add(merged.get(value));
                }
                
-               System.out.println("Current Regions");
+               /*System.out.println("Current Regions");
                for(Integer i : regions){
                    System.out.println(i);
-               }
+               }*/
                
                Integer dest = regions.get(0);
                
@@ -393,7 +442,7 @@ public class LevelGenerator {
                
                Iterator t = openRegions.iterator();
                
-               System.out.println("Current open Regions");
+               /*System.out.println("Current open Regions");
                while(t.hasNext()){
                    Object i = t.next();
                    System.out.println(i);
@@ -405,6 +454,31 @@ public class LevelGenerator {
                
                for(Integer i : sources){
                    openRegions.remove(i);
+               }*/
+               Set<Integer> posRegions = connectorRegions.get(obj);
+               boolean containsBossRoom = false;
+               for(Integer i : posRegions){
+                   containsBossRoom = containsBossRoom || (i == bossRoomRegion);
+               }
+               if(!containsBossRoom){
+                    for(Integer i : posRegions){
+                        openRegions.remove(i);
+                    }
+               }else{
+                   openRegions.remove(bossRoomRegion);
+               }
+               
+               
+               List<String> keysToRemove = new ArrayList<String>();
+               for(String key : connectorRegions.keySet()){
+                   if(connectorRegions.get(key).equals(posRegions)){
+                       if(MathUtils.randomBoolean(.8f)){
+                           keysToRemove.add(key);
+                       }
+                   }
+               }
+               for(String key : keysToRemove){
+                    connectorRegions.remove(obj);
                }
                
                for(String key: connectorRegionsPos.keySet()){
@@ -415,6 +489,8 @@ public class LevelGenerator {
                    }
                   // if()
                }
+               
+               
            }
            
            /*for(int i = 0; i <= _currentRegion; i ++){
@@ -433,17 +509,17 @@ public class LevelGenerator {
                    int roomX = (int) r.getRoomX();
                    int roomY = (int) r.getRoomY();
                    
-                   for(int row = (int)r.getRoomY(); row < (int)r.getRoomY() + actualH; row++){
-                       for(int col = (int)r.getRoomX(); col <  (int)r.getRoomX() + actualW; col++){
+                   for(int row = (int)r.getRoomY(); row <= (int)r.getRoomY() + actualH; row++){
+                       for(int col = (int)r.getRoomX(); col <=  (int)r.getRoomX() + actualW; col++){
                            if(col != r.getRoomX() && row != r.getRoomY()) break;
                         try{   
                            if( mapLayout[row][col] == 0 && mapRegions[row][col] == r.getRoomRegion()){
                                mapLayout[row][col] = r.getDoor();
                            }
-                           if(mapLayout[row+ actualH][col] == 0 && mapRegions[row+ actualH][col] != null && mapRegions[row+ actualH][col] == r.getRoomRegion()){
+                           if(row == r.getRoomY() && mapLayout[row+ actualH][col] == 0 && mapRegions[row+ actualH][col] != null && mapRegions[row+ actualH][col] == r.getRoomRegion()){
                                mapLayout[row + actualH][col] = r.getDoor();
                            }
-                           if( mapLayout[row][col + actualW] == 0 && mapRegions[row][col + actualW] != null && mapRegions[row][col + actualW] == r.getRoomRegion()){
+                           if(col == r.getRoomX() && mapLayout[row][col + actualW] == 0 && mapRegions[row][col + actualW] != null && mapRegions[row][col + actualW] == r.getRoomRegion()){
                                mapLayout[row][col + actualW] = r.getDoor();
                            }
                        }catch(Exception e){

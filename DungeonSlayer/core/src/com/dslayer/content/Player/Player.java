@@ -594,7 +594,7 @@ public class Player extends BaseActor{
                     || (obj instanceof RoomDoor && ((RoomDoor)obj).canPass())){
                 continue;
             }
-            preventOverlap(obj);
+            //preventOverlap(obj);
         }
     }
     

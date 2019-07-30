@@ -185,6 +185,9 @@ public abstract class BaseEnemy extends BaseActor{
             if(player.boundaryPolygon == null)
                 continue;
             if(Intersector.overlaps(TargetRange,player.getBoundaryPolygon().getBoundingRectangle()) && !((Player)player).isDead()){
+                if(_room.isActorInRoom(player)){
+                    System.out.println("Player in Room");
+                }
                 if(_room != null && !_room.isActorInRoom(player)){
                     continue;
                 }

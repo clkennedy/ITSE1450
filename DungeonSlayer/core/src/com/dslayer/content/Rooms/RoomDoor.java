@@ -85,7 +85,9 @@ public abstract class RoomDoor extends RoomPanels{
     @Override
     public void act(float dt){
          super.act(dt);
-         
+         if(true){
+             return;
+         }
          for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
             if(Intersector.overlapConvexPolygons(this.getBoundaryPolygon(), player.getBoundaryPolygon())){
                 if(((Player)player).inventoryContains(BossKey.class) && !canPass){
