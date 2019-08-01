@@ -105,6 +105,8 @@ public class MainMenuScreen extends BaseScreen {
             bgFrames[i] = "Background/Frames/b " + (i + gifOffset) + ".png";
         }
         b.loadAnimationFromFiles(bgFrames,.05f, true);
+        b.setOrigin(0,0);
+        b.setScale(Options.aspectRatio);
         
         if(!musicPlaying){
             backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/8BitDungTitle.mp3"));

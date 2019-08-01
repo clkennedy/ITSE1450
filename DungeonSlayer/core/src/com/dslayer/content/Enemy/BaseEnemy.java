@@ -213,9 +213,9 @@ public abstract class BaseEnemy extends BaseActor{
         
         if(((target == null || ignoreTracking) && (hitWall || Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle())))){
             if(_room != null){
-                moveTo.x = MathUtils.random(_room.getRoomX() * RoomPanels.defaultSize* Options.aspectRatio,(_room.getRoomX() + _room.getRoomWidth()) * RoomPanels.defaultSize* Options.aspectRatio);
-                moveTo.y = MathUtils.random(Difficulty.worldHeight - (_room.getRoomY() * RoomPanels.defaultSize* Options.aspectRatio),
-                        Difficulty.worldHeight - ((_room.getRoomY() + _room.getRoomHeight()) * RoomPanels.defaultSize * Options.aspectRatio)); 
+                moveTo.x = MathUtils.random(_room.getRoomX() * RoomPanels.defaultSize,(_room.getRoomX() + _room.getRoomWidth()) * RoomPanels.defaultSize);
+                moveTo.y = MathUtils.random(Difficulty.worldHeight - (_room.getRoomY() * RoomPanels.defaultSize),
+                        Difficulty.worldHeight - ((_room.getRoomY() + _room.getRoomHeight()) * RoomPanels.defaultSize)); 
             }else{
                 moveTo.x = MathUtils.random(Difficulty.worldWidth);
                 moveTo.y = MathUtils.random(Difficulty.worldHeight); 

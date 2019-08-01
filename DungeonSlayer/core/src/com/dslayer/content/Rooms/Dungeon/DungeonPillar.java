@@ -25,7 +25,7 @@ public class DungeonPillar extends RoomWall{
         //texture = new Texture(Gdx.files.internal(dHole));
         loadTexture(dPillar);
         //setSize(80,80);
-        setSize(tSize * Options.aspectRatio, tSize * Options.aspectRatio);
+        DefaultSize();
         setOrigin(getWidth() / 2, getHeight() / 2);
         setBoundaryRectangle();
     }
@@ -35,7 +35,7 @@ public class DungeonPillar extends RoomWall{
         //texture = new Texture(Gdx.files.internal(dHole));
         loadTexture(dPillar);
         //setSize(80,80);
-        setSize(size * Options.aspectRatio, size * Options.aspectRatio);
+        setSize(size, size);
         setOrigin(getWidth() / 2, getHeight() / 2);
         setBoundaryRectangle();
     }

@@ -73,7 +73,7 @@ public class PhantomBoss extends BaseBoss{
         //setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
         loadAnimationFromSheet(phantomWalk,1, 6, .3f, true);
         size = 80;
-        setScale(1f);
+        setScale(Options.aspectRatio);
         setBoundaryPolygonLong(10);
         setMaxSpeed(50);
         setOrigin(getWidth() /2, getHeight() / 2);
