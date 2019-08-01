@@ -51,12 +51,26 @@ public abstract class Skill extends BaseActor{
     protected Sound skillSound;
     protected Sound skillHit;
     
+    protected boolean showIndicator = false;
+    protected float indCooldown = 1.5f;
+    protected float indCooldownTime = 0f;
+    
+    protected boolean skillDone = false;
+    
     public Skill(){
         super();
     }
     
     public Skill(float x, float y, Stage s){
         super(x,y,s);
+    }
+    
+    public void setIndicator(boolean t){
+        showIndicator = t;
+    }
+    
+    public boolean isSkillComplete(){
+        return skillDone;
     }
     
     public Skill setFrom(Skill.From f){
@@ -176,5 +190,6 @@ public abstract class Skill extends BaseActor{
     
     protected abstract void loadCDTexture();
     protected abstract void loadCastTexture();
-    public abstract void cast(BaseActor caster, Vector2 target, Skill.From from);
+    public abstract BaseActor cast(BaseActor caster, Vector2 target, Skill.From from);
+    public abstract BaseActor cast(BaseActor caster, BaseActor target, Skill.From from);
 }

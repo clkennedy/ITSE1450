@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
+import com.dslayer.content.Player.Player;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
@@ -35,6 +36,8 @@ public class BaseBoss extends BaseEnemy{
     protected List<Animation<TextureRegion>> slashAnimList;
     protected List<Animation<TextureRegion>> castAnimList;
     protected Animation<TextureRegion> dieAnim;
+    
+    protected float damageMitigation = 2.3f;
 
     @Override
     public void attack(BaseActor player) {
@@ -103,12 +106,17 @@ public class BaseBoss extends BaseEnemy{
         isDying = true;
     }
     
+    @Override
+    public void takeDamage(int damage, Player player){
+        super.takeDamage((int)(damage / damageMitigation), player);
+    }
+    
     private void canAttack(float dt){
         if(attackCooldownTime >= attackCooldown){
             canAttack = true;
             attackCooldownTime = 0;
         }
-        if(!canAttack){
+        if(!canAttack && !channeling){
             attackCooldownTime += dt;
         }
     }

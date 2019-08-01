@@ -74,6 +74,8 @@ public abstract class BaseEnemy extends BaseActor{
     protected boolean attacking;
     protected boolean canAttack = true;
     
+    protected boolean channeling = false;
+    
     protected int pointsWorth = 10;
     
     public Vector2 moveTo;
@@ -82,6 +84,8 @@ public abstract class BaseEnemy extends BaseActor{
     protected Texture walk;
     protected Texture attack;
     protected Texture die;
+    
+    protected boolean ignoreTracking = false;
     
     protected boolean canMove = true;
     
@@ -92,6 +96,8 @@ public abstract class BaseEnemy extends BaseActor{
     protected Backpack backpack = new Backpack();;
     
     private Sound footSteps;
+    
+    protected BaseActor aura;
     
     protected Room _room;
     
@@ -205,7 +211,7 @@ public abstract class BaseEnemy extends BaseActor{
             }
         }
         
-        if(target == null && (hitWall || Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle()))){
+        if(((target == null || ignoreTracking) && (hitWall || Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle())))){
             if(_room != null){
                 moveTo.x = MathUtils.random(_room.getRoomX() * RoomPanels.defaultSize* Options.aspectRatio,(_room.getRoomX() + _room.getRoomWidth()) * RoomPanels.defaultSize* Options.aspectRatio);
                 moveTo.y = MathUtils.random(Difficulty.worldHeight - (_room.getRoomY() * RoomPanels.defaultSize* Options.aspectRatio),
@@ -373,6 +379,9 @@ public abstract class BaseEnemy extends BaseActor{
             walk.dispose();
         if(die != null)
             die.dispose();
+        if(aura != null){
+            aura.remove();
+        }
         return super.remove();
     }
     

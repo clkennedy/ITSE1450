@@ -42,7 +42,7 @@ public class BaseActor extends Group {
     public String network_id;
     
     //debugging stuff (custom)
-    protected static boolean debug = false;
+    protected static boolean debug = true;
     protected ShapeRenderer sRend;
     // Animation support
     protected Animation<TextureRegion> animation;
@@ -503,6 +503,14 @@ public class BaseActor extends Group {
             return false;
         }
         return animation.isAnimationFinished(elapsedTime);
+    }
+    public boolean isAnimationPastHalfway() {
+        if(animation.getPlayMode() == Animation.PlayMode.LOOP){
+            return false;
+        }
+        float frameDuration = animation.getFrameDuration();
+        float totalDuration = animation.getAnimationDuration();
+        return elapsedTime >= (totalDuration / 2);
     }
     
     /**

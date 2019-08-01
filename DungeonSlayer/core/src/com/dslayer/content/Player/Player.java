@@ -599,7 +599,7 @@ public class Player extends BaseActor{
         alignCamera();
         
         int count = 0;
-        
+        //setZIndex(1000);
         //wall Collison
         ArrayList<BaseActor> allRoomObjects = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels");
         for(BaseActor obj: allRoomObjects){

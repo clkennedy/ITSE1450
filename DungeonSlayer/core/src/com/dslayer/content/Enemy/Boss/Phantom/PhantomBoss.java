@@ -16,10 +16,15 @@ import com.dslayer.content.options.Difficulty;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.dslayer.content.Enemy.BaseEnemy;
+import com.dslayer.content.Enemy.Boss.BaseBoss;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.Skills.DarkLaser;
 import com.dslayer.content.Skills.FireBall;
+import com.dslayer.content.Skills.ShadowGrab;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.Skills.Slash;
 import com.dslayer.content.options.Avatars;
@@ -27,6 +32,7 @@ import com.dslayer.content.options.LPC;
 import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
 import java.util.ArrayList;
+import java.util.List;
 import org.json.JSONObject;
 
 /**
@@ -34,12 +40,24 @@ import org.json.JSONObject;
  * @author ARustedKnight
  */
 
-public class PhantomBoss extends BaseEnemy{
+public class PhantomBoss extends BaseBoss{
     
     private final String phantomWalk = "Bosses/Phantom/PanthonFloat.png";
     private final String phantomDie = "Bosses/Phantom/PhantomDie.png";
+    private final String phantomAttack = "Bosses/Phantom/PhantomAttack.png";
+    private final String phantomPrepChannel = "Bosses/Phantom/PhantomPullCandle.png";
+    private final String phantomChannel = "Bosses/Phantom/PhantomCandle.png";
+    private final String phantomChannelAura = "particles/DarkPurpleOvalAura.png";
     protected enum WalkDirection{up,left,down,right};
     protected WalkDirection currentDirection;
+    
+    private List<BaseActor> targets;
+    
+    protected Skill skill2;
+    protected int skillToCast = 1;
+    
+    protected BaseActor channeledSkill = null;
+    protected boolean doneAttacking = false;
     
     public PhantomBoss(float x, float y, Stage s){
         
@@ -48,40 +66,43 @@ public class PhantomBoss extends BaseEnemy{
         
         pointsWorth = 15;
         
-        maxHealth = 40;
+        maxHealth = 400;
         health = maxHealth;
         healthBar = new Rectangle(x, y, maxHealth , 5);
         currentDirection = WalkDirection.left;
         //setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
         loadAnimationFromSheet(phantomWalk,1, 6, .3f, true);
         size = 80;
-        setSize(size,size);
+        setScale(1f);
         setBoundaryPolygonLong(10);
         setMaxSpeed(50);
         setOrigin(getWidth() /2, getHeight() / 2);
-        attackDamage = 30;
 
         AttackRange = new Circle(x, y, 300* Options.aspectRatio);
         TargetRange = new Circle(x, y, 500* Options.aspectRatio);
         
-        skill = new FireBall();
-        skill.setDamage(40);
+        skill = new ShadowGrab();
+        skill.setDamage(50);
         skill.isEnemy(true);
         
-        AttackRange = new Circle(x, y, 100* Options.aspectRatio);
-        TargetRange = new Circle(x, y, 100* Options.aspectRatio);
+        skill2 = new DarkLaser();
+        skill2.setDamage(750);
+        skill2.isEnemy(true);
         
         moveTo = new Vector2();
         moveTo.x = MathUtils.random(Difficulty.worldWidth);
         moveTo.y = MathUtils.random(Difficulty.worldHeight);
         
         moveToRange = new Circle(moveTo.x, moveTo.y, 30);
+        ignoreTracking = true;
         
-        //castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.cast);
-        //walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
-        //dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);
+        aura = new BaseActor(x,y,s);
+        aura.loadTexture(phantomChannelAura);
+        aura.addAction(Actions.fadeOut(.1f));
+        aura.setWidth(this.getWidth() * 2f);
+        aura.setHeight(this.getHeight() * 2f);
         
-        
+        targets = new ArrayList();
         if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
             this.network_id = Integer.toString(Multiplayer.getNextID());
             JSONObject data = new JSONObject();
@@ -103,18 +124,47 @@ public class PhantomBoss extends BaseEnemy{
         super.act(dt);
         if(isDying)
             return;
-        
+        aura.setPosition(this.getX() - (getWidth() / 2), this.getY()- (getHeight()/ 2));
+        aura.setZIndex(this.getZIndex() - 50);
         if(attacking){
-            if(isAnimationFinished()){
-                attacking = false;
-                skill.cast(this, new Vector2(target.getX(), target.getY()), Skill.From.Enemy);
+            if(isAnimationFinished() && !doneAttacking){
+                if(skillToCast == 1){
+                    doneAttacking = true;
+                    for(BaseActor b : targets){
+                        skill.cast(this, b, Skill.From.Enemy);
+                    }
+                }
+                if(skillToCast == 2){
+                    doneAttacking = true;
+                    for(int i = 0; i < 5; i ++){
+                        channeledSkill = skill2.cast(this, new Vector2(this.getX() + (getWidth() / 2), this.getY() + (getHeight() / 2)), Skill.From.Enemy);
+                    }
+                    loadAnimationFromSheet(phantomChannel, 1, 6, .15f, true);
+                    channeling = true;
+                }
                 canAttack = false;
+            }
+            if(doneAttacking ){
+                if(channeling && channeledSkill != null && ((Skill)channeledSkill).isSkillComplete()){
+                    attacking = false;
+                    channeling = false;
+                    targets.clear();
+                    doneAttacking = false;
+                    aura.addAction(Actions.fadeOut(1f));
+                }else if(!channeling){
+                    attacking = false;
+                    channeling = false;
+                    targets.clear();
+                    doneAttacking = false;
+                    
+                }
+                
             }
             return;
         }
         lookForTarget();
         moveTowardTarget2();
-        //lookForAttack();
+        lookForAttack();
         
         applyPhysics(dt);
     }
@@ -123,8 +173,15 @@ public class PhantomBoss extends BaseEnemy{
     public void attack(BaseActor player){
         attacking = true;
         setSpeed(0);
-        //setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
-        setSize(size, size);
+        skillToCast = MathUtils.random(2, 2);
+        if(skillToCast == 1){
+            loadAnimationFromSheet(phantomAttack, 1, 6, .2f, false);
+        }
+        if(skillToCast == 2){
+            loadAnimationFromSheet(phantomPrepChannel, 1, 10, .15f, false);
+            aura.addAction(Actions.fadeIn(2));
+        }
+        //setSize(size, size);
         target = player;
     }
     
@@ -132,26 +189,20 @@ public class PhantomBoss extends BaseEnemy{
         if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
             return;
         
-        ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
-        boolean anyPlayerInAttackRange = false;
-        for(BaseActor player: boo){
-            if(Intersector.overlaps(AttackRange, player.getBoundaryPolygon().getBoundingRectangle())){
+        ArrayList<BaseActor> players = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
+        for(BaseActor player: players){
                 if(_room != null && !_room.isActorInRoom(player)){
                     continue;
                 }
-                anyPlayerInAttackRange = true;
+                targets.add(player);
                 chaseTarget = false;
                 if(!canAttack)
                     return;
-                attacking = true;
-                setSpeed(0);
-                //setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
-                setSize(size, size);
-                target = player;
+                attack(player);
                 if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
                     JSONObject data = new JSONObject();
                     try{
-                    System.out.println(player.network_id);
+                    //System.out.println(player.network_id);
                     data.put("id", this.network_id);
                     data.put("target", player.network_id);
                     Multiplayer.socket.emit("enemyAttack", data);
@@ -160,12 +211,8 @@ public class PhantomBoss extends BaseEnemy{
                            System.out.println("Failed to push enemy Attack: Skeleton Warrior");
                     }
                 }
-            moveTo.x = getX();
-            moveTo.y = getY();
-            moveToChanged();
-            }else if(!anyPlayerInAttackRange){
-                chaseTarget = true;
-            }
+                
+            //moveToChanged();
         }
     }
     
@@ -196,8 +243,8 @@ public class PhantomBoss extends BaseEnemy{
         }
         
         
-        //setAnimation(walkAnimList.get(currentDirection.ordinal()));
-        setSize(size, size);
+        loadAnimationFromSheet(phantomWalk,1, 6, .3f, true);
+        //setSize(size, size);
     }
     
     protected void moveTowardTarget2(){
@@ -229,8 +276,8 @@ public class PhantomBoss extends BaseEnemy{
         }
             
         
-       // setAnimation(walkAnimList.get(currentDirection.ordinal()));
-        setSize(size, size);
+        loadAnimationFromSheet(phantomWalk,1, 6, .3f, true);
+        //setSize(size, size);
     }
     @Override
     public void die() {
@@ -238,7 +285,7 @@ public class PhantomBoss extends BaseEnemy{
         //setAnimationWithReset(dieAnim);
         //resetAnim();
         loadAnimationFromSheet(phantomDie, 1, 10, .2f, false);
-        setSize(size, size);
+        //setSize(size, size);
         
         isDying = true;
     }

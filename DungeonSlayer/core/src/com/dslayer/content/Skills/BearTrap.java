@@ -167,7 +167,7 @@ public class BearTrap extends Skill{
      }
 
     @Override
-    public void cast(BaseActor caster, Vector2 target, Skill.From from) {
+    public BaseActor cast(BaseActor caster, Vector2 target, Skill.From from) {
         float degrees = (float)(MathUtils.atan2((target.y - (caster.getY() + caster.getHeight()) )
                 , target.x - (caster.getX() + caster.getWidth())) * 180.0d / Math.PI);
         
@@ -189,6 +189,7 @@ public class BearTrap extends Skill{
             canCast = false;
             skillCooldown = rechargeRate - rechargeTimer;
         }
+        return b;
     }
     
     public BearTrap isProjectile(){
@@ -225,6 +226,11 @@ public class BearTrap extends Skill{
             //trappedEnemy.remove();
         
         return super.remove();
+    }
+
+    @Override
+    public BaseActor cast(BaseActor arg0, BaseActor arg1, From arg2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

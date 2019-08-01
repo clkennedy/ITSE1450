@@ -22,7 +22,7 @@ public class RoomPanels extends BaseActor{
     protected BaseActor DefaultSize(){
         setScale(1f);
         setSize(defaultSize, defaultSize);
-        
+        setZIndex(0);
         return this;
     }
     

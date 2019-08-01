@@ -6,15 +6,18 @@
 package com.dslayer.content.Skills;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Player.Player;
+import com.dslayer.content.Rooms.Dungeon.DungeonObject;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Options;
 import com.dslayer.content.projectiles.Spells.ProjectileSpell;
 import com.dslayer.content.projectiles.Spells.Projectiles;
+import static com.dslayer.content.projectiles.Spells.Projectiles.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,33 +25,41 @@ import java.util.List;
  *
  * @author ARustedKnight
  */
-public class Slash extends Skill{
+public class DarkLaser extends Skill{
     
-    private String ico = "Icons/Slash.png";
-    private String icoCD = "Icons/SlashCD.png";
+    private String ico = "Icons/ArrowShotIcon.png";
+    private String icoCD = "Icons/ArrowShotIconCD.png";
     
-    private float duration = .5f;
-    private float durationTimer = 0;
+    private String indicator = "particles/Laser idicator.png";
+    
+    protected float degrees = 0;
+    
+    private String soundPath = "";
+    
+    private Sound sound;
+    
+    private int pierce = 3;
+    
+    private float stayArroundDuration = 2;
+    private float stayTimer=0;
     
     List<BaseActor> alreadyHit;
     
-    public Slash(){
+    private float baseSpeed;
+    
+    public DarkLaser(){
         super();
         setup();
+        
     }
     
-    public Slash(float x, float y, Stage s){
+    public DarkLaser(float x, float y, Stage s){
         super(x,y,s);
+        //setOrigin(getWidth() / 2, getHeight() / 2);
         setup();
     }
     
     private void setup(){
-        /*setAnimation(Projectiles.getFireBallAnim());
-        setOriginX(getWidth() / 2);
-        setOriginY(getHeight() / 2);
-        setBoundaryPolygonHalfWidth(12);
-        setRotation(90);
-        damage = 50;*/
     }
     @Override
     public void setupIcon(float x, float y){
@@ -61,67 +72,102 @@ public class Slash extends Skill{
         if(!isAction)
             return;
         getBoundaryPolygon();
-        accelerateAtAngle(direction);
+        //accelerateAtAngle(direction);
         applyPhysics(dt);
+        
+        
+        if(!showIndicator){
+            stayTimer+=dt;
+            if(stayTimer > stayArroundDuration){
+                skillDone = true;
+                remove();
+            }
+                
+        }else{
+            indCooldownTime += dt;
+            if(indCooldownTime > indCooldown){
+                showIndicator = false;
+                loadAnimationFromSheet(DarkLaser, 11, 1, .02f, true);
+                setOrigin(0,0);
+                setBoundaryPolygonWide(12);
+                //setRotation(0);
+                
+            }else{
+                return;
+            }
+        }
         
         if(from == Skill.From.Enemy){
             for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
                 if(overlaps(player) && !alreadyHit.contains(player)){
                     ((Player)player).takeDamage((int)damage);
-                    alreadyHit.add(player);
                     if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
                         skillHit.play(Options.soundVolume);
                     }
+                    alreadyHit.add(player);
                 }
             }
         }
         if(from == Skill.From.Player){
             for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                 if(overlaps(enemy) && !alreadyHit.contains(enemy)){
-                    ((BaseEnemy)enemy).takeDamage((int)damage, player);
-                    alreadyHit.add(enemy);
+                    float d = damage * (getSpeed() /  baseSpeed) * ((float)pierce / 3f);
+                    ((BaseEnemy)enemy).takeDamage((int)d, player);
                     if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
                         skillHit.play(Options.soundVolume);
                     }
+                    alreadyHit.add(enemy);
                 }
             }
-        }
-        durationTimer += dt;
-        if(durationTimer > duration){
-            remove();
         }
      }
 
     @Override
     public BaseActor cast(BaseActor caster, Vector2 target, Skill.From from) {
-        float degrees = (float)(MathUtils.atan2((target.y - (caster.getY() + caster.getHeight()) )
-                , target.x - (caster.getX() + caster.getWidth())) * 180.0d / Math.PI);
-        BaseActor b = new Slash(caster.getX() + caster.getWidth() /2,caster.getY() + caster.getHeight() /2 , 
-                BaseActor.getMainStage()).isProjectile()
-                .setProjectileAcceleration(500 * Options.aspectRatio).
-                setProjectileRotation(degrees).
-                setDirection(degrees)
-                .setFrom(from).setDamage(damage);
+        
+        float degrees = MathUtils.random(360);
+        Vector2 distance = new Vector2(30, 0);
+        distance.setAngle(degrees);
+        target.add(distance);
+        BaseActor b = new DarkLaser(caster.getX(),caster.getY(), 
+                BaseActor.getMainStage());
+        if(from == Skill.From.Enemy){
+            ((Skill)b).showIndicator = true;
+        }
+                ((DarkLaser)b).isProjectile()
+                .setFrom(from);
+                b.setOrigin(0,0);
+                b.setPosition(target.x, target.y);
+                b.setRotation(degrees);
+                b.setZIndex(1000);
+                ((DarkLaser)b).degrees = degrees;
                 canCast = false;
-                if(from == Skill.From.Player){
-                    ((Skill)b).player = ((Player)caster);
-                }
-                return b;
+        if(from == Skill.From.Player){
+            ((Skill)b).player = ((Player)caster);
+        }
+        return b;   
     }
     
-    public Slash isProjectile(){
+    public DarkLaser isProjectile(){
         isAction = true;
+        if(!showIndicator){
+            loadAnimationFromSheet(DarkLaser, 11, 1, .02f, true);
+        }else{
+            loadTexture(indicator);
+        }
+        setScale(2f * Options.aspectRatio, 1f * Options.aspectRatio);
+        //baseSpeed = 700 * Options.aspectRatio;
         alreadyHit = new ArrayList<BaseActor>();
-        loadTexture(Projectiles.Slash);
-        setScale(1f * Options.aspectRatio);
-        setOriginX(getWidth() / 2);
-        setOriginY(getHeight() / 2);
-        setPosition(getX() - (getWidth() /2) , getY() - (getHeight() / 2));
+        //setProjectileSpeed(baseSpeed);
+        //setOriginX(getWidth() / 2);
+        //setOriginY(getHeight() / 2);
+        //setPosition(getX() - getWidth(), getY() - getHeight());
         setBoundaryPolygon(12);
+        damage = 100;
         return this;
     }
     
-    @Override
+   @Override
     protected void loadCDTexture() {
         //baIcon.loadTexture(icoCD);
         baIcon.loadTexture(icoCD);

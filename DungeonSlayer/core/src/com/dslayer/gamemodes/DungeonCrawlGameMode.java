@@ -111,7 +111,7 @@ public class DungeonCrawlGameMode extends GameMode{
         nonBossRooms = lg.getNonBossRooms();
         bossRoom = lg.getBossRooms();
         
-        Vector2 pSpawn = Spawner.getSpawnLocation(spawnRoom);
+        Vector2 pSpawn = Spawner.getSpawnLocation(bossRoom);
         
         player = new Player(pSpawn.x,pSpawn.y, mainStage);
         player.setHero(HeroSelectionScreenDungeon.currentSelection);
@@ -131,7 +131,7 @@ public class DungeonCrawlGameMode extends GameMode{
         
         for(int i = 0; i < nonBossRooms.size(); i++){
             Room r = nonBossRooms.get(i);
-            int randNumOfEn = MathUtils.random(2, 9);
+            int randNumOfEn = 0; //MathUtils.random(2, 9);
             for(int j = 0; j < randNumOfEn; j ++){
                 BaseEnemy b = Spawner.spawnRandomEnemy(r);
                 if(MathUtils.randomBoolean(.6f)){
@@ -146,7 +146,7 @@ public class DungeonCrawlGameMode extends GameMode{
         boss = Spawner.spawnRandomBoss(bossRoom);
         
         int rand = MathUtils.random(nonBossRooms.size() - 1);
-        nonBossRooms.get(rand).getRandomEnemy().addToBackpack(new BossKey());
+        //nonBossRooms.get(rand).getRandomEnemy().addToBackpack(new BossKey());
         
         gm = new GameMessage();
         RoomDoor.gm = gm;

@@ -119,7 +119,7 @@ public class IceNova extends Skill{
      }
     
     @Override
-    public void cast(BaseActor caster, Vector2 target, Skill.From from) {
+    public BaseActor cast(BaseActor caster, Vector2 target, Skill.From from) {
         //float degrees = (float)(MathUtils.atan2((target.y - caster.y ), target.x - caster.x) * 180.0d / Math.PI);
                 Skill b = new IceNova(caster.getX() ,caster.getY() , BaseActor.getMainStage()).isProjectile()
                         .setFrom(from);
@@ -129,6 +129,7 @@ public class IceNova extends Skill{
                 if(from == Skill.From.Player){
                     ((Skill)b).player = ((Player)caster);
                 }
+                return b;
         }
     
     public IceNova isProjectile(){
@@ -155,6 +156,11 @@ public class IceNova extends Skill{
         //baIcon.loadTexture(ico);
         baIcon.loadTexture(ico);
         baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
+    }
+
+    @Override
+    public BaseActor cast(BaseActor arg0, BaseActor arg1, From arg2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
         
 }

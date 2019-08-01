@@ -123,7 +123,7 @@ public class SkeletonArmored extends BaseSkeleton{
                 if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
                     JSONObject data = new JSONObject();
                     try{
-                    System.out.println(player.network_id);
+                    //System.out.println(player.network_id);
                     data.put("id", this.network_id);
                     data.put("target", player.network_id);
                     Multiplayer.socket.emit("enemyAttack", data);
