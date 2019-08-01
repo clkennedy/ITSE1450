@@ -88,6 +88,7 @@ public class Player extends BaseActor{
     
     private float defaultDamageModifier = 1;
     private float damageModifier = 1;
+    private float sprintSpeedModifier = 1.5f;
     
     public Hero hero;
     
@@ -559,7 +560,7 @@ public class Player extends BaseActor{
                         }
                 }
             }
-            float speedModifier = (_playerControls.isPressed("Sprint")) ? 1.3f : 1f;
+            float speedModifier = (_playerControls.isPressed("Sprint")) ? sprintSpeedModifier : 1f;
             setAcceleration(accel * speedModifier * Options.aspectRatio);
             setMaxSpeed(playerSpeed * speedModifier);
             if(_playerControls.isPressed("Right")){
@@ -607,7 +608,7 @@ public class Player extends BaseActor{
                     || (obj instanceof RoomDoor && ((RoomDoor)obj).canPass())){
                 continue;
             }
-            //preventOverlap(obj);
+            preventOverlap(obj);
         }
     }
     

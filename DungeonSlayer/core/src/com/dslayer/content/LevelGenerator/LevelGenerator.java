@@ -47,7 +47,7 @@ public class LevelGenerator {
     protected int _currentRegion = -1;
     
     protected int minimumRoomSize = 7;
-    protected int maximumRoomSize = 17;
+    protected int maximumRoomSize = 12;
     
     protected int mapWidth;
     protected int mapHeight;
@@ -204,7 +204,7 @@ public class LevelGenerator {
                for(int c = x; c < x + width; c++){
                    mapRegions[r][c] = _currentRegion;
                    if(room.getLayout()[row][col] != 0){
-                       mapLayout[r][c] = room.getFillerObjectKey();
+                       mapLayout[r][c] = room.getLayout()[row][col];
                    }else{
                        mapLayout[r][c] = room.getLayout()[row][col];
                    }
@@ -367,7 +367,7 @@ public class LevelGenerator {
                merged.add(i);
                openRegions.add(i);
            }
-           
+           //drawMapLayout();
            Set connectors = connectorRegions.keySet();
            //System.out.println("Current Region is : " + _currentRegion);
            while(openRegions.size() > 0){
@@ -399,8 +399,14 @@ public class LevelGenerator {
                 //System.out.println("Starting Pos: " + pos);
                 
                 for(Vector2 curDir: directions){
-                    //System.out.println("Current Direction: " + curDir);
                     Vector2 curPos = new Vector2(tmpPos.x, tmpPos.y);
+                    System.out.println("Starting Pos: " + curPos);
+                    System.out.println("Current Direction: " + curDir);
+                    int region = (mapRegions[(int)(curPos.x + curDir.x)][(int)(curPos.y+curDir.y)] == null) ? 
+                            ((mapRegions[(int)(curPos.x + (curDir.x * 2))][(int)(curPos.y+(curDir.y * 2))] == null)? -1:
+                            mapRegions[(int)(curPos.x + (curDir.x * 2))][(int)(curPos.y+(curDir.y * 2))]):
+                            mapRegions[(int)(curPos.x + curDir.x)][(int)(curPos.y+curDir.y)];
+                    System.out.println("Region: " + region);
                     boolean foundFloor = false;
                     while(!foundFloor){
                         if((curPos.x + curDir.x >= mapWidth || curPos.x + curDir.x < 0 ||
@@ -408,51 +414,33 @@ public class LevelGenerator {
                                 || mapLayout[(int)(curPos.x + curDir.x)][(int)(curPos.y+curDir.y)] == 0){
                             break;
                         }
-                        //System.out.println("Current Pos: " + curPos);
+                        System.out.println("Current Pos: " + curPos);
                         if(mapLayout[(int)(curPos.x + curDir.x)][(int)(curPos.y+curDir.y)] != 0
                             && (curPos.x + curDir.x < mapWidth && curPos.x + curDir.x > 0 &&
                                 curPos.y + curDir.y < mapHeight && curPos.y + curDir.y > 0)){
                         mapLayout[(int)(curPos.x + curDir.x)][(int)(curPos.y+curDir.y)] = 0;
                         
-                        if(mapLayout[(int)(curPos.x + curDir.y)][(int)(curPos.y+curDir.x)] == 0 ||
-                                mapLayout[(int)(curPos.x - curDir.y)][(int)(curPos.y-curDir.x)] == 0){
+                        if((mapLayout[(int)(curPos.x + curDir.y)][(int)(curPos.y+curDir.x)] == 0 
+                            && mapRegions[(int)(curPos.x + curDir.y)][(int)(curPos.y+curDir.x)] != null
+                            && mapRegions[(int)(curPos.x + curDir.y)][(int)(curPos.y+curDir.x)] == region) ||
+                                (mapLayout[(int)(curPos.x - curDir.y)][(int)(curPos.y-curDir.x)] == 0 
+                                && mapRegions[(int)(curPos.x - curDir.y)][(int)(curPos.y-curDir.x)] != null
+                                && mapRegions[(int)(curPos.x - curDir.y)][(int)(curPos.y-curDir.x)] == region)){
                             foundFloor = true;
+                            break;
                         }
                         } 
                         curPos.add(curDir);
                     }
-                    curPos = new Vector2(tmpPos.x, tmpPos.y);
-                    if(mapLayout[(int)(curPos.x - curDir.x)][(int)(curPos.y-curDir.y)] != 0 && false){
-                        foundFloor = false;
-                        while(!foundFloor){
-                            if(mapLayout[(int)(curPos.x - curDir.x)][(int)(curPos.y-curDir.y)] == 0 ||
-                                    (curPos.x - curDir.x >= mapWidth || curPos.x - curDir.x < 0 ||
-                                    curPos.y - curDir.y >= mapHeight && curPos.y - curDir.y < 0)){
-                                break;
-                            }
-                            System.out.println("Current Pos: " + curPos);
-                            if(mapLayout[(int)(curPos.x - curDir.x)][(int)(curPos.y-curDir.y)] != 0
-                                && (curPos.x - curDir.x < mapWidth && curPos.x - curDir.x > 0 &&
-                                    curPos.y - curDir.y < mapHeight && curPos.y - curDir.y > 0)){
-                            mapLayout[(int)(curPos.x - curDir.x)][(int)(curPos.y-curDir.y)] = 0;
-
-                            if(mapLayout[(int)(curPos.x - curDir.y)][(int)(curPos.y-curDir.x)] == 0 ||
-                                    mapLayout[(int)(curPos.x + curDir.y)][(int)(curPos.y+curDir.x)] == 0){
-                                foundFloor = true;
-                            }
-                            } 
-                            curPos.sub(curDir);
-                        }
-                    }
                 }
                
                List<Integer>regions = new ArrayList();
-               //System.out.println("---Regions---");
+               System.out.println("Regions");
                for(Integer value : connectorRegions.get(obj)){
-                   //System.out.println(value);
+                   System.out.println(value);
                    regions.add(merged.get(value));
                }
-               
+               System.out.println("__________");
                /*System.out.println("Current Regions");
                for(Integer i : regions){
                    System.out.println(i);

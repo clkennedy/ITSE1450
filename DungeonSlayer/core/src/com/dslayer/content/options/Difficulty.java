@@ -28,6 +28,9 @@ public class Difficulty {
     
     public static String DIFFICULTY = "Default";
     
+    public enum RoomTypes {Dungeon, Forest}
+    public static RoomTypes RoomType = RoomTypes.Dungeon;
+    
     public static void NORMAL(){
         DIFFICULTY = "Normal";
 

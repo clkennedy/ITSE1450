@@ -155,17 +155,17 @@ public abstract class Room {
         if((pos.x == this.roomX && pos.y == this.roomY) ||
                 (pos.x == this.roomX + (this.roomWidth) && pos.y == this.roomY) ||
                 (pos.x == this.roomX && pos.y == this.roomY + (this.roomHeight)) ||
-                (pos.x == this.roomX + (this.roomWidth) && pos.y == this.roomY + (this.roomHeight))){
+                (pos.x == this.roomX + (this.roomWidth ) && pos.y == this.roomY + (this.roomHeight))){
             return true;
         }
         return false;
     }
     
     public boolean isActorInRoom(BaseActor actor){
-       float bottom = (Difficulty.worldHeight - ((roomY + roomHeight) * RoomPanels.defaultSize* Options.aspectRatio));
-       float top = (Difficulty.worldHeight - ((roomY) * RoomPanels.defaultSize* Options.aspectRatio));
-       float leftWall = (roomX) * (RoomPanels.defaultSize* Options.aspectRatio);
-       float rightWall = (roomX + roomWidth) * (RoomPanels.defaultSize* Options.aspectRatio);
+       float bottom = (Difficulty.worldHeight - ((roomY + roomHeight -1) * RoomPanels.defaultSize* Options.aspectRatio));
+       float top = (Difficulty.worldHeight - ((roomY +1) * RoomPanels.defaultSize* Options.aspectRatio));
+       float leftWall = (roomX + 1) * (RoomPanels.defaultSize* Options.aspectRatio);
+       float rightWall = (roomX + roomWidth - 1) * (RoomPanels.defaultSize* Options.aspectRatio);
         /*System.out.println("Top: " + top + "\r\n" +
                                 "Bottom: " + bottom + "\r\n"+
                                 "Right: " +  rightWall + "\r\n"+

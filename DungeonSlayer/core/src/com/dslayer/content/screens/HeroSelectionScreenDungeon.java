@@ -33,6 +33,10 @@ import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.options.Avatar;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Options;
+import static com.dslayer.content.options.Options.displayType;
+import static com.dslayer.content.options.Options.lastDisplaySetting;
+import static com.dslayer.content.options.Options.nextDisplaySetting;
+import static com.dslayer.content.options.Options.setDisplay;
 import com.dslayer.content.options.Unlocks;
 import static com.dslayer.content.options.Unlocks.currentAvatar;
 import com.dslayer.gamemodes.DungeonCrawlGameMode;
@@ -114,6 +118,52 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
             count++;
             heroSelections.add(b);
         }
+        
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+        Label lastDisplay = new Label("<", FontLoader.buttonStyle);
+        lastDisplay.setSize(lastDisplay.getWidth() * Options.aspectRatio, lastDisplay.getHeight() * Options.aspectRatio);
+        lastDisplay.setOriginX(lastDisplay.getWidth() / 2);
+        lastDisplay.setOriginY(lastDisplay.getHeight()/ 2);
+        lastDisplay.setAlignment(Align.left);
+        lastDisplay.setPosition(20 * Options.aspectRatio , 100 * Options.aspectRatio);
+        lastDisplay.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                previousDungeon();
+            }
+        
+        });
+        mainStage.addActor(lastDisplay);
+        
+        Label displayText = new Label("", FontLoader.buttonStyle);
+        displayText.setText((Difficulty.RoomType == Difficulty.RoomTypes.Dungeon)? "Dungeon" :
+                "Forest");
+        displayText.setSize(displayText.getWidth(), displayText.getHeight());
+        displayText.setOriginX(lastDisplay.getWidth() / 2);
+        displayText.setOriginY(lastDisplay.getHeight()/ 2);
+        displayText.setAlignment(Align.left);
+        displayText.setPosition((lastDisplay.getX() + lastDisplay.getWidth() + 20)* Options.aspectRatio,100 * Options.aspectRatio);
+        mainStage.addActor(displayText);
+        
+        Label nextDisplay = new Label(">", FontLoader.buttonStyle);
+        nextDisplay.setSize(nextDisplay.getWidth() * Options.aspectRatio, nextDisplay.getHeight() * Options.aspectRatio);
+        nextDisplay.setOriginX(nextDisplay.getWidth() / 2);
+        nextDisplay.setOriginY(nextDisplay.getHeight()/ 2);
+        nextDisplay.setAlignment(Align.left);
+        nextDisplay.setPosition((displayText.getX()+ displayText.getWidth() + 20) * Options.aspectRatio,100* Options.aspectRatio);
+        nextDisplay.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                nextDungeon();
+            }
+        
+        });
+        
+        mainStage.addActor(nextDisplay);
+        
+        //------------------------------------------------------------------------------------------------------------------------------
         count = 0;
         
         Label ready = new Label("Ready", FontLoader.menuStyle);
@@ -166,6 +216,25 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
         BaseGame.setActiveScreen( new MainMenuScreen());
     }
     
+    
+    public void nextDungeon(){
+        int d = Difficulty.RoomType.ordinal();
+        d++;
+        if(d >= Difficulty.RoomTypes.values().length){
+            d = 0;
+        }
+        Difficulty.RoomType = Difficulty.RoomTypes.values()[d];
+        BaseGame.setActiveScreen(new HeroSelectionScreenDungeon());
+    }
+    public void previousDungeon(){
+        int d = Difficulty.RoomType.ordinal();
+        d--;
+        if(d < 0){
+            d = Difficulty.RoomTypes.values().length - 1;
+        }
+        Difficulty.RoomType = Difficulty.RoomTypes.values()[d];
+        BaseGame.setActiveScreen(new HeroSelectionScreenDungeon());
+    }
     
     public void update(float dt) {
     }

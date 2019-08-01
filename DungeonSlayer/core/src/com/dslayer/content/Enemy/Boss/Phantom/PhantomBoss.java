@@ -173,7 +173,7 @@ public class PhantomBoss extends BaseBoss{
     public void attack(BaseActor player){
         attacking = true;
         setSpeed(0);
-        skillToCast = MathUtils.random(2, 2);
+        skillToCast = MathUtils.random(1, 2);
         if(skillToCast == 1){
             loadAnimationFromSheet(phantomAttack, 1, 6, .2f, false);
         }
