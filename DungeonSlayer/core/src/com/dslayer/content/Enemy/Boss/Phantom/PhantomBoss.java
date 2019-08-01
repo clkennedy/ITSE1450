@@ -1,0 +1,246 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.dslayer.content.Enemy.Boss.Phantom;
+
+import com.dslayer.content.Enemy.Skeleton.*;
+import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.math.MathUtils;
+import com.dslayer.content.options.Difficulty;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.dslayer.content.Enemy.BaseEnemy;
+import com.dslayer.content.projectiles.Spells.ProjectileSpell;
+import com.dslayer.content.Player.Player;
+import com.dslayer.content.Skills.FireBall;
+import com.dslayer.content.Skills.Skill;
+import com.dslayer.content.Skills.Slash;
+import com.dslayer.content.options.Avatars;
+import com.dslayer.content.options.LPC;
+import com.dslayer.content.options.Multiplayer;
+import com.dslayer.content.options.Options;
+import java.util.ArrayList;
+import org.json.JSONObject;
+
+/**
+ *
+ * @author ARustedKnight
+ */
+
+public class PhantomBoss extends BaseEnemy{
+    
+    private final String phantomWalk = "Bosses/Phantom/PanthonFloat.png";
+    private final String phantomDie = "Bosses/Phantom/PhantomDie.png";
+    protected enum WalkDirection{up,left,down,right};
+    protected WalkDirection currentDirection;
+    
+    public PhantomBoss(float x, float y, Stage s){
+        
+        super(x,y,s);
+        //texture = new Texture(Gdx.files.internal(skeleMage));
+        
+        pointsWorth = 15;
+        
+        maxHealth = 40;
+        health = maxHealth;
+        healthBar = new Rectangle(x, y, maxHealth , 5);
+        currentDirection = WalkDirection.left;
+        //setAnimation(this.walkAnimList.get(currentDirection.ordinal()));
+        loadAnimationFromSheet(phantomWalk,1, 6, .3f, true);
+        size = 80;
+        setSize(size,size);
+        setBoundaryPolygonLong(10);
+        setMaxSpeed(50);
+        setOrigin(getWidth() /2, getHeight() / 2);
+        attackDamage = 30;
+
+        AttackRange = new Circle(x, y, 300* Options.aspectRatio);
+        TargetRange = new Circle(x, y, 500* Options.aspectRatio);
+        
+        skill = new FireBall();
+        skill.setDamage(40);
+        skill.isEnemy(true);
+        
+        AttackRange = new Circle(x, y, 100* Options.aspectRatio);
+        TargetRange = new Circle(x, y, 100* Options.aspectRatio);
+        
+        moveTo = new Vector2();
+        moveTo.x = MathUtils.random(Difficulty.worldWidth);
+        moveTo.y = MathUtils.random(Difficulty.worldHeight);
+        
+        moveToRange = new Circle(moveTo.x, moveTo.y, 30);
+        
+        //castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.cast);
+        //walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
+        //dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);
+        
+        
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+            this.network_id = Integer.toString(Multiplayer.getNextID());
+            JSONObject data = new JSONObject();
+            try{
+                data.put("id",this.network_id);
+                data.put("x", x / Options.aspectRatio);
+                data.put("y", y / Options.aspectRatio);
+                data.put("type", type.Phantom.ordinal());
+                Multiplayer.socket.emit("enemyCreated", data);
+            }
+            catch(Exception e){
+                
+            }
+        }
+    }
+    
+    @Override
+    public void act(float dt){
+        super.act(dt);
+        if(isDying)
+            return;
+        
+        if(attacking){
+            if(isAnimationFinished()){
+                attacking = false;
+                skill.cast(this, new Vector2(target.getX(), target.getY()), Skill.From.Enemy);
+                canAttack = false;
+            }
+            return;
+        }
+        lookForTarget();
+        moveTowardTarget2();
+        //lookForAttack();
+        
+        applyPhysics(dt);
+    }
+    
+    @Override
+    public void attack(BaseActor player){
+        attacking = true;
+        setSpeed(0);
+        //setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
+        setSize(size, size);
+        target = player;
+    }
+    
+    private void lookForAttack(){
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host)
+            return;
+        
+        ArrayList<BaseActor> boo = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
+        boolean anyPlayerInAttackRange = false;
+        for(BaseActor player: boo){
+            if(Intersector.overlaps(AttackRange, player.getBoundaryPolygon().getBoundingRectangle())){
+                if(_room != null && !_room.isActorInRoom(player)){
+                    continue;
+                }
+                anyPlayerInAttackRange = true;
+                chaseTarget = false;
+                if(!canAttack)
+                    return;
+                attacking = true;
+                setSpeed(0);
+                //setAnimationWithReset(castAnimList.get(currentDirection.ordinal()));
+                setSize(size, size);
+                target = player;
+                if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+                    JSONObject data = new JSONObject();
+                    try{
+                    System.out.println(player.network_id);
+                    data.put("id", this.network_id);
+                    data.put("target", player.network_id);
+                    Multiplayer.socket.emit("enemyAttack", data);
+                    }
+                    catch(Exception e){
+                           System.out.println("Failed to push enemy Attack: Skeleton Warrior");
+                    }
+                }
+            moveTo.x = getX();
+            moveTo.y = getY();
+            moveToChanged();
+            }else if(!anyPlayerInAttackRange){
+                chaseTarget = true;
+            }
+        }
+    }
+    
+    private void moveTowardTarget(){
+        
+        setAcceleration(100);
+        if(moveTo.y > getY()){
+            accelerateAtAngle(90);
+            currentDirection = WalkDirection.up;
+        }
+        if(moveTo.y < getY()){
+            accelerateAtAngle(270);
+            currentDirection = WalkDirection.down;
+        }
+        if(moveTo.x < getX()){
+            accelerateAtAngle(180);
+            if(currentDirection != WalkDirection.left){
+                flipAnim();
+            }
+            currentDirection = WalkDirection.left;
+        }
+        if(moveTo.x > getX()){
+            accelerateAtAngle(0);
+            if(currentDirection != WalkDirection.right){
+                flipAnim();
+            }
+            currentDirection = WalkDirection.right;
+        }
+        
+        
+        //setAnimation(walkAnimList.get(currentDirection.ordinal()));
+        setSize(size, size);
+    }
+    
+    protected void moveTowardTarget2(){
+        if(!canMove)
+            return;
+        setAcceleration(100 * Options.aspectRatio);
+        if(Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle())){
+            return;
+        }
+        float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
+        accelerateAtAngle(degrees);
+        
+        
+        if(degrees > 45 && degrees <= 135)
+            currentDirection = WalkDirection.up;
+        if(degrees > -135 && degrees <= -45)
+            currentDirection = WalkDirection.down;
+        if(degrees > -45 && degrees <= 45){
+            if(currentDirection != WalkDirection.right){
+                flipAnim();
+            }
+            currentDirection = WalkDirection.right;
+        }
+        if((degrees >= -180 && degrees <= -135) || (degrees >= 135 && degrees <= 180)){
+            if(currentDirection != WalkDirection.left){
+                flipAnim();
+            }
+            currentDirection = WalkDirection.left;
+        }
+            
+        
+       // setAnimation(walkAnimList.get(currentDirection.ordinal()));
+        setSize(size, size);
+    }
+    @Override
+    public void die() {
+        setSpeed(0);
+        //setAnimationWithReset(dieAnim);
+        //resetAnim();
+        loadAnimationFromSheet(phantomDie, 1, 10, .2f, false);
+        setSize(size, size);
+        
+        isDying = true;
+    }
+    
+}

@@ -63,8 +63,8 @@ public class DungeonRoom extends Room{
     public Room generateRoom() {
         this.generateRoom(roomWidth, roomHeight);
         
-        this.roomWidthPixels = _layout.length * (RoomPanels.defaultSize * Options.aspectRatio);
-        this.roomHeightPixels = _layout[0].length * (RoomPanels.defaultSize* Options.aspectRatio);
+        this.roomWidthPixels = _layout.length * (RoomPanels.defaultSize);
+        this.roomHeightPixels = _layout[0].length * (RoomPanels.defaultSize);
         return this;
     }
 
@@ -103,8 +103,8 @@ public class DungeonRoom extends Room{
             }
             //System.out.println();
         }
-        this.roomWidthPixels = width * RoomPanels.defaultSize * Options.aspectRatio;
-        this.roomHeightPixels = height * RoomPanels.defaultSize* Options.aspectRatio;
+        this.roomWidthPixels = width * RoomPanels.defaultSize;
+        this.roomHeightPixels = height * RoomPanels.defaultSize;
         this._layout = temp;
         return this;
     }
@@ -136,8 +136,8 @@ public class DungeonRoom extends Room{
             
             while(b.getX() > roomWidthPixels || b.getX() < 0 ||
                    b.getY() > roomHeightPixels || b.getY() < 0 ){
-                float x = MathUtils.random(RoomPanels.defaultSize * Options.aspectRatio, roomWidthPixels - (RoomPanels.defaultSize * Options.aspectRatio) - b.getWidth());
-                float y = MathUtils.random(RoomPanels.defaultSize * Options.aspectRatio, roomHeightPixels - (RoomPanels.defaultSize * Options.aspectRatio) - b.getHeight());
+                float x = MathUtils.random(RoomPanels.defaultSize, roomWidthPixels - (RoomPanels.defaultSize) - b.getWidth());
+                float y = MathUtils.random(RoomPanels.defaultSize, roomHeightPixels - (RoomPanels.defaultSize) - b.getHeight());
                 //System.out.println("X: " + x + "|Y: "+ y);
                 b.setPosition(x, y);
                 for(BaseActor obj : roomObjects){

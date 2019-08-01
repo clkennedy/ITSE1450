@@ -29,6 +29,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
+import com.holidaystudios.tools.GifDecoder;
 import org.json.JSONObject;
 
 /**
@@ -47,6 +48,8 @@ public class BaseActor extends Group {
     protected Animation<TextureRegion> animation;
     private float elapsedTime;
     private boolean animationPaused;
+    
+    protected boolean flipAnimation = false;
     
     // Velocity support
     private Vector2 velocityVec;
@@ -261,8 +264,10 @@ public class BaseActor extends Group {
         super.setSize(width, height);
         setOrigin(width / 2, height / 2);
     }
-    
-     public void setAnimationWithReset(Animation<TextureRegion> anim) {
+    public void resetAnim(){
+        elapsedTime = 0;
+    }
+    public void setAnimationWithReset(Animation<TextureRegion> anim) {
         animation = anim;
         elapsedTime = 0;
         if(animation != null){
@@ -302,7 +307,7 @@ public class BaseActor extends Group {
         batch.setColor(c.r, c.g, c.b, c.a);
         if(animation != null && isVisible())
         {
-            batch.draw(animation.getKeyFrame(elapsedTime), getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+            batch.draw(animation.getKeyFrame(elapsedTime), getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),((flipAnimation)? -1 : 1 ) * getScaleX(), getScaleY(), getRotation());
             if(debug){
                batch.end();
                 sRend.setProjectionMatrix(this.getStage().getCamera().combined);
@@ -327,6 +332,14 @@ public class BaseActor extends Group {
     * @param    loop sets whether the animation will loop or only play once
     * @return the Converted Animation
     */
+    
+    public Animation<TextureRegion> loadAnimationFromGif(String fileName, float frameDuration, boolean loop) {
+    Animation<TextureRegion> anim = GifDecoder.loadGIFAnimation(Animation.PlayMode.LOOP, Gdx.files.internal(fileName).read());
+    anim.setFrameDuration(frameDuration);
+    setAnimation(anim);
+    return anim;
+    }
+    
     public Animation<TextureRegion> loadAnimationFromFiles(String[] fileNames, float frameDuration, boolean loop) {
         int fileCount = fileNames.length;
         textureArray = new Array<TextureRegion>();
@@ -408,6 +421,8 @@ public class BaseActor extends Group {
         }
         if(animation == null) {
             setAnimation(anim);
+        }else{
+            setAnimationWithReset(anim);
         }
         
         return anim;        
@@ -443,11 +458,16 @@ public class BaseActor extends Group {
         
         if(animation == null) {
             setAnimation(anim);
+        }else{
+            setAnimationWithReset(anim);
         }
         
         return anim;        
     }
-    
+     
+    public void flipAnim(){
+        flipAnimation = !flipAnimation;
+    }
     /**
     * Loads a single texture to be used as the sprite in the BaseActor
     * 
@@ -628,7 +648,14 @@ public class BaseActor extends Group {
         // reset acceleration
         accelerationVec.set(0, 0);
     }
-    
+    public String getVelocity(float dt){
+        //System.out.println((velocityVec.x * dt) + " | " + (velocityVec.y * dt));
+        return (velocityVec.x * dt) + " | " + (velocityVec.y * dt);
+    }
+    public String getVelocityAngle(){
+        //System.out.println((velocityVec.x * dt) + " | " + (velocityVec.y * dt));
+        return (String.valueOf(velocityVec.angle()));
+    }
     /**
     * Creates a collision Polygon in the shape of a rectangle<br>
     * based on the width and height of the BaseActor

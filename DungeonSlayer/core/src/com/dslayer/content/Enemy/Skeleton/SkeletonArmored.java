@@ -170,6 +170,7 @@ public class SkeletonArmored extends BaseSkeleton{
     }
      @Override
     public void die() {
+        super.die();
         setSpeed(0);
         setAnimationWithReset(dieAnim);
         setSize(size, size);

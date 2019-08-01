@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.Align;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
+import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.Hero.Hero;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
@@ -66,25 +67,8 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
         //private Player player;
         
         currentSelection = Hero.getNewHero(Hero.heros.values()[HeroSelectionIndex]);
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("HumbleFonts/compass/CompassPro.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 100;
-        parameter.borderColor = Color.WHITE;
-        parameter.borderWidth = 0f;
-        fontTitle = generator.generateFont(parameter); // font size 12 pixels
         
-        parameter.size = 20;
-        fontnames = generator.generateFont(parameter);
-        
-        parameter.size = 60;
-        fontMenus = generator.generateFont(parameter);
-        generator.dispose();
-        
-        Label.LabelStyle title = new Label.LabelStyle(fontTitle, Color.BROWN);
-        Label.LabelStyle names = new Label.LabelStyle(fontnames, Color.BROWN);
-        Label.LabelStyle menu = new Label.LabelStyle(fontMenus, Color.BROWN);
-        
-        Label l = new Label("Select Hero", title);
+        Label l = new Label("Select Hero", FontLoader.titleStyle);
         l.setPosition((mainStage.getWidth()/ 2) - (l.getWidth()/2), mainStage.getHeight() - 100);
         mainStage.addActor(l);
         
@@ -103,7 +87,7 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
         for(Hero.heros bActor : Hero.heros .values()){
             Hero h = Hero.getNewHero(bActor);
             BaseActor b = new BaseActor();
-            Label name = new Label(h.getName(), names);
+            Label name = new Label(h.getName(), FontLoader.pointStyle);
             b.setAnimation(h.playRight());
             b.setSize(100, 100);
             b.setOrigin(b.getWidth() / 2, b.getHeight() / 2);
@@ -132,7 +116,7 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
         }
         count = 0;
         
-        Label ready = new Label("Ready", menu);
+        Label ready = new Label("Ready", FontLoader.menuStyle);
         ready.setPosition((mainStage.getWidth()/ 2) - (ready.getWidth()/2), ready.getHeight() + 10);
         ready.setOrigin(ready.getWidth()/2, ready.getHeight()/2);
         ready.setAlignment(Align.center);
@@ -144,7 +128,7 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
                 });
         mainStage.addActor(ready);
         
-        Label cancel = new Label("Cancel", menu);
+        Label cancel = new Label("Cancel", FontLoader.menuStyle);
         cancel.setPosition((mainStage.getWidth()/ 2) - (cancel.getWidth()/2),  10);
         cancel.setOrigin(cancel.getWidth()/2, cancel.getHeight()/2);
         cancel.setAlignment(Align.center);
@@ -186,8 +170,5 @@ public class HeroSelectionScreenDungeon extends BaseScreen {
     public void update(float dt) {
     }
     private void cleanUpResources(){
-        fontMenus.dispose();
-        fontTitle.dispose();
-        fontnames.dispose();
     }
 }

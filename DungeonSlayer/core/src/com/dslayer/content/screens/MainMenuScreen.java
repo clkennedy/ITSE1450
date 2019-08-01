@@ -31,6 +31,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
@@ -41,6 +42,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import sun.font.TrueTypeFont;
 import com.badlogic.gdx.utils.Align;
+import com.dslayer.content.Font.FontLoader;
+import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.gamemodes.SurvivalGameMode;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -53,11 +56,6 @@ import static java.lang.System.gc;
  * @author douglas.atkinson
  */
 public class MainMenuScreen extends BaseScreen {
-    
-    public static LabelStyle titleStyle;
-    public static LabelStyle menuStyle;
-    public static LabelStyle buttonStyle;
-    public static LabelStyle pointStyle;
     
     BaseActor playButton;
     BaseActor instructionButton;
@@ -78,15 +76,11 @@ public class MainMenuScreen extends BaseScreen {
     public static boolean musicPlaying = false;
     Label multi;
     
-    private BitmapFont fontPoint;
-    private BitmapFont fontTitle;
-    private BitmapFont fontButton;
-    private BitmapFont fontMenu;
-    
     public void initialize()
     {
         BaseScreen.cleanUp();
         gc();
+        RoomPanels.resetDefaultSize();
         
         Multiplayer.restartNetworkid();
         paused = false;
@@ -99,41 +93,29 @@ public class MainMenuScreen extends BaseScreen {
         
         BaseActor.setMainStage(mainStage);
         
+        BaseActor b = new BaseActor(0,0,mainStage);
+        String[] bgFrames = new String[500];
+        int gifOffset = 0;
+        if(MathUtils.randomBoolean(.4f)){
+            gifOffset = 0 + 455;
+        }else if(MathUtils.randomBoolean(.4f)){
+            gifOffset = 0 + 1137;
+        }
+        for(int i = 0; i < bgFrames.length; i ++){
+            bgFrames[i] = "Background/Frames/b " + (i + gifOffset) + ".png";
+        }
+        b.loadAnimationFromFiles(bgFrames,.05f, true);
+        
         if(!musicPlaying){
             backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/8BitDungTitle.mp3"));
             backgroundMusic.setLooping(true);
             backgroundMusic.setVolume(Options.musicVolume);
             backgroundMusic.play();
             musicPlaying = true;
-        }   
+        }
+        //BaseGame.labelStyle = FontLoader.menuStyle;
         
-        
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("HumbleFonts/compass/CompassPro.ttf"));
-        FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-        parameter.size = 100;
-        parameter.borderColor = Color.WHITE;
-        parameter.borderWidth = 1f;
-        fontTitle = generator.generateFont(parameter); // font size 12 pixels
-        
-        parameter.size = 80;
-        fontMenu = generator.generateFont(parameter);
-        
-        parameter.size = 40;
-        parameter.borderColor = Color.WHITE;
-        parameter.borderWidth = 0f;
-        fontButton = generator.generateFont(parameter);
-        
-        parameter.size = 15;
-        fontPoint = generator.generateFont(parameter);
-        generator.dispose();
-        
-        titleStyle = new LabelStyle(fontTitle, Color.BROWN);
-        menuStyle = new LabelStyle(fontMenu, Color.BROWN);
-        buttonStyle = new LabelStyle(fontButton, Color.BROWN);
-        pointStyle = new LabelStyle(fontPoint, Color.WHITE);
-        //BaseGame.labelStyle = menuStyle;
-        
-        Label l = new Label("Ironside", titleStyle);
+        Label l = new Label("Ironside", FontLoader.titleStyle);
         l.setPosition((mainStage.getWidth()/ 2) - (l.getWidth()/2), mainStage.getHeight() - 100);
         
         mainStage.addActor(l);
@@ -142,7 +124,7 @@ public class MainMenuScreen extends BaseScreen {
 
         //TextButton tb = new TextButton("Play", );
         
-        Label playDungeon = new Label("Dungeon", menuStyle);
+        Label playDungeon = new Label("Dungeon", FontLoader.menuStyle);
         playDungeon.setSize((playDungeon.getWidth() * 1.2f) * Options.aspectRatio, (playDungeon.getHeight() *1.2f) * Options.aspectRatio);
         playDungeon.setOriginX(playDungeon.getWidth() / 2);
         playDungeon.setOriginY(playDungeon.getHeight()/ 2);
@@ -158,7 +140,7 @@ public class MainMenuScreen extends BaseScreen {
         });
         mainStage.addActor(playDungeon);
         
-        Label play = new Label("Survival", menuStyle);
+        Label play = new Label("Survival", FontLoader.menuStyle);
         play.setSize((play.getWidth() * 1.2f) * Options.aspectRatio, (play.getHeight() *1.2f) * Options.aspectRatio);
         play.setOriginX(play.getWidth() / 2);
         play.setOriginY(play.getHeight()/ 2);
@@ -175,7 +157,7 @@ public class MainMenuScreen extends BaseScreen {
         });
         mainStage.addActor(play);
         
-        multi = new Label("Multiplayer", menuStyle);
+        multi = new Label("Multiplayer", FontLoader.menuStyle);
         multi.setSize((multi.getWidth() * 1.2f) * Options.aspectRatio, (multi.getHeight() *1.2f) * Options.aspectRatio);
         multi.setOriginX(multi.getWidth() / 2);
         multi.setOriginY(multi.getHeight()/ 2);
@@ -196,7 +178,7 @@ public class MainMenuScreen extends BaseScreen {
         
         mainStage.addActor(play);
         
-        Label options = new Label("Options", menuStyle);
+        Label options = new Label("Options", FontLoader.menuStyle);
         options.setSize((options.getWidth() * 1.2f) * Options.aspectRatio, (options.getHeight() *1.2f) * Options.aspectRatio);
         options.setOriginX(options.getWidth() / 2);
         options.setOriginY(options.getHeight()/ 2);
@@ -213,7 +195,7 @@ public class MainMenuScreen extends BaseScreen {
         mainStage.addActor(options);
         
         
-        Label quit = new Label("Quit", menuStyle);
+        Label quit = new Label("Quit", FontLoader.menuStyle);
         quit.setSize((quit.getWidth() * 1.2f) * Options.aspectRatio, (quit.getHeight() *1.2f) * Options.aspectRatio);
         quit.setOriginX(quit.getWidth() / 2);
         quit.setOriginY(quit.getHeight()/ 2);
@@ -290,6 +272,7 @@ public class MainMenuScreen extends BaseScreen {
         backgroundMusic.stop();
         musicPlaying = false;
         Progress.Save();
+        FontLoader.dispose();
         gc();
         Gdx.app.exit();
         System.exit(0);
@@ -361,14 +344,6 @@ public class MainMenuScreen extends BaseScreen {
     @Override
     public void dispose(){
         Progress.Save();
-        if(fontButton != null)
-            fontButton.dispose();
-        if(fontMenu !=  null)
-            fontMenu.dispose();
-        if(fontPoint != null)
-            fontPoint.dispose();
-        if(fontTitle != null)
-            fontTitle.dispose();
         
         super.dispose();
     }

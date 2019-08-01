@@ -6,6 +6,8 @@
 package com.dslayer.content.Rooms;
 
 import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
@@ -40,6 +42,7 @@ public abstract class Room {
     }
     
     public Room(int x, int y, int width, int height){
+        this();
         roomX = x;
         roomY = y;
         roomWidth = width;
@@ -71,6 +74,17 @@ public abstract class Room {
     public abstract String getFloorTexture();
     
     public abstract void Draw(Stage mainStage);
+    
+    public boolean addEnemy(BaseEnemy e){
+        return enemies.add(e);
+    }
+    
+    public BaseEnemy getRandomEnemy(){
+        if(enemies.isEmpty())
+            return null;
+        int rand = MathUtils.random(enemies.size() - 1);
+        return enemies.get(rand);
+    }
     
     public float getRoomWidthPixels(){
         return roomWidthPixels;
@@ -134,6 +148,16 @@ public abstract class Room {
             }
         }
         
+        return false;
+    }
+    
+    public boolean isCorner(Vector2 pos){
+        if((pos.x == this.roomX && pos.y == this.roomY) ||
+                (pos.x == this.roomX + (this.roomWidth) && pos.y == this.roomY) ||
+                (pos.x == this.roomX && pos.y == this.roomY + (this.roomHeight)) ||
+                (pos.x == this.roomX + (this.roomWidth) && pos.y == this.roomY + (this.roomHeight))){
+            return true;
+        }
         return false;
     }
     

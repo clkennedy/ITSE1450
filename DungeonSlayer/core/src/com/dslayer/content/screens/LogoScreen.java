@@ -43,6 +43,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import sun.font.TrueTypeFont;
 import com.badlogic.gdx.utils.Align;
+import com.dslayer.content.Font.FontLoader;
 import com.dslayer.gamemodes.SurvivalGameMode;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -63,6 +64,7 @@ public class LogoScreen extends BaseScreen {
     
     public void initialize()
     {
+        FontLoader.Init();
        Logo = new BaseActor(0,0, mainStage);
        Logo.loadTexture("Logos/BakariLogo_transparent.png");
        Logo.setOrigin(Logo.getWidth() / 2, Logo.getHeight() / 2);

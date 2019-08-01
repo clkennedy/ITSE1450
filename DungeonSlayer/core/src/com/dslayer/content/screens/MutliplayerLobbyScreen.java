@@ -44,6 +44,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import sun.font.TrueTypeFont;
 import com.badlogic.gdx.utils.Align;
+import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.Hero.Hero;
 import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.Player.Player;
@@ -103,7 +104,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
        hero.setSize(30, 30);
        hero.setOrigin(hero.getWidth() / 2, hero.getHeight() / 2);
        
-       countDown = new Label(Integer.toString( (int)startTime), MainMenuScreen.titleStyle);
+       countDown = new Label(Integer.toString( (int)startTime), FontLoader.titleStyle);
        countDown.setFontScale(4);
        countDown.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()/ 2);
        countDown.setVisible(false);
@@ -119,7 +120,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
        
        Multiplayer.socket = multiplayerRoomScreen.getSocket();
        configSocket();
-       Label mainMenu = new Label("Main Menu", MainMenuScreen.buttonStyle);
+       Label mainMenu = new Label("Main Menu", FontLoader.buttonStyle);
         //createRoom.setFontScale(.5f);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         mainMenu.setOriginX(mainMenu.getWidth() / 2);
@@ -137,7 +138,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         });
         mainStage.addActor(mainMenu);
         
-        Label back = new Label("Back", MainMenuScreen.buttonStyle);
+        Label back = new Label("Back", FontLoader.buttonStyle);
         //createRoom.setFontScale(.5f);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         back.setOriginX(back.getWidth() / 2);
@@ -155,7 +156,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         });
         mainStage.addActor(back);
         
-        ready = new Label("Ready", MainMenuScreen.buttonStyle);
+        ready = new Label("Ready", FontLoader.buttonStyle);
         //createRoom.setFontScale(.5f);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         ready.setOriginX(ready.getWidth() / 2);
@@ -172,7 +173,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         });
         mainStage.addActor(ready);
         
-        Label HeroSelect = new Label("Hero Selection", MainMenuScreen.buttonStyle);
+        Label HeroSelect = new Label("Hero Selection", FontLoader.buttonStyle);
         //createRoom.setFontScale(.5f);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         HeroSelect.setOriginX(HeroSelect.getWidth() / 2);
@@ -187,7 +188,7 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         });
         mainStage.addActor(HeroSelect);
         
-        Label rooms = new Label("Players", MainMenuScreen.buttonStyle);
+        Label rooms = new Label("Players", FontLoader.buttonStyle);
         //createRoom.setFontScale(.5f);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         rooms.setOriginX(rooms.getWidth() / 2);
@@ -232,13 +233,9 @@ public class MutliplayerLobbyScreen extends BaseScreen {
                 roomTable.remove();
             }
             roomTable = new Table();
-            //System.out.println("Rooms Refreshed");
-            MainMenuScreen.buttonStyle.fontColor = Color.WHITE;
-            Label.LabelStyle roomStyle = new Label.LabelStyle(MainMenuScreen.buttonStyle);
-            MainMenuScreen.buttonStyle.fontColor = Color.BROWN;
             Vector2 vet = new Vector2(30, mainStage.getHeight() - 100);
             for(String player: players.keySet()){
-                Label playerName = new Label(players.get(player).toString(), roomStyle);
+                Label playerName = new Label(players.get(player).toString(), FontLoader.buttonStyle);
                 playerName.setOriginX(playerName.getWidth() / 2);
                 playerName.setOriginY(playerName.getHeight()/ 2);
                 //roomName.setPosition(vet.x, vet.y);

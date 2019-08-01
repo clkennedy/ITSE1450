@@ -35,9 +35,12 @@ public class BaseSkeleton extends BaseEnemy{
     protected List<Animation<TextureRegion>> castAnimList;
     protected Animation<TextureRegion> dieAnim;
 
+    
+    
     @Override
     public void attack(BaseActor player) {
     }
+
     
     protected enum WalkDirection{up,left,down,right};
     protected WalkDirection currentDirection;
@@ -94,6 +97,7 @@ public class BaseSkeleton extends BaseEnemy{
     }
     @Override
     public void die() {
+        super.die();
         setSpeed(0);
         setAnimationWithReset(dieAnim);
         setSize(size, size);

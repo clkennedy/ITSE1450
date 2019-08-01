@@ -37,5 +37,7 @@ public class Backpack {
         }
         return false;
     }
-    
+    public List<Items> getItems(){
+        return _items;
+    }
 }

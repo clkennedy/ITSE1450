@@ -13,13 +13,22 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
  * @author ARustedKnight
  */
 public class Items extends BaseActor{
-    
+    protected boolean spawned = false;
     public Items(float x, float y, Stage stage){
         super(x,y,stage);
+        spawned = true;
     }
     
     public Items(){
         
+    }
+    
+    @Override
+    public void act(float dt){
+        super.act(dt);
+        getBoundaryPolygon();
+        applyPhysics(dt);
+        //System.out.println(String.format("%s %s %s %s %s %s",network_id, getX(), getY(), getSpeed(), getVelocity(dt),getVelocityAngle() ));
     }
     
 }

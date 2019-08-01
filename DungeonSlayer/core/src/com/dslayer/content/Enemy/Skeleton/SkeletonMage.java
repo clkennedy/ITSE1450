@@ -121,6 +121,9 @@ public class SkeletonMage extends BaseSkeleton{
         boolean anyPlayerInAttackRange = false;
         for(BaseActor player: boo){
             if(Intersector.overlaps(AttackRange, player.getBoundaryPolygon().getBoundingRectangle())){
+                if(_room != null && !_room.isActorInRoom(player)){
+                    continue;
+                }
                 anyPlayerInAttackRange = true;
                 chaseTarget = false;
                 if(!canAttack)
@@ -176,6 +179,7 @@ public class SkeletonMage extends BaseSkeleton{
     }
     @Override
     public void die() {
+        super.die();
         setSpeed(0);
         setAnimationWithReset(dieAnim);
         setSize(size, size);

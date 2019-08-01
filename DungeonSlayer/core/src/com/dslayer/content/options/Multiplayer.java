@@ -9,7 +9,7 @@ import com.atkinson.game.engine.BaseActor;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
-import com.dslayer.content.Objects.Potions.HealthPotion2;
+import com.dslayer.content.Inventory.Items.Potions.HealthPotion;
 import com.dslayer.content.screens.LevelScreen;
 import com.dslayer.content.screens.MutliplayerLobbyScreen;
 import com.dslayer.content.screens.multiplayerRoomScreen;
@@ -37,7 +37,7 @@ public class Multiplayer {
     public static BaseActor getNewGameObject(GameObjects obj, float x, float y){
         switch (obj) {
             case HealthPotion:
-                return new HealthPotion2(x, y, BaseActor.getMainStage());
+                return new HealthPotion(x, y, BaseActor.getMainStage());
             case SkeletonWarrior:
                 return new SkeletonWarrior(x, y, BaseActor.getMainStage());
             case SkeletonMage:

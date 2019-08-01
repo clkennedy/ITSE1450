@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.dslayer.content.Font.FontLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,25 +25,13 @@ import java.util.List;
 public class GameMessage extends BaseActor{
     
     private Label message;
-    Label.LabelStyle mStyle;
             
     private float duration = 3f;
     private float durationTimer = 0f;
     
     private List<String> messages;
-    BitmapFont fontTitle;
     public GameMessage(){
         messages = new ArrayList();
-        
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("HumbleFonts/compass/CompassPro.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 50;
-        parameter.borderColor = Color.WHITE;
-        parameter.borderWidth = 1f;
-        fontTitle = generator.generateFont(parameter); // font size 12 pixels
-        
-        generator.dispose();
-        mStyle = new Label.LabelStyle(fontTitle, Color.BROWN);
     }
     
     public void AddMessage(String m){
@@ -60,7 +49,7 @@ public class GameMessage extends BaseActor{
             return;
         }else if(messages.size() > 0 && message == null){
             
-            message = new Label(messages.remove(0), mStyle);
+            message = new Label(messages.remove(0), FontLoader.menuStyle);
             message.setPosition((BaseActor.getMainStage().getWidth()/ 2) - (message.getWidth()/2),
                     BaseActor.getMainStage().getHeight()); 
             message.addAction(Actions.moveBy(0, - 100, 1f));
@@ -81,8 +70,6 @@ public class GameMessage extends BaseActor{
     
     @Override
     public boolean remove(){
-        
-        fontTitle.dispose();
         
         return super.remove();
     }

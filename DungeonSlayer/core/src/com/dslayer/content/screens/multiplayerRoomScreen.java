@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.utils.Align;
+import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Multiplayer;
@@ -41,8 +42,6 @@ import org.json.JSONObject;
  */
 public class multiplayerRoomScreen extends BaseScreen implements Input.TextInputListener {
 
-    
-    
     private static String playerUserNameText;
     
     private Label playerUserName;
@@ -78,7 +77,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         }
         configSocketEvents();
         
-        Label createRoom = new Label("Create Room", MainMenuScreen.buttonStyle);
+        Label createRoom = new Label("Create Room", FontLoader.buttonStyle);
         createRoom.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         createRoom.setOriginX(createRoom.getWidth() / 2);
@@ -95,7 +94,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         });
         mainStage.addActor(createRoom);
         
-        Label mainMenu = new Label("Back", MainMenuScreen.buttonStyle);
+        Label mainMenu = new Label("Back", FontLoader.buttonStyle);
         mainMenu.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         mainMenu.setOriginX(mainMenu.getWidth() / 2);
@@ -115,7 +114,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         mainStage.addActor(mainMenu);
         
         
-        Label refreshRoomsButton = new Label("Refresh", MainMenuScreen.buttonStyle);
+        Label refreshRoomsButton = new Label("Refresh", FontLoader.buttonStyle);
         refreshRoomsButton.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         refreshRoomsButton.setOriginX(refreshRoomsButton.getWidth() / 2);
@@ -133,7 +132,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         
         mainStage.addActor(refreshRoomsButton);
         
-        Label userName = new Label("UserName", MainMenuScreen.buttonStyle);
+        Label userName = new Label("UserName", FontLoader.buttonStyle);
         userName.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         userName.setOriginX(userName.getWidth() / 2);
@@ -142,10 +141,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         userName.setAlignment(Align.center);
         mainStage.addActor(userName);
         
-        
-        
-        MainMenuScreen.buttonStyle.fontColor = Color.WHITE;
-        Label.LabelStyle usernStyle = new Label.LabelStyle(MainMenuScreen.buttonStyle);
+        Label.LabelStyle usernStyle = new Label.LabelStyle(FontLoader.buttonStyle);
         playerUserName = new Label(playerUserNameText, usernStyle);
         playerUserName.setFontScale(1f * Options.aspectRatio);
         playerUserName.setOriginX(playerUserName.getWidth() / 2);
@@ -154,8 +150,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         playerUserName.setAlignment(Align.center);
         mainStage.addActor(playerUserName);
         
-        MainMenuScreen.buttonStyle.fontColor = Color.BROWN;
-        Label changeUserName = new Label("Change", MainMenuScreen.buttonStyle);
+        Label changeUserName = new Label("Change", FontLoader.buttonStyle);
         changeUserName.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         changeUserName.setOriginX(changeUserName.getWidth() / 2);
@@ -174,7 +169,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         
         //--------------------------------------------------------------------------------------------
         
-        Label rooms = new Label("Rooms", MainMenuScreen.buttonStyle);
+        Label rooms = new Label("Rooms", FontLoader.buttonStyle);
         rooms.setFontScale(1f * Options.aspectRatio);
         //createRoom.setSize((createRoom.getWidth() * 1.2f) * Options.aspectRatio, (createRoom.getHeight() *1.2f) * Options.aspectRatio);
         rooms.setOriginX(createRoom.getWidth() / 2);
@@ -268,9 +263,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
             }
             roomTable = new Table();
             //System.out.println("Rooms Refreshed");
-            MainMenuScreen.buttonStyle.fontColor = Color.WHITE;
-            Label.LabelStyle roomStyle = new Label.LabelStyle(MainMenuScreen.buttonStyle);
-            MainMenuScreen.buttonStyle.fontColor = Color.BROWN;
+            Label.LabelStyle roomStyle = new Label.LabelStyle(FontLoader.buttonStyle);
             Vector2 vet = new Vector2(30, mainStage.getHeight() - 100);
             for(String room: rooms){
                 Label roomName = new Label(room, roomStyle);
@@ -443,10 +436,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
                         Vector2 olPos = new Vector2(playerUserName.getX(), playerUserName.getY());
                         playerUserName.remove();
                         playerUserNameText = userName;
-                        MainMenuScreen.buttonStyle.fontColor = Color.WHITE;
-                        Label.LabelStyle usernStyle = new Label.LabelStyle(MainMenuScreen.buttonStyle);
-                        MainMenuScreen.buttonStyle.fontColor = Color.BROWN;
-                        playerUserName = new Label(playerUserNameText, usernStyle);
+                        playerUserName = new Label(playerUserNameText, FontLoader.buttonStyle);
                         //createRoom.setFontScale(.5f);
                         playerUserName.setOriginX(playerUserName.getWidth() / 2);
                         playerUserName.setOriginY(playerUserName.getHeight()/ 2);

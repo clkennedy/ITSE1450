@@ -21,9 +21,10 @@ import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
+import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.GameMessage.GameMessage;
 import com.dslayer.content.Hero.Hero;
-import com.dslayer.content.Objects.Potions.HealthPotion2;
+import com.dslayer.content.Inventory.Items.Potions.HealthPotion;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
@@ -163,10 +164,10 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         player.network_id = Multiplayer.myID;
         player.UserName = Multiplayer.myUserName;
         
-        Label u = new Label(Multiplayer.myUserName +": ", MainMenuScreen.pointStyle);
+        Label u = new Label(Multiplayer.myUserName +": ", FontLoader.pointStyle);
         u.setAlignment(Align.left);
         pointTable.add(u);
-        Label p = new Label(Integer.toString(player.getPoints()), MainMenuScreen.pointStyle);
+        Label p = new Label(Integer.toString(player.getPoints()), FontLoader.pointStyle);
         p.setAlignment(Align.right);
         PlayerPointLabels.put(Multiplayer.myID, p);
         
@@ -221,10 +222,10 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                 //mainStage.addActor(op);
                 OtherPlayers.put(id, op);
                 
-                Label u = new Label(op.UserName +": ", MainMenuScreen.pointStyle);
+                Label u = new Label(op.UserName +": ", FontLoader.pointStyle);
                 u.setAlignment(Align.left);
                 pointTable.add(u);
-                Label p = new Label(Integer.toString(op.getPoints()), MainMenuScreen.pointStyle);
+                Label p = new Label(Integer.toString(op.getPoints()), FontLoader.pointStyle);
                 PlayerPointLabels.put(op.network_id, p);
 
                 pointTable.add(p);
@@ -328,7 +329,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         
         
         for(enemyInfo enemy : healthPotsToSpawn){
-            BaseActor e = new HealthPotion2(enemy.X * Options.aspectRatio, enemy.Y * Options.aspectRatio, mainStage);
+            BaseActor e = new HealthPotion(enemy.X * Options.aspectRatio, enemy.Y * Options.aspectRatio, mainStage);
             e.network_id = enemy.id;
             gameObjects.put(enemy.id, e);
         }
@@ -396,10 +397,10 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         if(potionRespawnTimer > potionRespawnInterval){
             potionRespawnTimer = 0;
             if(hPots.size() < maxPotionsOnFeild && MathUtils.randomBoolean(.8f)){
-                BaseActor a =new HealthPotion2(MathUtils.random(Difficulty.worldWidth - (RoomPanels.defaultSize * 2)) + RoomPanels.defaultSize, 
+                BaseActor a =new HealthPotion(MathUtils.random(Difficulty.worldWidth - (RoomPanels.defaultSize * 2)) + RoomPanels.defaultSize, 
                         MathUtils.random(Difficulty.worldHeight - (RoomPanels.defaultSize * 2))+ RoomPanels.defaultSize, 
                         mainStage);
-                        ((HealthPotion2)a).enableDespawnTimer(30);
+                        ((HealthPotion)a).enableDespawnTimer(30);
                 gameObjects.put(a.network_id, a);
             }
         }

@@ -128,12 +128,12 @@ public class FireBall extends Skill{
     
     public FireBall isProjectile(){
         isAction = true;
-        loadAnimationFromSheet(FireBall, 8, 8, .05f, true);
+        loadAnimationFromSheet(FireBall, 8, 8, .02f, true);
         setScale(1f * Options.aspectRatio);
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setPosition(getX() - (getWidth() /2) , getY() - (getHeight() / 2));
-        setBoundaryPolygonHalfLong(12);
+        setBoundaryPolygon(12);
         setRotation(90);
         damage = 50;
         return this;

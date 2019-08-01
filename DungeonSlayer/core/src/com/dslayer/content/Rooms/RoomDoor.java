@@ -25,10 +25,10 @@ import com.dslayer.content.Rooms.Dungeon.DungeonDoor;
  */
 public abstract class RoomDoor extends RoomPanels{
     
-    public abstract DungeonDoor Bottom();
-    public abstract DungeonDoor Left();
-    public abstract DungeonDoor Right();
-    public abstract DungeonDoor Top();
+    public abstract RoomDoor Bottom();
+    public abstract RoomDoor Left();
+    public abstract RoomDoor Right();
+    public abstract RoomDoor Top();
     
     private Circle openDistance;
     public static GameMessage gm;
@@ -85,7 +85,7 @@ public abstract class RoomDoor extends RoomPanels{
     @Override
     public void act(float dt){
          super.act(dt);
-         if(true){
+         if(canPass){
              return;
          }
          for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){

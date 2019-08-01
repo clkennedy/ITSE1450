@@ -9,24 +9,29 @@ import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Enemy.Goblin.GoblinAssassin;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
+import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.GameMessage.GameMessage;
 import com.dslayer.content.Inventory.Items.BossKey;
 import com.dslayer.content.LevelGenerator.LevelGenerator;
-import com.dslayer.content.Objects.Potions.HealthPotion2;
+import com.dslayer.content.Inventory.Items.Potions.HealthPotion;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
+import com.dslayer.content.Rooms.Forest.ForestRoom;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.Rooms.RoomDoor;
 import com.dslayer.content.Rooms.RoomPanels;
+import com.dslayer.content.Spawner.Spawner;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
@@ -61,6 +66,8 @@ public class DungeonCrawlGameMode extends GameMode{
     private boolean goSent = false;
     
     List<Room> nonBossRooms;
+    Room bossRoom;
+    BaseEnemy boss;
     
     Label points;
     private int dungeonWidth = 31;
@@ -81,40 +88,37 @@ public class DungeonCrawlGameMode extends GameMode{
         Multiplayer.host = true;
         
         LevelGenerator lg = new LevelGenerator(dungeonWidth, dungeonHeight);
-        lg.setDefaultSize(20);
-        lg.setRoom(new DungeonRoom());
+        lg.setDefaultSize(80);
+        lg.setRoom(new ForestRoom());
         
         lg.generateMap();
         
-        //Room dr = new DungeonRoom();
-        //dr.generateRoom(30,40);
-        //dr.fillRoomWithObjects(14);
-        System.out.println("Done generating Dungeon");
+        //System.out.println("Done generating Dungeon");
         Difficulty.worldHeight = lg.getPixelHeight();
         Difficulty.worldWidth = lg.getPixelWidth();
+        System.out.println(Difficulty.worldWidth);
+        System.out.println(Difficulty.worldHeight);
         Difficulty.newGame();
         
         //dr.Draw(mainStage);
         lg.draw(mainStage);
+        BaseActor.setMainStage(mainStage);
         Table pointTable = new Table();
         //player = new Player(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
                        // MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
         
         Room spawnRoom = lg.getRandomNonBossRoom();
         nonBossRooms = lg.getNonBossRooms();
+        bossRoom = lg.getBossRooms();
         
-        int spawnX = MathUtils.random(((int)spawnRoom.getRoomX() + 1), (int)spawnRoom.getRoomX() + (int)spawnRoom.getRoomWidth() - 1);
-        int spawnY = MathUtils.random(dungeonHeight - ((int)spawnRoom.getRoomY() + (int)spawnRoom.getRoomHeight() - 2), dungeonHeight - (int)spawnRoom.getRoomY() );
+        Vector2 pSpawn = Spawner.getSpawnLocation(spawnRoom);
         
-        spawnX = spawnX * (int)lg.getDefaultSize();
-        spawnY = spawnY * (int)lg.getDefaultSize();
-        
-        player = new Player(spawnX,spawnY, mainStage);
+        player = new Player(pSpawn.x,pSpawn.y, mainStage);
         player.setHero(HeroSelectionScreenDungeon.currentSelection);
-        Label u = new Label(player.hero.getName() +": ", MainMenuScreen.pointStyle);
+        Label u = new Label(player.hero.getName() +": ", FontLoader.pointStyle);
         u.setAlignment(Align.left);
         pointTable.add(u);
-        points = new Label(Integer.toString(player.getPoints()), MainMenuScreen.pointStyle);
+        points = new Label(Integer.toString(player.getPoints()), FontLoader.pointStyle);
         points.setAlignment(Align.right);
         
         float width = u.getWidth() + points.getWidth();
@@ -127,14 +131,27 @@ public class DungeonCrawlGameMode extends GameMode{
         
         for(int i = 0; i < nonBossRooms.size(); i++){
             Room r = nonBossRooms.get(i);
-           // new SkeletonWarrior(((r.getRoomX() +3)) * RoomPanels.defaultSize *Options.aspectRatio,
-                    //(dungeonHeight - (r.getRoomY()+r.getRoomHeight() - 3)) * RoomPanels.defaultSize *Options.aspectRatio , mainStage).setRoom(r);
+            int randNumOfEn = MathUtils.random(2, 9);
+            for(int j = 0; j < randNumOfEn; j ++){
+                BaseEnemy b = Spawner.spawnRandomEnemy(r);
+                if(MathUtils.randomBoolean(.6f)){
+                    int randPots = MathUtils.random(0, 3);
+                    for(int k = 0; k < randPots; k ++){
+                        b.addToBackpack(new HealthPotion());
+                    }
+                }
+            }
         }
+       
+        boss = Spawner.spawnRandomBoss(bossRoom);
+        
+        int rand = MathUtils.random(nonBossRooms.size() - 1);
+        nonBossRooms.get(rand).getRandomEnemy().addToBackpack(new BossKey());
         
         gm = new GameMessage();
         RoomDoor.gm = gm;
         gm.AddMessage("Welcome");
-        player.addToBackpack(new BossKey());
+        //player.addToBackpack(new BossKey());
     }
     @Override
     public void update(float dt) {
@@ -146,6 +163,19 @@ public class DungeonCrawlGameMode extends GameMode{
                 goSent = true;
             }
             if(player.isAnimationFinished() && gm.isEmpty()){
+                gameOver = true;
+            }
+            return;
+        }
+        
+        if(boss.isDead())
+        {
+            if(!goSent){
+                gm.AddMessage("Dungeon Cleared");
+                gm.AddMessage("Total Points: " + player.getPoints());
+                goSent = true;
+            }
+            if(boss.isAnimationFinished() && gm.isEmpty()){
                 gameOver = true;
             }
             return;

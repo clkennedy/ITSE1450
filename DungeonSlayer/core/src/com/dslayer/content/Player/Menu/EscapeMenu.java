@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
+import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Options;
 import com.dslayer.content.screens.MainMenuScreen;
@@ -36,7 +37,6 @@ public class EscapeMenu extends BaseActor{
     , "Scroll/scroll6.png", "Scroll/scroll7.png", "Scroll/scroll8.png", "Scroll/scroll9.png", "Scroll/scroll10.png", "Scroll/scroll11.png", "Scroll/scroll12.png"};
     
     private static List<Sound> soundsToPause = new ArrayList<Sound>();
-    BitmapFont fontmm;
     private EscapeMenu(){
         
     }
@@ -55,18 +55,7 @@ public class EscapeMenu extends BaseActor{
         
         setSize(400 * Options.aspectRatio, 400 * Options.aspectRatio);
         
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("HumbleFonts/compass/CompassPro.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 70;
-        parameter.borderColor = Color.WHITE;
-        parameter.borderWidth = 1f;
-        fontmm = generator.generateFont(parameter); // font size 12 pixels
-        
-        generator.dispose();
-        
-        Label.LabelStyle mm = new Label.LabelStyle(fontmm, Color.BROWN);
-        
-        Label mainMenu = new Label("MainMenu", mm);
+        Label mainMenu = new Label("MainMenu", FontLoader.menuStyle);
         mainMenu.setFontScale(1f * Options.aspectRatio);
         mainMenu.setAlignment(Align.center);
         mainMenu.addListener(new Hover(){
@@ -90,6 +79,10 @@ public class EscapeMenu extends BaseActor{
     }
     
     private void mainMenu(){
+        for(Sound s : soundsToPause){
+            s.stop();
+            s.dispose();
+        }
         GameMode.stopMusic();
         BaseGame.setActiveScreen(new MainMenuScreen());
     }
@@ -98,7 +91,6 @@ public class EscapeMenu extends BaseActor{
         for(Sound s : soundsToPause){
             s.resume();
         }
-        fontmm.dispose();
         
         return super.remove();
     }

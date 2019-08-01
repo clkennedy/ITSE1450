@@ -111,6 +111,7 @@ public class BaseGolem extends BaseEnemy{
     }
     @Override
     public void die() {
+        super.die();
         setSpeed(0);
         setAnimationWithReset(dieAnim);
         setSize(size, size);

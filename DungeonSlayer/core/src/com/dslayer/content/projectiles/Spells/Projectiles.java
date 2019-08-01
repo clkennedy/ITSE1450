@@ -15,7 +15,7 @@ import com.dslayer.content.options.Avatars;
  */
 public class Projectiles {
     
-    public static final String FireBall = "particles/11_fire_spritesheet.png";
+    public static final String FireBall = "particles/Fireball.png";
     public static final String Arrow = "particles/Arrow.png";
     public static final String BearTrap = "Traps/Bear_Trap.png";
     public static final String IceNova = "particles/19_freezing_spritesheet.png";

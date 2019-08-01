@@ -24,6 +24,9 @@ import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
+import com.dslayer.content.Inventory.Backpack;
+import com.dslayer.content.Inventory.Items.BossKey;
+import com.dslayer.content.Inventory.Items.Items;
 import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.Room;
@@ -44,7 +47,7 @@ public abstract class BaseEnemy extends BaseActor{
 
     protected boolean chaseTarget = true;
     
-    public static enum type{SkeletionWarrior, SkeletonMage, ArmoredSkeleton, BlueGolem, GoblinAssassin};
+    public static enum type{SkeletionWarrior, SkeletonMage, ArmoredSkeleton, BlueGolem, GoblinAssassin, Phantom};
     
     protected int maxHealth;
     protected int health;
@@ -86,9 +89,11 @@ public abstract class BaseEnemy extends BaseActor{
     protected float movedChangedEventTimer = 1f;
     protected float movedChangedEventTimerCount = 0f;
     
+    protected Backpack backpack = new Backpack();;
+    
     private Sound footSteps;
     
-    private Room _room;
+    protected Room _room;
     
     public static BaseEnemy getNewEnemy(type en,float x,float y){
         switch (en) {
@@ -108,9 +113,13 @@ public abstract class BaseEnemy extends BaseActor{
     }
     
     public BaseEnemy() {
-        
     }
-    
+    public boolean inventoryContains(Class<? extends Items> cls){
+        return backpack.containsItem(cls);
+    }
+    public boolean addToBackpack(Items item){
+        return backpack.addItem(item);
+    }
     public BaseEnemy setRoom(Room room){
         this._room = room;
         return this;
@@ -185,9 +194,6 @@ public abstract class BaseEnemy extends BaseActor{
             if(player.boundaryPolygon == null)
                 continue;
             if(Intersector.overlaps(TargetRange,player.getBoundaryPolygon().getBoundingRectangle()) && !((Player)player).isDead()){
-                if(_room.isActorInRoom(player)){
-                    System.out.println("Player in Room");
-                }
                 if(_room != null && !_room.isActorInRoom(player)){
                     continue;
                 }
@@ -221,7 +227,23 @@ public abstract class BaseEnemy extends BaseActor{
         
     }
     
-    public abstract void die();
+    public void die(){
+        int count = 0;
+        for(Items item : backpack.getItems()){
+            try{
+                Items i = item.getClass().getDeclaredConstructor(float.class,float.class,Stage.class).newInstance(this.getX(),this.getY(),BaseActor.getMainStage());
+                i.setAcceleration(0);
+                i.setDeceleration(20);
+                i.setSpeed(50);
+                i.setMotionAngle((float)((MathUtils.random((float)360)))); 
+                i.setZIndex(1000);
+                i.network_id = String.valueOf(count++);
+                //System.out.println(String.format("%s %s %s %s %s %s", i.getClass(), i.getSpeed(), i.getX(), i.getY(), i.getMotionAngle(), ""));
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
+    }
     
     @Override
     public void draw(Batch batch, float parentAlpha){

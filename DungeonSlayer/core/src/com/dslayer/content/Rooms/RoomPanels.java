@@ -17,11 +17,11 @@ import com.dslayer.content.options.Options;
  */
 public class RoomPanels extends BaseActor{
     private static final float originalDefaultSize = 50;
-    public static float defaultSize = 50;
+    public static float defaultSize = 50 * Options.aspectRatio;
     
     protected BaseActor DefaultSize(){
         setScale(1f);
-        setSize(defaultSize * Options.aspectRatio, defaultSize*Options.aspectRatio);
+        setSize(defaultSize, defaultSize);
         
         return this;
     }
@@ -33,7 +33,7 @@ public class RoomPanels extends BaseActor{
         return defaultSize;
     }
      public static void resetDefaultSize(){
-        defaultSize = originalDefaultSize;
+        defaultSize = originalDefaultSize * Options.aspectRatio;
     }
     @Override
     public void draw(Batch batch, float parentAlpha) {

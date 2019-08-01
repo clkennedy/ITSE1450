@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
+import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.screens.MainMenuScreen;
 
 /**
@@ -49,7 +50,7 @@ public class Options extends BaseScreen{
         float w = 0;
        
         
-        Label musicVol = new Label("Music Volume", MainMenuScreen.buttonStyle);
+        Label musicVol = new Label("Music Volume", FontLoader.buttonStyle);
         musicVol.setSize(musicVol.getWidth() * Options.aspectRatio, musicVol.getHeight()  * Options.aspectRatio);
         musicVol.setFontScale(1f * Options.aspectRatio);
         musicVol.setOriginX(musicVol.getWidth() / 2);
@@ -59,7 +60,7 @@ public class Options extends BaseScreen{
         
         mainStage.addActor(musicVol);
         
-        Label musicVolDec = new Label("-", MainMenuScreen.buttonStyle);
+        Label musicVolDec = new Label("-", FontLoader.buttonStyle);
         musicVolDec.setSize(musicVolDec.getWidth()  * Options.aspectRatio, musicVolDec.getHeight() * Options.aspectRatio);
         musicVolDec.setFontScale(1f * Options.aspectRatio);
         musicVolDec.setOriginX(musicVolDec.getWidth() / 2);
@@ -77,9 +78,9 @@ public class Options extends BaseScreen{
         mainStage.addActor(musicVolDec);
         
         //lMusicVol
-        lMusicVol = new Label("", MainMenuScreen.buttonStyle);
+        lMusicVol = new Label("", FontLoader.buttonStyle);
         lMusicVol.setText(Integer.toString((int)(musicVolume * 10)));
-        lMusicVol.setStyle(MainMenuScreen.buttonStyle);
+        lMusicVol.setStyle(FontLoader.buttonStyle);
         lMusicVol.setFontScale(1f * Options.aspectRatio);
         lMusicVol.setSize(lMusicVol.getWidth(), lMusicVol.getHeight());
         lMusicVol.setOriginX(lMusicVol.getWidth() / 2);
@@ -88,7 +89,7 @@ public class Options extends BaseScreen{
         lMusicVol.setPosition((((musicVolDec.getX() + musicVolDec.getWidth()) ) + (40* Options.aspectRatio)),musicVolDec.getY() + musicVolDec.getOriginY());
         mainStage.addActor(lMusicVol);
         
-        Label musicVolInc = new Label("+", MainMenuScreen.buttonStyle);
+        Label musicVolInc = new Label("+", FontLoader.buttonStyle);
         musicVolInc.setSize(musicVolInc.getWidth() * Options.aspectRatio, musicVolInc.getHeight() * Options.aspectRatio);
         musicVolInc.setFontScale(1f * Options.aspectRatio);
         musicVolInc.setOriginX(musicVolInc.getWidth() / 2);
@@ -106,7 +107,7 @@ public class Options extends BaseScreen{
         mainStage.addActor(musicVolInc);
         
         //Sound Options
-        Label soundVol = new Label("Sound Volume", MainMenuScreen.buttonStyle);
+        Label soundVol = new Label("Sound Volume", FontLoader.buttonStyle);
         soundVol.setSize(soundVol.getWidth() * Options.aspectRatio, soundVol.getHeight() * Options.aspectRatio);
         soundVol.setFontScale(1f * Options.aspectRatio);
         soundVol.setOriginX(soundVol.getWidth() / 2);
@@ -116,7 +117,7 @@ public class Options extends BaseScreen{
         mainStage.addActor(soundVol);
         
         
-        Label soundVolDec = new Label("-", MainMenuScreen.buttonStyle);
+        Label soundVolDec = new Label("-", FontLoader.buttonStyle);
         soundVolDec.setSize(soundVolDec.getWidth() * Options.aspectRatio, soundVolDec.getHeight() * Options.aspectRatio);
         soundVolDec.setFontScale(1f * Options.aspectRatio);
         soundVolDec.setOriginX(soundVolDec.getWidth() / 2);
@@ -132,10 +133,10 @@ public class Options extends BaseScreen{
         });
         mainStage.addActor(soundVolDec);
         
-        lSoundVol = new Label("", MainMenuScreen.buttonStyle);
+        lSoundVol = new Label("", FontLoader.buttonStyle);
         lSoundVol.setText(Integer.toString((int)(soundVolume * 10)));
         lSoundVol.setFontScale(1f * Options.aspectRatio);
-        lSoundVol.setStyle(MainMenuScreen.buttonStyle);
+        lSoundVol.setStyle(FontLoader.buttonStyle);
         lSoundVol.setSize(lSoundVol.getWidth(), lSoundVol.getHeight());
         lSoundVol.setOriginX(lMusicVol.getWidth() / 2);
         lSoundVol.setOriginY(lMusicVol.getHeight()/ 2);
@@ -143,7 +144,7 @@ public class Options extends BaseScreen{
         lSoundVol.setPosition((((soundVolDec.getX() + soundVolDec.getWidth()) ) + (40* Options.aspectRatio)),soundVolDec.getY() + soundVolDec.getOriginY());
         mainStage.addActor(lSoundVol);
         
-        Label soundVolInc = new Label("+", MainMenuScreen.buttonStyle);
+        Label soundVolInc = new Label("+", FontLoader.buttonStyle);
         soundVolInc.setFontScale(1f * Options.aspectRatio);
         soundVolInc.setSize(soundVolInc.getWidth() * Options.aspectRatio, soundVolInc.getHeight() * Options.aspectRatio);
         soundVolInc.setOriginX(soundVolInc.getWidth() / 2);
@@ -160,7 +161,7 @@ public class Options extends BaseScreen{
         });
         mainStage.addActor(soundVolInc);
         
-        Label lastDisplay = new Label("<", MainMenuScreen.buttonStyle);
+        Label lastDisplay = new Label("<", FontLoader.buttonStyle);
         soundVolInc.setFontScale(1f * Options.aspectRatio);
         lastDisplay.setSize(lastDisplay.getWidth() * Options.aspectRatio, lastDisplay.getHeight() * Options.aspectRatio);
         lastDisplay.setOriginX(lastDisplay.getWidth() / 2);
@@ -177,7 +178,7 @@ public class Options extends BaseScreen{
         });
         mainStage.addActor(lastDisplay);
         
-        Label displayText = new Label("", MainMenuScreen.buttonStyle);
+        Label displayText = new Label("", FontLoader.buttonStyle);
         displayText.setText((displayType == DisplayType.FULLSCREEN)? "Fullscreen" :
                 (displayType == DisplayType.WINDOWED)? "Windowed": "Borderless");
         displayText.setFontScale(1f * Options.aspectRatio);
@@ -188,7 +189,7 @@ public class Options extends BaseScreen{
         displayText.setPosition(lastDisplay.getX() +(100 * Options.aspectRatio),220* Options.aspectRatio);
         mainStage.addActor(displayText);
         
-        Label nextDisplay = new Label(">", MainMenuScreen.buttonStyle);
+        Label nextDisplay = new Label(">", FontLoader.buttonStyle);
         soundVolInc.setFontScale(1f * Options.aspectRatio);
         nextDisplay.setSize(nextDisplay.getWidth() * Options.aspectRatio, nextDisplay.getHeight() * Options.aspectRatio);
         nextDisplay.setOriginX(nextDisplay.getWidth() / 2);
@@ -207,7 +208,7 @@ public class Options extends BaseScreen{
         //mainmenu
         
         
-        mainmenu = new Label("Main Menu", MainMenuScreen.buttonStyle);
+        mainmenu = new Label("Main Menu", FontLoader.buttonStyle);
         mainmenu.setFontScale(1f * Options.aspectRatio);
         mainmenu.setSize((mainmenu.getWidth() / 3) * Options.aspectRatio,(mainmenu.getHeight() /3) * Options.aspectRatio);
         mainmenu.setOriginX(mainmenu.getWidth() / 2);

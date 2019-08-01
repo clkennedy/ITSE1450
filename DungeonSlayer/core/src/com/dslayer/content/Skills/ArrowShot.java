@@ -74,7 +74,7 @@ public class ArrowShot extends Skill{
         if(!isAction)
             return;
         getBoundaryPolygon();
-        accelerateAtAngle(direction);
+        //accelerateAtAngle(direction);
         applyPhysics(dt);
         
         if(getSpeed() <=0){

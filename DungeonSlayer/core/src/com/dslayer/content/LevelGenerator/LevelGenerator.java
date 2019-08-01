@@ -97,11 +97,23 @@ public class LevelGenerator {
        
        return tempRooms;
    }
+   public Room getBossRooms(){
+       Room tempRooms = null;
+       
+       for(Room r: _rooms){
+           if(r.isBossRoom()){
+               tempRooms= r;
+               break;
+           }
+       }
+       
+       return tempRooms;
+   }
    
    public void setDefaultSize(float size){
        Room.setDefaultSize(size);
-       mapWidthPixels = mapWidth * RoomPanels.defaultSize * Options.aspectRatio;
-       mapHeightPixels = mapHeight * RoomPanels.defaultSize * Options.aspectRatio;
+       mapWidthPixels = mapWidth * RoomPanels.defaultSize;
+       mapHeightPixels = mapHeight * RoomPanels.defaultSize;
    }
    public float getDefaultSize(){
        return Room.getDefaultSize();
@@ -246,7 +258,7 @@ public class LevelGenerator {
           
            if(!unMadeCells.isEmpty()){
                 Vector2 dir = new Vector2(0,0);
-               if(unMadeCells.contains(lastDir) && MathUtils.random(100) > 0){
+               if(unMadeCells.contains(lastDir) && MathUtils.randomBoolean(.5f)){
                    dir = lastDir;
                }
                else{
@@ -286,6 +298,15 @@ public class LevelGenerator {
             }
             System.out.println("]");
         }
+   }
+   
+   private boolean isCornerOfRoom(Vector2 pos){
+        for(Room r : _rooms){
+            if(r.isCorner(pos)){
+                return true; 
+            }
+        }
+        return false;
    }
    
    private void connectRegions(){
@@ -348,17 +369,25 @@ public class LevelGenerator {
            }
            
            Set connectors = connectorRegions.keySet();
-           System.out.println("Current Region is : " + _currentRegion);
+           //System.out.println("Current Region is : " + _currentRegion);
            while(openRegions.size() > 0){
                
-               System.out.println("KeySet Size: " + connectors.size());
-               System.out.println("openRegions Size: " + openRegions.size());
-               int rand = MathUtils.random(connectors.size() - 1);
-               System.out.println("Selected Index: "+rand);
+               //System.out.println("KeySet Size: " + connectors.size());
+               //System.out.println("openRegions Size: " + openRegions.size());
+               boolean validPos = false;
+               Vector2 pos = null;
+               Object obj = null;
+               while(pos == null || isCornerOfRoom(pos)){
+                    int rand = MathUtils.random(connectors.size() - 1);
+                    //System.out.println("Selected Index: "+rand);
                
-               Object obj = connectors.toArray()[rand];
-               Object connector = connectorRegions.get(obj).toArray()[0];
-               Vector2 pos = connectorRegionsPos.get(obj);
+                    obj = connectors.toArray()[rand];
+               
+                    Object connector = connectorRegions.get(obj).toArray()[0];
+               
+                    pos = connectorRegionsPos.get(obj);
+               }
+               
                Vector2 tmpPos = new Vector2(pos.x, pos.y);
                //Vector2 dir = connectorRegionsDir.get(obj);
                
@@ -367,10 +396,10 @@ public class LevelGenerator {
                
                 //mapLayout[(int)tmpPos.x][(int)tmpPos.y] = 0;
                 Set<Vector2> directions = connectorRegionsDir.get(obj);
-                System.out.println("Starting Pos: " + pos);
+                //System.out.println("Starting Pos: " + pos);
                 
                 for(Vector2 curDir: directions){
-                    System.out.println("Current Direction: " + curDir);
+                    //System.out.println("Current Direction: " + curDir);
                     Vector2 curPos = new Vector2(tmpPos.x, tmpPos.y);
                     boolean foundFloor = false;
                     while(!foundFloor){
@@ -379,7 +408,7 @@ public class LevelGenerator {
                                 || mapLayout[(int)(curPos.x + curDir.x)][(int)(curPos.y+curDir.y)] == 0){
                             break;
                         }
-                        System.out.println("Current Pos: " + curPos);
+                        //System.out.println("Current Pos: " + curPos);
                         if(mapLayout[(int)(curPos.x + curDir.x)][(int)(curPos.y+curDir.y)] != 0
                             && (curPos.x + curDir.x < mapWidth && curPos.x + curDir.x > 0 &&
                                 curPos.y + curDir.y < mapHeight && curPos.y + curDir.y > 0)){
@@ -418,9 +447,9 @@ public class LevelGenerator {
                 }
                
                List<Integer>regions = new ArrayList();
-               System.out.println("---Regions---");
+               //System.out.println("---Regions---");
                for(Integer value : connectorRegions.get(obj)){
-                   System.out.println(value);
+                   //System.out.println(value);
                    regions.add(merged.get(value));
                }
                
@@ -458,7 +487,7 @@ public class LevelGenerator {
                Set<Integer> posRegions = connectorRegions.get(obj);
                boolean containsBossRoom = false;
                for(Integer i : posRegions){
-                   containsBossRoom = containsBossRoom || (i == bossRoomRegion);
+                   containsBossRoom = (posRegions.size() == 2) && (containsBossRoom || (i == bossRoomRegion));
                }
                if(!containsBossRoom){
                     for(Integer i : posRegions){
@@ -477,9 +506,7 @@ public class LevelGenerator {
                        }
                    }
                }
-               for(String key : keysToRemove){
-                    connectorRegions.remove(obj);
-               }
+               
                
                for(String key: connectorRegionsPos.keySet()){
                    Vector2 connPos = connectorRegionsPos.get(key);
@@ -489,7 +516,9 @@ public class LevelGenerator {
                    }
                   // if()
                }
-               
+               for(String key : keysToRemove){
+                    connectors.remove(key);
+               }
                
            }
            

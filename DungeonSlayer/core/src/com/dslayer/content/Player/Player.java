@@ -94,6 +94,7 @@ public class Player extends BaseActor{
     private boolean isMoving = false;
     private Vector2 resetCoords;
     
+    private float playerSpeed = 100 * Options.aspectRatio;
     
     public static enum direction{up, down, left, right};
     public direction dir;
@@ -125,6 +126,11 @@ public class Player extends BaseActor{
         altFire.addMouseMapping(1);
         _playerControls.addMapping(altFire);
         
+        ActionMapping Sprint = new ActionMapping("Sprint");
+        Sprint.addKeyboardMapping(Keys.SHIFT_LEFT);
+        Sprint.addMouseMapping(Keys.SHIFT_RIGHT);
+        _playerControls.addMapping(Sprint);
+        
         resetCoords = new Vector2(x, y);
         
         footSteps = Gdx.audio.newSound(Gdx.files.internal("Sounds/footsteps_concrete_.mp3"));
@@ -146,7 +152,7 @@ public class Player extends BaseActor{
        // setSize(Unlocks.currentAvatar.getWidth() * Options.aspectRatio, Unlocks.currentAvatar.getHeight() * Options.aspectRatio);
         setBoundaryPolygonLong(10);
         
-        setMaxSpeed(100 * Options.aspectRatio);
+        setMaxSpeed(playerSpeed);
         setDeceleration(250 * Options.aspectRatio);
         
         healthBar = new Rectangle(this.getStage().getCamera().viewportWidth - maxHealth - 20, 10, maxHealth, 20);
@@ -505,8 +511,8 @@ public class Player extends BaseActor{
                     if(canMove)
                         setAnimation(hero.playDown());
            
-           setSize(hero.getDSize(), hero.getDSize());
-           directionChanged = dir != direction.down;
+            setSize(hero.getDSize(), hero.getDSize());
+            directionChanged = dir != direction.down;
             dir = direction.down;
        }
        if((getY()) < MouseWorldY &&
@@ -553,23 +559,30 @@ public class Player extends BaseActor{
                         }
                 }
             }
+            float speedModifier = (_playerControls.isPressed("Sprint")) ? 1.3f : 1f;
+            setAcceleration(accel * speedModifier * Options.aspectRatio);
+            setMaxSpeed(playerSpeed * speedModifier);
             if(_playerControls.isPressed("Right")){
-                setAcceleration(accel * Options.aspectRatio);
+                //setSpeed(accel * speedModifier * Options.aspectRatio);
+                //setAcceleration(accel * speedModifier * Options.aspectRatio);
                 isMoving = true;
                 accelerateAtAngle(0);
             }
             if(_playerControls.isPressed("Left")){
-                setAcceleration(accel * Options.aspectRatio);
+                //setSpeed(accel * speedModifier * Options.aspectRatio);
+                //setAcceleration(accel * speedModifier * Options.aspectRatio);
                 isMoving = true;
                 accelerateAtAngle(180);
             }
             if(_playerControls.isPressed("Down")){
-                setAcceleration(accel * Options.aspectRatio);
+                //setSpeed(accel * speedModifier * Options.aspectRatio);
+                //setAcceleration(accel * speedModifier * Options.aspectRatio);
                 isMoving = true;
                 accelerateAtAngle(270);
             }
             if(_playerControls.isPressed("Up")){
-                setAcceleration(accel * Options.aspectRatio);
+                //setSpeed(accel * speedModifier * Options.aspectRatio);
+                
                 isMoving = true;
                 accelerateAtAngle(90);
             }

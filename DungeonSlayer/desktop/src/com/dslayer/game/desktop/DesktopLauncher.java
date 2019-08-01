@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.dslayer.Launcher.DungeonSlayer;
+import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Options;
 
@@ -25,7 +26,6 @@ public class DesktopLauncher {
     cfg.resizable = false;
     //cfg.fullscreen = true;
     //cfg.vSyncEnabled = true;
-    
     //Options.desktopWidth = LwjglApplicationConfiguration.getDesktopDisplayMode().width;
     //Options.desktopheight = LwjglApplicationConfiguration.getDesktopDisplayMode().height;
         
