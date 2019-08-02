@@ -27,6 +27,7 @@ import com.dslayer.content.Hero.Hero;
 import com.dslayer.content.Inventory.Items.Potions.HealthPotion;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
+import com.dslayer.content.Rooms.Forest.ForestRoom;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.Skills.Skill;
@@ -148,8 +149,13 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         gameObjectToRemove = new ArrayList<String>();
         
         setupSocketListeners();
+        Room dr = new DungeonRoom();;
+        if(Difficulty.RoomType == Difficulty.RoomTypes.Dungeon.Dungeon){
+            dr = new DungeonRoom();
+        }else if(Difficulty.RoomType == Difficulty.RoomTypes.Dungeon.Forest){
+            dr = new ForestRoom();
+        }
         
-        Room dr = new DungeonRoom();
         dr.generateRoom(30,40);
         
         Difficulty.worldHeight = dr.getRoomHeightPixels();

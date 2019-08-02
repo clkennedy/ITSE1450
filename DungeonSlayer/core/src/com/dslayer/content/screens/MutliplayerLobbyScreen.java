@@ -48,6 +48,7 @@ import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.Hero.Hero;
 import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.Player.Player;
+import static com.dslayer.content.screens.MultiplayerHeroSelectionScreen.HeroSelectionIndex;
 import com.dslayer.gamemodes.MultiplayerSurvivalGameMode;
 import com.dslayer.gamemodes.SurvivalGameMode;
 import io.socket.client.IO;
@@ -88,6 +89,8 @@ public class MutliplayerLobbyScreen extends BaseScreen {
     
     Label ready;
     Label countDown;
+    Label displayText;
+    Label displayGMText;
     
     private float startTime = 5f;
     private float startTimeTimer = 0;
@@ -117,6 +120,21 @@ public class MutliplayerLobbyScreen extends BaseScreen {
        playersChecks = new HashMap<String, BaseActor>();
        playerHeros = new HashMap<String, Integer>();
        heroAvatars = new HashMap<String, BaseActor>();
+       
+       players.put(Multiplayer.myID,Multiplayer.myUserName);
+       playersReady.put(Multiplayer.myID,false);
+       Label playerName = new Label(players.get(Multiplayer.myID).toString(), FontLoader.buttonStyle);
+                playerName.setOriginX(playerName.getWidth() / 2);
+                playerName.setOriginY(playerName.getHeight()/ 2);
+                //roomName.setPosition(vet.x, vet.y);
+                playerName.setAlignment(Align.center);
+       playerNames.put(Multiplayer.myID, playerName);
+       playersChecks.put(Multiplayer.myID, null);
+       heroAvatars.put(Multiplayer.myID, null);
+       playerHeros.put(Multiplayer.myID, MultiplayerHeroSelectionScreen.HeroSelectionIndex);
+       redraw = true;
+       redrawHeros = true;
+       reload = true;
        
        Multiplayer.socket = multiplayerRoomScreen.getSocket();
        configSocket();
@@ -204,11 +222,112 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         scroll.setPosition(15, mainStage.getHeight() - scroll.getHeight() - 50);
         
         mainStage.addActor(scroll);
+        //------------------------------------------------------------------------------------------------------------------------------
+        Label nextDisplay = new Label(">", FontLoader.buttonStyle);
+        nextDisplay.setSize(nextDisplay.getWidth() * Options.aspectRatio, nextDisplay.getHeight() * Options.aspectRatio);
+        nextDisplay.setOriginX(nextDisplay.getWidth() / 2);
+        nextDisplay.setOriginY(nextDisplay.getHeight()/ 2);
+        nextDisplay.setAlignment(Align.right);
+        nextDisplay.setPosition((Gdx.graphics.getWidth() - nextDisplay.getWidth() - 20), Gdx.graphics.getHeight() - 50);
+        nextDisplay.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                nextDungeon();
+            }
+        
+        });
+        displayText = new Label("", FontLoader.buttonStyle);
+        displayText.setText((Difficulty.RoomType == Difficulty.RoomTypes.Dungeon)? "Dungeon" :
+                "Forest");
+        displayText.setSize(displayText.getWidth(), displayText.getHeight());
+        displayText.setOriginX(displayText.getWidth() / 2);
+        displayText.setOriginY(displayText.getHeight()/ 2);
+        displayText.setAlignment(Align.right);
+        displayText.setPosition((nextDisplay.getX() - displayText.getWidth() - 20),Gdx.graphics.getHeight() - 50);
+        
+        
+        
+        
+        
+        Label lastDisplay = new Label("<", FontLoader.buttonStyle);
+        lastDisplay.setSize(lastDisplay.getWidth() * Options.aspectRatio, lastDisplay.getHeight() * Options.aspectRatio);
+        lastDisplay.setOriginX(lastDisplay.getWidth() / 2);
+        lastDisplay.setOriginY(lastDisplay.getHeight()/ 2);
+        lastDisplay.setAlignment(Align.left);
+        lastDisplay.setPosition((displayText.getX() - lastDisplay.getWidth() - 20),  Gdx.graphics.getHeight() - 50);
+        lastDisplay.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                previousDungeon();
+            }
+        
+        });
+        mainStage.addActor(displayText);
+        if(Multiplayer.host){
+            mainStage.addActor(lastDisplay);
+            mainStage.addActor(nextDisplay);
+        }
+        
+        
+        //------------------------------------------------------------------------------------------------------------------------------
+        
+        //------------------------------------------------------------------------------------------------------------------------------
+        Label nextGMDisplay = new Label(">", FontLoader.buttonStyle);
+        nextGMDisplay.setSize(nextGMDisplay.getWidth() * Options.aspectRatio, nextGMDisplay.getHeight() * Options.aspectRatio);
+        nextGMDisplay.setOriginX(nextGMDisplay.getWidth() / 2);
+        nextGMDisplay.setOriginY(nextGMDisplay.getHeight()/ 2);
+        nextGMDisplay.setAlignment(Align.right);
+        nextGMDisplay.setPosition((Gdx.graphics.getWidth() - nextGMDisplay.getWidth() - 20), Gdx.graphics.getHeight() - 150);
+        nextGMDisplay.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                nextGMMode();
+            }
+        
+        });
+        displayGMText = new Label("", FontLoader.buttonStyle);
+        displayGMText.setText((Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival)? "Survial" :
+                "Crawl");
+        displayGMText.setSize(displayGMText.getWidth(), displayGMText.getHeight());
+        displayGMText.setOriginX(displayGMText.getWidth() / 2);
+        displayGMText.setOriginY(displayGMText.getHeight()/ 2);
+        displayGMText.setAlignment(Align.right);
+        displayGMText.setPosition((nextDisplay.getX() - displayGMText.getWidth() - 20),Gdx.graphics.getHeight() - 150);
+        
+        
+        
+        
+        
+        Label lastGMDisplay = new Label("<", FontLoader.buttonStyle);
+        lastGMDisplay.setSize(lastDisplay.getWidth() * Options.aspectRatio, lastGMDisplay.getHeight() * Options.aspectRatio);
+        lastGMDisplay.setOriginX(lastGMDisplay.getWidth() / 2);
+        lastGMDisplay.setOriginY(lastGMDisplay.getHeight()/ 2);
+        lastGMDisplay.setAlignment(Align.left);
+        lastGMDisplay.setPosition((displayText.getX() - lastGMDisplay.getWidth() - 20),  Gdx.graphics.getHeight() - 150);
+        lastGMDisplay.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                previousGMMode();
+            }
+        
+        });
+        mainStage.addActor(displayGMText);
+        if(Multiplayer.host){
+            mainStage.addActor(lastGMDisplay);
+            mainStage.addActor(nextGMDisplay);
+        }
+        
+        
+        //------------------------------------------------------------------------------------------------------------------------------
     }
 
     @Override
     public void update(float dt) {
-        if(!Multiplayer.connected){
+        if(!Multiplayer.connected && Multiplayer.socket != null){
             Multiplayer.socket.close();
             Multiplayer.socket = null;
             BaseGame.setActiveScreen(new MainMenuScreen());
@@ -218,11 +337,6 @@ public class MutliplayerLobbyScreen extends BaseScreen {
             roomDestroyed = false;
             multiplayerRoomScreen.rejoined = true;
             BaseGame.setActiveScreen(Multiplayer.baseScreen);
-        }
-        
-        if(reload){
-            reload = false;
-            Multiplayer.socket.emit("getRoomPlayers");
         }
         
         //redraw names
@@ -306,23 +420,36 @@ public class MutliplayerLobbyScreen extends BaseScreen {
                 Multiplayer.socket.emit("startGame");
             }
             Multiplayer.levelScreen = new LevelScreen();
-            Multiplayer.levelScreen.setGameMode(new MultiplayerSurvivalGameMode());
+            if(Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival){
+                Multiplayer.levelScreen.setGameMode(new MultiplayerSurvivalGameMode());
+            }else if(Multiplayer.GameModeType == Multiplayer.GameModeTypes.Crawl){
+                Multiplayer.levelScreen.setGameMode(new MultiplayerSurvivalGameMode());
+            }
+            
             BaseGame.setActiveScreen(Multiplayer.levelScreen);
         }
-        
+        if(reload){
+            reload = false;
+            Multiplayer.socket.emit("getRoomPlayers");
+            redraw = true;
+        }
     }
     
     public void backToMainMenu(){
+        if(Multiplayer.connected && Multiplayer.socket != null){
             Multiplayer.socket.close();
             Multiplayer.socket = null;
-            BaseGame.setActiveScreen(new MainMenuScreen());
+        }
+        BaseGame.setActiveScreen(new MainMenuScreen());
     }
     
     public void backToRoomSelection(){
+        if(Multiplayer.connected && Multiplayer.socket != null){
             multiplayerRoomScreen.rejoined = true;
             Multiplayer.socket.emit("leaveRoom");
             Multiplayer.host = false;
-            BaseGame.setActiveScreen(Multiplayer.baseScreen);
+        }
+            BaseGame.setActiveScreen(new multiplayerRoomScreen());
     }
     
     public void readyUp(){
@@ -342,6 +469,82 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         BaseGame.setActiveScreen(new MultiplayerHeroSelectionScreen());
     }
     
+    public void nextDungeon(){
+        int d = Difficulty.RoomType.ordinal();
+        d++;
+        if(d >= Difficulty.RoomTypes.values().length){
+            d = 0;
+        }
+        Difficulty.RoomType = Difficulty.RoomTypes.values()[d];
+        displayText.setText((Difficulty.RoomType == Difficulty.RoomTypes.Dungeon)? "Dungeon" :
+                "Forest");
+        if(Multiplayer.host){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("mapType", d);
+                Multiplayer.socket.emit("hostChangedMapType", data);
+            }catch(Exception e){
+
+            }
+        } 
+    }
+    public void previousDungeon(){
+        int d = Difficulty.RoomType.ordinal();
+        d--;
+        if(d < 0){
+            d = Difficulty.RoomTypes.values().length - 1;
+        }
+        Difficulty.RoomType = Difficulty.RoomTypes.values()[d];
+        displayText.setText((Difficulty.RoomType == Difficulty.RoomTypes.Dungeon)? "Dungeon" :
+                "Forest");;
+        if(Multiplayer.host){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("mapType", d);
+                Multiplayer.socket.emit("hostChangedMapType", data);
+            }catch(Exception e){
+
+            }
+        }       
+    }
+    public void nextGMMode(){
+        int d = Multiplayer.GameModeType.ordinal();
+        d++;
+        if(d >= Multiplayer.GameModeTypes.values().length){
+            d = 0;
+        }
+        Multiplayer.GameModeType = Multiplayer.GameModeTypes.values()[d];
+        displayGMText.setText((Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival)? "Survial" :
+                "Crawl");
+        if(Multiplayer.host){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("gameMode", d);
+                Multiplayer.socket.emit("hostChangedGameMode", data);
+            }catch(Exception e){
+
+            }
+        }
+    }
+    public void previousGMMode(){
+        int d = Multiplayer.GameModeType.ordinal();;
+        d--;
+        if(d < 0){
+            d = Multiplayer.GameModeTypes.values().length - 1;
+        }
+        Multiplayer.GameModeType = Multiplayer.GameModeTypes.values()[d];
+        displayGMText.setText((Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival)? "Survial" :
+                "Crawl");
+        if(Multiplayer.host){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("gameMode", d);
+                Multiplayer.socket.emit("hostChangedGameMode", data);
+            }catch(Exception e){
+
+            }
+        }
+    }
 public void configSocket(){
         
     Multiplayer.socket.on("newPlayerJoinedRoom", new Emitter.Listener() {
@@ -431,6 +634,32 @@ public void configSocket(){
                     Gdx.app.log("SocketIO", "Error getting Rooms");
                 }
             }
+        }).on("hostChangedGameMode", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                JSONObject data = (JSONObject) os[0];
+                try{
+                    int id = data.getInt("gameMode");
+                    Multiplayer.GameModeType = Multiplayer.GameModeTypes.values()[id];
+                    displayGMText.setText((Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival)? "Survial" :
+                        "Crawl");
+                }catch(Exception e){
+                    Gdx.app.log("SocketIO", "hostChangedGameMode");
+                }
+            }
+        }).on("hostChangedMapType", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                JSONObject data = (JSONObject) os[0];
+                try{
+                    int id = data.getInt("mapType");
+                    Difficulty.RoomType = Difficulty.RoomTypes.values()[id];
+                    displayText.setText((Difficulty.RoomType == Difficulty.RoomTypes.Dungeon)? "Dungeon" :
+                        "Forest");
+                }catch(Exception e){
+                    Gdx.app.log("SocketIO", "hostChangedMapType");
+                }
+            }
         }).on("playerFlaggedUnReady", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
@@ -462,10 +691,10 @@ public void configSocket(){
                 JSONObject data = (JSONObject) os[0];
                 try{
                     String id = data.getString("id").toString();
-                    System.out.println("hero Changes");
+                    //System.out.println("hero Changes");
                     playersReady.put(id,false);
                     playerHeros.put(id, data.getInt("hero"));
-                    System.out.println(data.getInt("hero"));
+                    //System.out.println(data.getInt("hero"));
                     redraw = true;
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms");

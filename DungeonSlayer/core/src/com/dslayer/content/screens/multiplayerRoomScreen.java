@@ -295,10 +295,12 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         if(successfullRoomCreation){
             successfullRoomCreation = false;
             Multiplayer.host = true;
+            Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
             BaseGame.setActiveScreen(Multiplayer.lobbyScreen);
         }
         if(joinedRoom){
             joinedRoom = false;
+            Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
             BaseGame.setActiveScreen(Multiplayer.lobbyScreen);
         }
     }

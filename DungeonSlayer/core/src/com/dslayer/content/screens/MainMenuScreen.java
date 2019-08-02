@@ -107,6 +107,9 @@ public class MainMenuScreen extends BaseScreen {
         b.loadAnimationFromFiles(bgFrames,.05f, true);
         b.setOrigin(0,0);
         b.setScale(Options.aspectRatio);
+        if(Options.displayType != Options.DisplayType.WINDOWED ){
+            b.setPosition((Gdx.graphics.getWidth()/ 2) - (b.getWidth()), 0);
+        }
         
         if(!musicPlaying){
             backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/8BitDungTitle.mp3"));

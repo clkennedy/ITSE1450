@@ -55,6 +55,8 @@ io.on('connection', function(socket){
                                 socket.to(players[i].roomName).emit('roomDestroyed', {roomName: rooms[j].name});
                                 log(rooms[j].name + " was Destroyed");
                                 rooms.splice(j,1);
+                            }else{
+                                socket.to(players[i].roomName).emit('playerDisconnectedGame', {id: socket.id, userName: players[i].userName});
                             }
                         }
                     }
@@ -97,6 +99,7 @@ io.on('connection', function(socket){
        socket.leave(data.roomName);
        player.roomName = "";
    })
+   
    
    socket.on('leaveRoom', function(){
        log("looking for player " + socket.id);
@@ -182,6 +185,14 @@ io.on('connection', function(socket){
        socket.to(player.roomName).emit('playerFlaggedReady', {id:socket.id});
         socket.emit('playerFlaggedReady', {id:socket.id});
        
+   })
+   socket.on('hostChangedGameMode', function(data){
+       var player = players.find(p => p.id == socket.id);
+       socket.to(player.roomName).emit('hostChangedGameMode', data);
+   })
+   socket.on('hostChangedMapType', function(data){
+       var player = players.find(p => p.id == socket.id);
+       socket.to(player.roomName).emit('hostChangedMapType', data);
    })
    socket.on('flagUnReady', function(){
        var player = players.find(p => p.id == socket.id);

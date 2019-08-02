@@ -24,6 +24,8 @@ public class Multiplayer {
     private static int networkid= 0;
     
     public static enum GameObjects{HealthPotion, SkeletonWarrior, SkeletonMage, BlueGolem};
+    public static enum GameModeTypes{Survival, Crawl};
+    public static GameModeTypes GameModeType = GameModeTypes.Survival;
     public static Socket socket;
     public static boolean connected = true;
     public static String myID;
