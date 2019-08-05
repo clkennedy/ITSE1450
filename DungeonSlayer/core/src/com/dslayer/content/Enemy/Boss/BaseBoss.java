@@ -24,6 +24,7 @@ import com.dslayer.content.options.Avatars;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +38,14 @@ public class BaseBoss extends BaseEnemy{
     protected List<Animation<TextureRegion>> castAnimList;
     protected Animation<TextureRegion> dieAnim;
     
+    protected int skillToCast = 1;
+    
     protected float damageMitigation = 2.3f;
+    
+    protected List<Float> degreesToCastSkillAt;
+    protected List<BaseActor> targets;
+    
+    protected boolean targetInRange = false;
 
     @Override
     public void attack(BaseActor player) {
@@ -63,6 +71,29 @@ public class BaseBoss extends BaseEnemy{
         
         moveToRange = new Circle(moveTo.x, moveTo.y, 30);
         
+    }
+    
+    public void setSkillToCast(int skillCast){
+        skillToCast = skillCast;
+    }
+    
+    public void collectTargets(){
+        ArrayList<BaseActor> players = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
+        for(BaseActor player: players){
+                if(_room != null && !_room.isActorInRoom(player)){
+                    continue;
+                }
+                targetInRange = true;
+                targets.add(player);
+                chaseTarget = false;
+        }
+    }
+    
+    public void setDegreesToCastAt(List<Float> degreesCasted){
+        degreesToCastSkillAt.clear();
+        for(float d: degreesCasted){
+            degreesToCastSkillAt.add(d);
+        }
     }
     
     public void draw(Batch batch, float parentAlpha) {

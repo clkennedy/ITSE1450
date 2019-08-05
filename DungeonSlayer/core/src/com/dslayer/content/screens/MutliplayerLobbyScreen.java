@@ -49,6 +49,7 @@ import com.dslayer.content.Hero.Hero;
 import com.dslayer.content.Player.Menu.EscapeMenu;
 import com.dslayer.content.Player.Player;
 import static com.dslayer.content.screens.MultiplayerHeroSelectionScreen.HeroSelectionIndex;
+import com.dslayer.gamemodes.MultiplayerCrawlGameMode;
 import com.dslayer.gamemodes.MultiplayerSurvivalGameMode;
 import com.dslayer.gamemodes.SurvivalGameMode;
 import io.socket.client.IO;
@@ -102,10 +103,18 @@ public class MutliplayerLobbyScreen extends BaseScreen {
        checkmark.setSize(40,40);
        checkmark.setOrigin(checkmark.getWidth() / 2, checkmark.getHeight() / 2);
        
-       hero = Hero.getNewHero(Hero.heros.ClassicHero);
+       hero = Hero.getNewHero((MultiplayerHeroSelectionScreen.HeroSelectionIndex));
        hero.setAnimation(((Hero)hero).playRight());
        hero.setSize(30, 30);
        hero.setOrigin(hero.getWidth() / 2, hero.getHeight() / 2);
+       
+       JSONObject data = new JSONObject();
+        try{
+            data.put("hero", HeroSelectionIndex);
+            Multiplayer.socket.emit("updateHero", data);
+        }catch(Exception e){
+        }
+            
        
        countDown = new Label(Integer.toString( (int)startTime), FontLoader.titleStyle);
        countDown.setFontScale(4);
@@ -336,13 +345,13 @@ public class MutliplayerLobbyScreen extends BaseScreen {
         if(roomDestroyed){
             roomDestroyed = false;
             multiplayerRoomScreen.rejoined = true;
-            BaseGame.setActiveScreen(Multiplayer.baseScreen);
+            BaseGame.setActiveScreen(new multiplayerRoomScreen());
         }
         
         //redraw names
         if(redraw){
             playerNames.clear();
-            scroll.replayAnimation();
+            //scroll.replayAnimation();
             if(roomTable != null){
                 roomTable.remove();
             }
@@ -372,11 +381,12 @@ public class MutliplayerLobbyScreen extends BaseScreen {
                 }
                 
                 playersChecks.put(player, checkmark);
+                
                 if(heroAvatars.get(player) != null)
                         heroAvatars.get(player).remove();
                 hero = Hero.getNewHero(Hero.heros.values()[playerHeros.get(player)]);
                 BaseActor b = new BaseActor();
-                b.setAnimationWithReset(((Hero)hero).playRight());
+                b.setAnimation(((Hero)hero).playRight());
                 b.setSize(30, 30);
                 b.setOrigin(hero.getWidth() /2, hero.getHeight() / 2);
                 heroAvatars.put(player, b);
@@ -419,24 +429,27 @@ public class MutliplayerLobbyScreen extends BaseScreen {
             if(Multiplayer.host){
                 Multiplayer.socket.emit("startGame");
             }
-            Multiplayer.levelScreen = new LevelScreen();
+            
+            LevelScreen ls = new LevelScreen();
             if(Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival){
-                Multiplayer.levelScreen.setGameMode(new MultiplayerSurvivalGameMode());
+                ls.setGameMode(new MultiplayerSurvivalGameMode());
             }else if(Multiplayer.GameModeType == Multiplayer.GameModeTypes.Crawl){
-                Multiplayer.levelScreen.setGameMode(new MultiplayerSurvivalGameMode());
+                ls.setGameMode(new MultiplayerCrawlGameMode());
             }
             
-            BaseGame.setActiveScreen(Multiplayer.levelScreen);
+            BaseGame.setActiveScreen(ls);
         }
         if(reload){
-            reload = false;
+            //reload = false;
             Multiplayer.socket.emit("getRoomPlayers");
+            Multiplayer.socket.emit("getRoomDetails");
             redraw = true;
         }
     }
     
     public void backToMainMenu(){
         if(Multiplayer.connected && Multiplayer.socket != null){
+            Multiplayer.socket.disconnect();
             Multiplayer.socket.close();
             Multiplayer.socket = null;
         }
@@ -581,6 +594,23 @@ public void configSocket(){
                         playerHeros.put(data.getString("id"), data.getInt("hero"));
                     }
                     redraw = true;
+                }catch(Exception e){
+                    Gdx.app.log("SocketIO", "Error getting Rooms" + e.getMessage());
+                }
+            }
+        }).on("getRoomDetails", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                JSONObject data = (JSONObject) os[0];
+                try{
+                    int id = data.getInt("mapType");
+                    Difficulty.RoomType = Difficulty.RoomTypes.values()[id];
+                    displayText.setText((Difficulty.RoomType == Difficulty.RoomTypes.Dungeon)? "Dungeon" :
+                        "Forest");
+                    id = data.getInt("gameMode");
+                    Multiplayer.GameModeType = Multiplayer.GameModeTypes.values()[id];
+                    displayGMText.setText((Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival)? "Survial" :
+                        "Crawl");
                 }catch(Exception e){
                     Gdx.app.log("SocketIO", "Error getting Rooms" + e.getMessage());
                 }

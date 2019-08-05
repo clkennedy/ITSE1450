@@ -69,8 +69,6 @@ io.on('connection', function(socket){
         log("Total Player: " + players.length);
    });
    
-   
-   
    var player = new Player(socket.id,"Player"+(nextPlayerNum ++),0,0);
    players.push(player);
    log("Total Player: " + players.length);
@@ -95,6 +93,12 @@ io.on('connection', function(socket){
    })
    
    socket.on('roomDestroyed', function(data){
+       var player = players.find(p => p.id == socket.id);
+       socket.leave(data.roomName);
+       player.roomName = "";
+   })
+   
+   socket.on('DestroyRoom', function(data){
        var player = players.find(p => p.id == socket.id);
        socket.leave(data.roomName);
        player.roomName = "";
@@ -188,11 +192,23 @@ io.on('connection', function(socket){
    })
    socket.on('hostChangedGameMode', function(data){
        var player = players.find(p => p.id == socket.id);
+       room = rooms.find(r => r.name == player.roomName);
+       room.GameMode = data.gameMode;
        socket.to(player.roomName).emit('hostChangedGameMode', data);
    })
    socket.on('hostChangedMapType', function(data){
        var player = players.find(p => p.id == socket.id);
+       room = rooms.find(r => r.name == player.roomName);
+       room.MapType = data.mapType;
        socket.to(player.roomName).emit('hostChangedMapType', data);
+   })
+   socket.on('mapData', function(data){
+       var player = players.find(p => p.id == socket.id);
+       socket.to(player.roomName).emit('mapData', data);
+   })
+   socket.on('spawnData', function(data){
+       var player = players.find(p => p.id == socket.id);
+       socket.to(player.roomName).emit('spawnData', data);
    })
    socket.on('flagUnReady', function(){
        var player = players.find(p => p.id == socket.id);
@@ -213,6 +229,11 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        socket.emit('getRoomPlayers', players.filter(p => p.roomName == room.name));
    })
+   socket.on('getRoomDetails', function(){
+       player = players.find(p => p.id == socket.id);
+       room = rooms.find(r => r.name == player.roomName);
+       socket.emit('getRoomDetails', {mapType:room.MapType,gameMode:room.GameMode });
+   })
    socket.on('getRoomPlayersGame', function(){
        player = players.find(p => p.id == socket.id);
        room = rooms.find(r => r.name == player.roomName);
@@ -228,9 +249,17 @@ io.on('connection', function(socket){
    socket.on('updateHeroPosition', function(data){
        player = players.find(p => p.id == socket.id);
        room = rooms.find(r => r.name == player.roomName);
+       //log('updateHeroPosition ' + socket.id);
        data.id = socket.id;
        if(room != null)
             socket.to(room.name).emit('updateHeroPosition', data);
+   })
+   socket.on('pingHostForLoadData', function(){
+       player = players.find(p => p.id == socket.id);
+       room = rooms.find(r => r.name == player.roomName);
+       hostId = room.host;
+       if(room != null)
+            socket.broadcast.to(hostId).emit('pingHostForLoadData');
    })
    socket.on('heroCast', function(data){
        player = players.find(p => p.id == socket.id);
@@ -256,7 +285,7 @@ io.on('connection', function(socket){
        data.id = socket.id;
        if(room != null){
            socket.to(room.name).emit('heroRecover', data);
-           log(socket.id + " recovered " + data.recover + " damage");
+           //log(socket.id + " recovered " + data.recover + " damage");
        }  
    })
    socket.on('heroAddPoints', function(data){
@@ -265,7 +294,7 @@ io.on('connection', function(socket){
        data.id = socket.id;
        if(room != null){
            socket.to(room.name).emit('heroAddPoints', data);
-           log(socket.id + " recovered " + data.recover + " damage");
+           //log(socket.id + " recovered " + data.recover + " damage");
        }  
    })
    
@@ -274,9 +303,19 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('healthPotionCreated', data);
-           log("Health Pot " + data.id + " Created");
+          // log("Health Pot " + data.id + " Created");
        }   
    })
+   
+   socket.on('GameItemSpawned', function(data){
+       player = players.find(p => p.id == socket.id);
+       room = rooms.find(r => r.name == player.roomName);
+       if(room != null){
+           socket.to(room.name).emit('GameItemSpawned', data);
+          // log("Health Pot " + data.id + " Created");
+       }   
+   })
+   
    socket.on('healthPotionPickUp', function(data){
        player = players.find(p => p.id == socket.id);
        room = rooms.find(r => r.name == player.roomName);
@@ -299,7 +338,7 @@ io.on('connection', function(socket){
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('enemyCreated', data);
-           log("Enemy " + data.id + " Created");
+           //log("Enemy " + data.id + " Created");
        }   
    })
    socket.on('enemyAttack', function(data){
@@ -310,12 +349,20 @@ io.on('connection', function(socket){
            //log("Enemy " + data.id + " Attacked " + data.target);
        }     
    })
+   socket.on('bossAttack', function(data){
+       player = players.find(p => p.id == socket.id);
+       room = rooms.find(r => r.name == player.roomName);
+       if(room != null){
+           socket.to(room.name).emit('bossAttack', data);
+           //log("Enemy " + data.id + " Attacked " + data.target);
+       }     
+   })
    socket.on('enemyDamageTaken', function(data){
        player = players.find(p => p.id == socket.id);
        room = rooms.find(r => r.name == player.roomName);
        if(room != null){
            socket.to(room.name).emit('enemyDamageTaken', data);
-           log(data.id + " enemy took " + data.damage + " damage");
+           //log(data.id + " enemy took " + data.damage + " damage");
        }  
    })
    socket.on('enemyDied', function(data){
@@ -324,7 +371,7 @@ io.on('connection', function(socket){
        if(room != null){
            socket.to(room.name).emit('enemyDied', data);
            socket.emit('enemyDied', data);
-           log(data.id + " Enemy Died");
+           //log(data.id + " Enemy Died");
        }  
    })
    socket.on('syncEnemies', function(data){
@@ -352,6 +399,8 @@ function Room(name){
     this.numOfPlayer = 0;
     this.host = "";
     this.inLobby = false;
+    this.GameMode = 0;
+    this.MapType = 0;
 }
 
 function Player(id, userName, x, y){

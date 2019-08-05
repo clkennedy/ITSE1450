@@ -156,7 +156,6 @@ public class DungeonCrawlGameMode extends GameMode{
         gm = new GameMessage();
         RoomDoor.gm = gm;
         gm.AddMessage("Welcome");
-        //player.addToBackpack(new BossKey());
     }
     @Override
     public void update(float dt) {

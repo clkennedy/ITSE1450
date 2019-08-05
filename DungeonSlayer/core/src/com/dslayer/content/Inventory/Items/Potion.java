@@ -34,8 +34,18 @@ public class Potion extends Items{
         potionSprites = Avatars.loadTextures(potions, 10, 10);
     }
     
-    public Potion(){
+    public Potion(float x, float y, Stage s, boolean handleMultiplayer){
+        super(x,y,s);
         
+        potions = new Texture(Gdx.files.internal(potionsPath));
+        potionSprites = Avatars.loadTextures(potions, 10, 10);
+    }
+    
+    public Potion(){
+        super();
+        
+        potions = new Texture(Gdx.files.internal(potionsPath));
+        potionSprites = Avatars.loadTextures(potions, 10, 10);
     }
     
     public void enableDespawnTimer(float timer){

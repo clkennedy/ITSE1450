@@ -325,6 +325,9 @@ public class Player extends BaseActor{
     }
     
     public void setHero(Hero hero){
+        if(this.hero != null){
+            this.hero.remove();
+        }
         this.hero = hero;
         this.setAnimation(this.hero.playRight());
         setSize(hero.getDSize(), hero.getDSize());
@@ -561,32 +564,35 @@ public class Player extends BaseActor{
                 }
             }
             float speedModifier = (_playerControls.isPressed("Sprint")) ? sprintSpeedModifier : 1f;
-            setAcceleration(accel * speedModifier * Options.aspectRatio);
-            setMaxSpeed(playerSpeed * speedModifier);
-            if(_playerControls.isPressed("Right")){
-                //setSpeed(accel * speedModifier * Options.aspectRatio);
-                //setAcceleration(accel * speedModifier * Options.aspectRatio);
-                isMoving = true;
-                accelerateAtAngle(0);
+            if(canMove){
+                setAcceleration(accel * speedModifier * Options.aspectRatio);
+                setMaxSpeed(playerSpeed * speedModifier);
+                if(_playerControls.isPressed("Right")){
+                    //setSpeed(accel * speedModifier * Options.aspectRatio);
+                    //setAcceleration(accel * speedModifier * Options.aspectRatio);
+                    isMoving = true;
+                    accelerateAtAngle(0);
+                }
+                if(_playerControls.isPressed("Left")){
+                    //setSpeed(accel * speedModifier * Options.aspectRatio);
+                    //setAcceleration(accel * speedModifier * Options.aspectRatio);
+                    isMoving = true;
+                    accelerateAtAngle(180);
+                }
+                if(_playerControls.isPressed("Down")){
+                    //setSpeed(accel * speedModifier * Options.aspectRatio);
+                    //setAcceleration(accel * speedModifier * Options.aspectRatio);
+                    isMoving = true;
+                    accelerateAtAngle(270);
+                }
+                if(_playerControls.isPressed("Up")){
+                    //setSpeed(accel * speedModifier * Options.aspectRatio);
+
+                    isMoving = true;
+                    accelerateAtAngle(90);
+                }
             }
-            if(_playerControls.isPressed("Left")){
-                //setSpeed(accel * speedModifier * Options.aspectRatio);
-                //setAcceleration(accel * speedModifier * Options.aspectRatio);
-                isMoving = true;
-                accelerateAtAngle(180);
-            }
-            if(_playerControls.isPressed("Down")){
-                //setSpeed(accel * speedModifier * Options.aspectRatio);
-                //setAcceleration(accel * speedModifier * Options.aspectRatio);
-                isMoving = true;
-                accelerateAtAngle(270);
-            }
-            if(_playerControls.isPressed("Up")){
-                //setSpeed(accel * speedModifier * Options.aspectRatio);
-                
-                isMoving = true;
-                accelerateAtAngle(90);
-            }
+            
        }
        
        applyPhysics(dt);

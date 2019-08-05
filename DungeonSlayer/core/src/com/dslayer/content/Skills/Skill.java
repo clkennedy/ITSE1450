@@ -191,5 +191,6 @@ public abstract class Skill extends BaseActor{
     protected abstract void loadCDTexture();
     protected abstract void loadCastTexture();
     public abstract BaseActor cast(BaseActor caster, Vector2 target, Skill.From from);
-    public abstract BaseActor cast(BaseActor caster, BaseActor target, Skill.From from);
+    public abstract BaseActor cast(BaseActor caster, Vector2 target,float degrees,  Skill.From from);
+    public abstract BaseActor cast(BaseActor caster, BaseActor target,  Skill.From from);
 }

@@ -80,7 +80,7 @@ public class FireBall extends Skill{
             for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
                 if(overlaps(player)){
                     ((Player)player).takeDamage((int)damage);
-                    if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                    if(skillHit != null && BaseActor.getMainStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
                         skillHit.play(Options.soundVolume);
                     }
                     remove();
@@ -91,9 +91,9 @@ public class FireBall extends Skill{
             for(BaseActor enemy: BaseActor.getList(this.getStage(), "com.dslayer.content.Enemy.BaseEnemy")){
                 if(overlaps(enemy)){
                     ((BaseEnemy)enemy).takeDamage((int)damage, player);
-                    if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
-                        skillHit.play(Options.soundVolume);
-                    }
+                    //if(skillHit != null && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
+                        //skillHit.play(Options.soundVolume);
+                    //}
                     remove();
                 }
             }
@@ -151,6 +151,11 @@ public class FireBall extends Skill{
         //baIcon.loadTexture(ico);
         baIcon.loadTexture(ico);
         baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
+    }
+
+    @Override
+    public BaseActor cast(BaseActor arg0, Vector2 target,float degrees, From arg2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

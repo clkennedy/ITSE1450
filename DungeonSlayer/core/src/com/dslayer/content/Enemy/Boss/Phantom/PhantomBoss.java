@@ -33,6 +33,7 @@ import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -51,10 +52,7 @@ public class PhantomBoss extends BaseBoss{
     protected enum WalkDirection{up,left,down,right};
     protected WalkDirection currentDirection;
     
-    private List<BaseActor> targets;
-    
     protected Skill skill2;
-    protected int skillToCast = 1;
     
     protected BaseActor channeledSkill = null;
     protected boolean doneAttacking = false;
@@ -63,6 +61,8 @@ public class PhantomBoss extends BaseBoss{
         
         super(x,y,s);
         //texture = new Texture(Gdx.files.internal(skeleMage));
+        
+        degreesToCastSkillAt = new ArrayList();
         
         pointsWorth = 15;
         
@@ -119,13 +119,15 @@ public class PhantomBoss extends BaseBoss{
         }
     }
     
+    
+    
     @Override
     public void act(float dt){
         super.act(dt);
         if(isDying)
             return;
         aura.setPosition(this.getX() - (getWidth() / 2), this.getY()- (getHeight()/ 2));
-        aura.setZIndex(this.getZIndex() - 50);
+        aura.setZIndex(this.getZIndex() - 1);
         if(attacking){
             if(isAnimationFinished() && !doneAttacking){
                 if(skillToCast == 1){
@@ -136,8 +138,8 @@ public class PhantomBoss extends BaseBoss{
                 }
                 if(skillToCast == 2){
                     doneAttacking = true;
-                    for(int i = 0; i < 5; i ++){
-                        channeledSkill = skill2.cast(this, new Vector2(this.getX() + (getWidth() / 2), this.getY() + (getHeight() / 2)), Skill.From.Enemy);
+                    for(float degrees : degreesToCastSkillAt){
+                        channeledSkill = skill2.cast(this, new Vector2(this.getX() + (getWidth() / 2), this.getY() + (getHeight() / 2)),degrees, Skill.From.Enemy);
                     }
                     loadAnimationFromSheet(phantomChannel, 1, 6, .15f, true);
                     channeling = true;
@@ -173,7 +175,7 @@ public class PhantomBoss extends BaseBoss{
     public void attack(BaseActor player){
         attacking = true;
         setSpeed(0);
-        skillToCast = MathUtils.random(1, 2);
+        
         if(skillToCast == 1){
             loadAnimationFromSheet(phantomAttack, 1, 6, .2f, false);
         }
@@ -194,25 +196,33 @@ public class PhantomBoss extends BaseBoss{
                 if(_room != null && !_room.isActorInRoom(player)){
                     continue;
                 }
+                targetInRange = true;
                 targets.add(player);
                 chaseTarget = false;
-                if(!canAttack)
-                    return;
-                attack(player);
-                if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
-                    JSONObject data = new JSONObject();
-                    try{
-                    //System.out.println(player.network_id);
-                    data.put("id", this.network_id);
-                    data.put("target", player.network_id);
-                    Multiplayer.socket.emit("enemyAttack", data);
-                    }
-                    catch(Exception e){
-                           System.out.println("Failed to push enemy Attack: Skeleton Warrior");
-                    }
-                }
-                
-            //moveToChanged();
+        }
+        if(!canAttack || !targetInRange)
+            return;
+        skillToCast = MathUtils.random(1, 2);
+        attack(null);
+        if(skillToCast == 2){
+            degreesToCastSkillAt.clear();
+            for(int i = 0; i < 5; i++){
+                degreesToCastSkillAt.add((float)MathUtils.random(360));
+            }
+        }
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+            JSONObject data = new JSONObject();
+            try{
+            //System.out.println(player.network_id);
+            data.put("id", this.network_id);
+            data.put("target", Multiplayer.myID);
+            data.put("skillCast", skillToCast);
+            data.put("degrees", degreesToCastSkillAt);
+            Multiplayer.socket.emit("bossAttack", data);
+            }
+            catch(Exception e){
+                   System.out.println("Failed to push enemy Attack: Skeleton Warrior");
+            }
         }
     }
     

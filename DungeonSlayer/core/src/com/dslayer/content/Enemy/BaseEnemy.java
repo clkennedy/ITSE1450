@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.content.Enemy.Boss.Phantom.PhantomBoss;
 import com.dslayer.content.Enemy.Goblin.GoblinAssassin;
 import com.dslayer.content.Enemy.Golem.BaseGolem;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
@@ -33,6 +34,7 @@ import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.Rooms.RoomFloor;
 import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.Skills.Skill;
+import com.dslayer.content.Spawner.Spawner;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
@@ -113,6 +115,8 @@ public abstract class BaseEnemy extends BaseActor{
                 return new SkeletonArmored(x, y, BaseActor.getMainStage());
             case GoblinAssassin:
                 return new GoblinAssassin(x, y, BaseActor.getMainStage());
+            case Phantom:
+                return new PhantomBoss(x, y, BaseActor.getMainStage());
             default:
                 throw new AssertionError();
         }
@@ -203,8 +207,13 @@ public abstract class BaseEnemy extends BaseActor{
                 if(_room != null && !_room.isActorInRoom(player)){
                     continue;
                 }
-                if(target == null)
+                if(target == null){
                     target = player;
+                    break;
+                } 
+                if(target == player){
+                    break;
+                }
             }
             else{
                 target = null;
@@ -235,19 +244,12 @@ public abstract class BaseEnemy extends BaseActor{
     
     public void die(){
         int count = 0;
+        
+        if(Multiplayer.socket != null && Multiplayer.socket.connected() && !Multiplayer.host){
+            return;
+        }
         for(Items item : backpack.getItems()){
-            try{
-                Items i = item.getClass().getDeclaredConstructor(float.class,float.class,Stage.class).newInstance(this.getX(),this.getY(),BaseActor.getMainStage());
-                i.setAcceleration(0);
-                i.setDeceleration(20);
-                i.setSpeed(50);
-                i.setMotionAngle((float)((MathUtils.random((float)360)))); 
-                i.setZIndex(1000);
-                i.network_id = String.valueOf(count++);
-                //System.out.println(String.format("%s %s %s %s %s %s", i.getClass(), i.getSpeed(), i.getX(), i.getY(), i.getMotionAngle(), ""));
-            }catch(Exception e){
-                System.out.println(e.getMessage());
-            }
+            Spawner.spawnItem(this.getX(), this.getY(), item.getClass());
         }
     }
     

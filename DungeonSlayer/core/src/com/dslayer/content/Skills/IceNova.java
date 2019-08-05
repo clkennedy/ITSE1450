@@ -159,6 +159,11 @@ public class IceNova extends Skill{
     }
 
     @Override
+    public BaseActor cast(BaseActor arg0, Vector2 target,float degrees, From arg2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public BaseActor cast(BaseActor arg0, BaseActor arg1, From arg2) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

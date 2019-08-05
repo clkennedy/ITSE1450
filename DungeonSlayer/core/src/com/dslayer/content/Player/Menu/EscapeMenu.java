@@ -55,7 +55,7 @@ public class EscapeMenu extends BaseActor{
         
         setSize(400 * Options.aspectRatio, 400 * Options.aspectRatio);
         
-        Label mainMenu = new Label("MainMenu", FontLoader.menuStyle);
+        Label mainMenu = new Label("MainMenu", FontLoader.buttonStyle);
         mainMenu.setFontScale(1f * Options.aspectRatio);
         mainMenu.setAlignment(Align.center);
         mainMenu.addListener(new Hover(){

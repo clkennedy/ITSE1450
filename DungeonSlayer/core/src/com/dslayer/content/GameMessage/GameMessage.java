@@ -49,7 +49,7 @@ public class GameMessage extends BaseActor{
             return;
         }else if(messages.size() > 0 && message == null){
             
-            message = new Label(messages.remove(0), FontLoader.menuStyle);
+            message = new Label(messages.remove(0), FontLoader.buttonStyle);
             message.setPosition((BaseActor.getMainStage().getWidth()/ 2) - (message.getWidth()/2),
                     BaseActor.getMainStage().getHeight()); 
             message.addAction(Actions.moveBy(0, - 100, 1f));

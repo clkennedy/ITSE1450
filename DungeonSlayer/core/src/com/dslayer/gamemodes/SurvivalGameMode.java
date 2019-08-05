@@ -126,7 +126,7 @@ public class SurvivalGameMode extends GameMode{
         points.setText( Integer.toString(player.getPoints()));
         
         potionRespawnTimer += dt;
-        List<BaseActor> hPots = BaseActor.getList(mainStage, "com.dslayer.content.Objects.Potions.HealthPotion");
+        List<BaseActor> hPots = BaseActor.getList(mainStage, "com.dslayer.content.Inventory.Items.Potions.HealthPotion");
         
         if(potionRespawnTimer > potionRespawnInterval){
             potionRespawnTimer = 0;

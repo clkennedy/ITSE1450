@@ -131,7 +131,15 @@ public class LevelGenerator {
        
    }
    
+   public void clearTiles(){
+       ArrayList<BaseActor> allRoomObjects = BaseActor.getList(BaseActor.getMainStage(), "com.dslayer.content.Rooms.RoomPanels");
+       for(int i = 0; i < allRoomObjects.size(); i ++){
+           allRoomObjects.get(i).remove();
+       }
+   }
+   
    public void draw(Stage stage){
+       clearTiles();
        BaseActor temp = new RoomPanels();
         for(int i = 0; i < this.mapLayout.length; i++){
             //System.out.print("[");
@@ -142,10 +150,23 @@ public class LevelGenerator {
                     continue;
                 temp.setPosition(j * temp.getWidth(),mapHeightPixels - temp.getHeight() - (i * temp.getHeight()));
                 temp.getBoundaryPolygon();
+                temp.setZIndex(0);
                 stage.addActor(temp);
             }
             //System.out.println("]");
         }
+   }
+   
+   public Integer[][] getMapLayout(){
+       return mapLayout;
+   }
+   
+   public void setMapLayout(Integer[][] mapL){
+       for(int i = 0; i < mapL.length; i++){
+           for(int j = 0; j < mapL[i].length; j++){
+               mapLayout[i][j] = mapL[i][j];
+           }
+       }
    }
    
    public void generateMap(){
@@ -315,10 +336,10 @@ public class LevelGenerator {
        Map<String, Set<Vector2>> connectorRegionsDir = new HashMap();
        
        drawMapRegions();
-       
+       System.out.println("Boss Room Region: " + getBossRooms().getRoomRegion());
        for(int r = 1; r < mapRegions.length; r++){
            for (int c = 1; c < mapRegions[r].length; c++) {
-               if(mapLayout[r][c] == 0 || mapLayout[r][c] != _room.getFillerObjectKey()) continue;
+               if(mapLayout[r][c] == 0 ) continue;
                
                Set<Integer> regions = new HashSet<Integer>();
                Set<Vector2> dir = new HashSet<Vector2>();
@@ -551,5 +572,9 @@ public class LevelGenerator {
            //drawMapLayout();
        
    }
+
+    private Stage getStage() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

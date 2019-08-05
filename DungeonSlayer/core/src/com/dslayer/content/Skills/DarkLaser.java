@@ -148,6 +148,31 @@ public class DarkLaser extends Skill{
         return b;   
     }
     
+    @Override
+    public BaseActor cast(BaseActor caster, Vector2 target,float degrees, From from) {
+        
+        Vector2 distance = new Vector2(30, 0);
+        distance.setAngle(degrees);
+        target.add(distance);
+        BaseActor b = new DarkLaser(caster.getX(),caster.getY(), 
+                BaseActor.getMainStage());
+        if(from == Skill.From.Enemy){
+            ((Skill)b).showIndicator = true;
+        }
+                ((DarkLaser)b).isProjectile()
+                .setFrom(from);
+                b.setOrigin(0,0);
+                b.setPosition(target.x, target.y);
+                b.setRotation(degrees);
+                b.setZIndex(1000);
+                ((DarkLaser)b).degrees = degrees;
+                canCast = false;
+        if(from == Skill.From.Player){
+            ((Skill)b).player = ((Player)caster);
+        }
+        return b;   
+    }
+    
     public DarkLaser isProjectile(){
         isAction = true;
         if(!showIndicator){
@@ -179,6 +204,8 @@ public class DarkLaser extends Skill{
         baIcon.loadTexture(ico);
         baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
     }
+
+    
 
     @Override
     public BaseActor cast(BaseActor arg0, BaseActor arg1, From arg2) {

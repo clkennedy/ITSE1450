@@ -66,7 +66,6 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         rooms = new ArrayList<String>();
         this.playerUserNameText = "default";
         
-        
         if(Multiplayer.socket == null || !Multiplayer.socket.connected()){
             connectSocket();
         }
@@ -242,7 +241,7 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
             if(Multiplayer.socket == null){
                 connectSocket();
             }
-            Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
+            //Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
             Multiplayer.socket.emit("joinMultiplerAgain");
             Multiplayer.socket.emit("requestRooms");
         }
@@ -295,13 +294,11 @@ public class multiplayerRoomScreen extends BaseScreen implements Input.TextInput
         if(successfullRoomCreation){
             successfullRoomCreation = false;
             Multiplayer.host = true;
-            Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
-            BaseGame.setActiveScreen(Multiplayer.lobbyScreen);
+            BaseGame.setActiveScreen(new MutliplayerLobbyScreen());
         }
         if(joinedRoom){
             joinedRoom = false;
-            Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
-            BaseGame.setActiveScreen(Multiplayer.lobbyScreen);
+            BaseGame.setActiveScreen(new MutliplayerLobbyScreen());
         }
     }
     

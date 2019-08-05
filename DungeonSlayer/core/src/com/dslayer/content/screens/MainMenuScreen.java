@@ -256,9 +256,9 @@ public class MainMenuScreen extends BaseScreen {
         backgroundMusic.stop();
         musicPlaying = false;
         //multiplayerRoomScreen.rejoined = true;
-        Multiplayer.baseScreen = new multiplayerRoomScreen();
-        Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
-        BaseGame.setActiveScreen(Multiplayer.baseScreen);   
+        //Multiplayer.baseScreen = new multiplayerRoomScreen();
+        //Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
+        BaseGame.setActiveScreen(new multiplayerRoomScreen());   
     }
     public void startGame(){
         removeButtons();

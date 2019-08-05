@@ -142,4 +142,9 @@ public class Stab extends Skill{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public BaseActor cast(BaseActor arg0, Vector2 arg1, float arg2, From arg3) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

@@ -32,9 +32,9 @@ public class Multiplayer {
     public static String myUserName = "";
     public static boolean host = false;
     
-    public static multiplayerRoomScreen baseScreen;
-    public static MutliplayerLobbyScreen lobbyScreen;
-    public static LevelScreen levelScreen;
+    //public static multiplayerRoomScreen baseScreen;
+    //public static MutliplayerLobbyScreen lobbyScreen;
+    //public static LevelScreen levelScreen;
     
     public static BaseActor getNewGameObject(GameObjects obj, float x, float y){
         switch (obj) {
@@ -56,5 +56,6 @@ public class Multiplayer {
     }
     public static void restartNetworkid(){
         networkid = 0;
+        host = false;
     }
 }

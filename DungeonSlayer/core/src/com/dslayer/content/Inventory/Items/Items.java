@@ -18,9 +18,17 @@ public class Items extends BaseActor{
         super(x,y,stage);
         spawned = true;
     }
+    public Items(float x, float y, Stage stage, boolean handleMultiplayer){
+        super(x,y,stage);
+        spawned = true;
+    }
     
     public Items(){
-        
+        //spawned = true;
+    }
+    
+    public void setSpawned(){
+        spawned = true;
     }
     
     @Override

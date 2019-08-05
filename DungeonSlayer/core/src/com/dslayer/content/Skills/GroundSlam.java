@@ -154,6 +154,7 @@ public class GroundSlam extends Skill{
                 if(from == Skill.From.Player){
                     ((Skill)b).player = ((Player)caster);
                 }
+                b.setZIndex(caster.getZIndex() - 1);
                 return b;
         }
     
@@ -166,7 +167,7 @@ public class GroundSlam extends Skill{
         setOriginX(getWidth() / 2);
         setOriginY(getHeight() / 2);
         setBoundaryPolygon(12);
-        setZIndex(1200);
+        //setZIndex(1200);
         setRotation(MathUtils.random(0, 360));
         return this;
     }
@@ -182,6 +183,11 @@ public class GroundSlam extends Skill{
         //baIcon.loadTexture(ico);
         baIcon.loadTexture(ico);
         baIcon.setSize(iconSize* Options.aspectRatio, iconSize* Options.aspectRatio);
+    }
+
+    @Override
+    public BaseActor cast(BaseActor arg0, Vector2 target,float degrees, From arg2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

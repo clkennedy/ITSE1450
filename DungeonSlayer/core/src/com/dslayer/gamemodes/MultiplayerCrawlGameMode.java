@@ -15,7 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Json;
 import com.dslayer.content.Enemy.BaseEnemy;
+import com.dslayer.content.Enemy.Boss.BaseBoss;
 import com.dslayer.content.Enemy.Goblin.GoblinAssassin;
 import com.dslayer.content.Enemy.Golem.BlueGolem;
 import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
@@ -24,16 +26,21 @@ import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.GameMessage.GameMessage;
 import com.dslayer.content.Hero.Hero;
+import com.dslayer.content.Inventory.Items.BossKey;
 import com.dslayer.content.Inventory.Items.Potions.HealthPotion;
+import com.dslayer.content.LevelGenerator.LevelGenerator;
 import com.dslayer.content.Player.Player;
 import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Forest.ForestRoom;
 import com.dslayer.content.Rooms.Room;
+import com.dslayer.content.Rooms.RoomDoor;
 import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.Skills.Skill;
+import com.dslayer.content.Spawner.Spawner;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
+import com.dslayer.content.screens.HeroSelectionScreenDungeon;
 import com.dslayer.content.screens.MainMenuScreen;
 import com.dslayer.content.screens.MultiplayerHeroSelectionScreen;
 import com.dslayer.content.screens.MutliplayerLobbyScreen;
@@ -50,7 +57,7 @@ import org.json.JSONObject;
  *
  * @author ARustedKnight
  */
-public class MultiplayerSurvivalGameMode extends GameMode{
+public class MultiplayerCrawlGameMode extends GameMode{
 
     private boolean endGame = false;
     
@@ -71,9 +78,12 @@ public class MultiplayerSurvivalGameMode extends GameMode{
     class enemyAttack{
         public String id;
         public String player_id;
+        public int attackType;
     }
     
     private HashMap<String, BaseActor> gameObjects;
+    private List<JSONObject> gameObjectsToSpawn;
+    private List<JSONObject> gameObjectsToSpawnQueue;
     
     private HashMap<String, Player> OtherPlayers;
     private HashMap<String, String> OtherPlayersUserNames;
@@ -81,7 +91,6 @@ public class MultiplayerSurvivalGameMode extends GameMode{
     private HashMap<String, Vector2> OtherPlayersOldPos;
     private HashMap<String, Integer> OtherPlayersHero;
     private HashMap<String, Float> OtherPlayersTimer;
-    private HashMap<String, Label> PlayerPointLabels;
     
     private Table pointTable;
     
@@ -115,78 +124,168 @@ public class MultiplayerSurvivalGameMode extends GameMode{
     private List<skillInfo> heroCast;
     private List<enemyInfo> enemiesToSpawn;
     private List<enemyAttack> enemiesAttack;
+    private List<enemyAttack> bossAttack;
     private List<enemyInfo> healthPotsToSpawn;
+    private List<enemyInfo> healthPotsToSpawnQueue;
     
     private List<String> gameObjectToRemove;
     
     private float moveTimeElepased = 0;
     
-    public MultiplayerSurvivalGameMode(Stage s){
+    List<Room> nonBossRooms;
+    Room bossRoom;
+    BaseEnemy boss;
+    
+    Label points;
+    private int dungeonWidth = 31;
+    private int dungeonHeight = 31;
+    
+    private float pingHost = .22f;
+    private float pingHostTimer = 0f;
+    
+    public boolean addingEnemy = false;
+    public boolean spawningEnemies = false;
+    public boolean loading = true;
+    public boolean mapLoaded = false;
+    public boolean spawnGathered = false;
+    public boolean bossKeyFound = false;
+    public Vector2 spawnPos;
+    
+    private LevelGenerator lg;
+    
+    public MultiplayerCrawlGameMode(Stage s){
         super(s);
         //System.out.println(Gdx.graphics.getHeight());
     }
     
-    public MultiplayerSurvivalGameMode(){
+    public MultiplayerCrawlGameMode(){
         this(BaseActor.getMainStage());
         
     }
     @Override
     public void setup() {
         gameObjects = new HashMap<String, BaseActor>();
+        gameObjectsToSpawn = new ArrayList<JSONObject>();
+        gameObjectsToSpawnQueue = new ArrayList();
         OtherPlayers = new HashMap<String, Player>();
         OtherPlayersHero = new HashMap<String, Integer>();
         OtherPlayersMoveTo = new HashMap<String, Vector2>();
         OtherPlayersOldPos = new HashMap<String, Vector2>();    
         OtherPlayersTimer = new HashMap<String, Float>();
-        PlayerPointLabels = new HashMap<String, Label>();
         OtherPlayersUserNames = new HashMap<String, String>();
         
         pointTable = new Table();
         
         enemiesAttack = new ArrayList<enemyAttack>();
+        bossAttack = new ArrayList<enemyAttack>();
         enemiesToSpawn = new ArrayList<enemyInfo>();
+        healthPotsToSpawnQueue = new ArrayList<enemyInfo>();
         healthPotsToSpawn = new ArrayList<enemyInfo>();
         heroCast = new ArrayList<skillInfo>();
         gameObjectToRemove = new ArrayList<String>();
         
         setupSocketListeners();
-        Room dr = new DungeonRoom();;
-        if(Difficulty.RoomType == Difficulty.RoomTypes.Dungeon.Dungeon){
-            dr = new DungeonRoom();
-        }else if(Difficulty.RoomType == Difficulty.RoomTypes.Dungeon.Forest){
-            dr = new ForestRoom();
-        }
-        
-        dr.generateRoom(30,40);
-        
-        Difficulty.worldHeight = dr.getRoomHeightPixels();
-        Difficulty.worldWidth = dr.getRoomWidthPixels();
-        Difficulty.newGame();
-        
-        dr.Draw(mainStage);
-        
-        Multiplayer.socket.emit("getRoomPlayersGame");
-        
-        player = new Player(100 * Options.aspectRatio, 100 * Options.aspectRatio, mainStage);
+        player = new Player(-100,-100, mainStage);
+        player.setHero(Hero.getNewHero(Hero.heros.values()[MultiplayerHeroSelectionScreen.HeroSelectionIndex]));
         player.network_id = Multiplayer.myID;
         player.UserName = Multiplayer.myUserName;
-        player.setHero((Hero.getNewHero(Hero.heros.values()[MultiplayerHeroSelectionScreen.HeroSelectionIndex])));
         
-        Label u = new Label(Multiplayer.myUserName +": ", FontLoader.pointStyle);
-        u.setAlignment(Align.left);
-        pointTable.add(u);
-        Label p = new Label(Integer.toString(player.getPoints()), FontLoader.pointStyle);
-        p.setAlignment(Align.right);
-        PlayerPointLabels.put(Multiplayer.myID, p);
+        if(Multiplayer.host){
+            lg = new LevelGenerator(dungeonWidth, dungeonHeight);
+            lg.setDefaultSize(100);
+            if(Difficulty.RoomType == Difficulty.RoomTypes.Dungeon){
+                lg.setRoom(new DungeonRoom());
+            }else if(Difficulty.RoomType == Difficulty.RoomTypes.Forest){
+                lg.setRoom(new ForestRoom());
+            }
+            lg.generateMap();
+            
+            mapLoaded = true;
+            
+            Difficulty.worldHeight = lg.getPixelHeight();
+            Difficulty.worldWidth = lg.getPixelWidth();
+            
+            Room spawnRoom = lg.getRandomNonBossRoom();
+            nonBossRooms = lg.getNonBossRooms();
+            bossRoom = lg.getBossRooms();
+            
+            //lg.draw(mainStage);
+            
+            Integer[][] ml = lg.getMapLayout();
+            JSONArray map = new JSONArray();
+            JSONArray mapRow;
+            for(int row = 0; row < ml.length; row ++){
+                mapRow = new JSONArray();
+                for(int col = 0; col < ml[row].length; col ++){
+                    mapRow.put(ml[row][col]);
+                }
+                map.put(mapRow);
+            }
+            JSONObject data = new JSONObject();
+            try{
+                data.put("mapData", map);
+                Multiplayer.socket.emit("mapData", data);
+            }catch(Exception e){
+                System.out.println("Problem Sending Map Data");
+            }
         
-        float width = u.getWidth() + p.getWidth();
-        pointTable.setWidth(width);
-        pointTable.add(p);
+        spawnPos = Spawner.getSpawnLocation(spawnRoom);
+        
+        data = new JSONObject();
+            try{
+                data.put("spawnDataX", spawnPos.x / Options.aspectRatio);
+                data.put("spawnDataY", spawnPos.y / Options.aspectRatio);
+                Multiplayer.socket.emit("spawnData", data);
+            }catch(Exception e){
+                System.out.println("Problem Sending Spawn Data");
+            }
+        spawnGathered = true;
+        for(int i = 0; i < nonBossRooms.size(); i++){
+            Room r = nonBossRooms.get(i);
+            int randNumOfEn = 0;
+            if(r == spawnRoom){
+                randNumOfEn = MathUtils.random(1, 4); 
+            }else{
+               randNumOfEn = MathUtils.random(2, 9); 
+            }
+            for(int j = 0; j < randNumOfEn; j ++){
+                BaseEnemy b = Spawner.spawnRandomEnemy(r);
+                if(MathUtils.randomBoolean(.6f)){
+                    int randPots = MathUtils.random(0, 3);
+                    for(int k = 0; k < randPots; k ++){
+                        b.addToBackpack(new HealthPotion());
+                    }
+                }
+                gameObjects.put(b.network_id, b);
+            }
+        }
+       
+        boss = Spawner.spawnRandomBoss(bossRoom);
+        gameObjects.put(boss.network_id, boss);
+        int rand = MathUtils.random(nonBossRooms.size() - 1);
+        nonBossRooms.get(rand).getRandomEnemy().addToBackpack(new BossKey());
+        
+        player.setPosition(spawnPos.x,spawnPos.y);
+        }
+        BaseActor.setMainStage(mainStage);
+        
+        Difficulty.newGame();
+        playMusic("8BitDungSurvival.mp3");
+        
+        gm = new GameMessage();
+        gm.AddMessage("Welcome");
+        points = new Label("", FontLoader.pointStyle);
+        points.setAlignment(Align.left);
+        
+        float width = points.getWidth();
+        pointTable.setWidth(100);
+        pointTable.add(points);
         pointTable.row();
-        pointTable.setHeight(u.getHeight());
+        pointTable.setHeight(50);
         pointTable.setPosition(pointTable.getWidth() / 2, BaseActor.getUiStage().getHeight() - pointTable.getHeight());
         BaseActor.getUiStage().addActor(pointTable);
-        //player = new Player(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
+        
+        Multiplayer.socket.emit("getRoomPlayersGame");
         JSONObject data = new JSONObject();
         try{
             data.put("targetX", player.getX() / Options.aspectRatio);
@@ -196,17 +295,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         }catch(Exception e){
             
         }
-        /*if(Multiplayer.host){
-            BaseActor s = new SkeletonWarrior(200, 200, mainStage);
-            gameObjects.put(s.network_id, s);
-            
-            BaseActor a = new HealthPotion2(300, 100, mainStage);
-            gameObjects.put(a.network_id, a);
-        }*/
-        playMusic("8BitDungSurvival.mp3");
-        gm = new GameMessage();
-        gm.AddMessage("Welcome");
-        BaseActor.setMainStage(mainStage);
+        reloadPlayers = true;
     }
     @Override
     public void update(float dt) {
@@ -217,73 +306,103 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             BaseGame.setActiveScreen(new multiplayerRoomScreen());
         }
         
+        if(loading){
+            pingHostTimer += dt;
+            if(pingHostTimer > pingHost){
+                Multiplayer.socket.emit("pingHostForLoadData");
+                pingHostTimer = 0;
+            }
+            loading = !mapLoaded && !spawnGathered;
+            return;
+        }
+        
         if(reloadPlayers){
+            //Multiplayer.socket.emit("getRoomPlayersGame");
             reloadPlayers = false;
-            //System.out.println("loadingPlayers");
+            if(lg != null){
+                lg.draw(mainStage);
+            }
+            System.out.println("loadingPlayers");
             for(String id : OtherPlayers.keySet()){
-                Player op = new Player(100, 100, mainStage);
+                Player op;
+                if(OtherPlayers.get(id) != null){
+                    op = OtherPlayers.get(id);
+                }else{
+                    op = new Player(spawnPos.x* Options.aspectRatio, spawnPos.y* Options.aspectRatio, mainStage);
+                }
+                op.setPosition(spawnPos.x * Options.aspectRatio, spawnPos.y * Options.aspectRatio);
                 op.isLocalPlayer = false;
                 op.connected = true;
                 op.network_id = id;
                 op.UserName = OtherPlayersUserNames.get(id);
+                //System.out.println(op.network_id);
                 op.setHero(Hero.getNewHero(Hero.heros.values()[OtherPlayersHero.get(id)]));
                 //mainStage.addActor(op);
                 OtherPlayers.put(id, op);
-                
-                Label u = new Label(op.UserName +": ", FontLoader.pointStyle);
-                u.setAlignment(Align.left);
-                pointTable.add(u);
-                Label p = new Label(Integer.toString(op.getPoints()), FontLoader.pointStyle);
-                PlayerPointLabels.put(op.network_id, p);
-
-                pointTable.add(p);
-                pointTable.row();
-                
-                float width = u.getWidth() + p.getWidth();
-                pointTable.setHeight(pointTable.getHeight() + u.getHeight());
-                if(pointTable.getWidth() < width){
-                    pointTable.setWidth(width);
-                }
-                pointTable.setPosition(pointTable.getWidth() / 2, BaseActor.getUiStage().getHeight() - pointTable.getHeight());
                 //BaseActor.getUiStage().addActor(pointTable);
             }
+            
         }
         
+        //Win Cond
+        if(boss != null && boss.isDead())
+        {
+            if(!goSent){
+                gm.AddMessage("Dungeon Cleared");
+                gm.AddMessage("Congradulations");
+                goSent = true;
+            }
+            if(boss.isAnimationFinished() && gm.isEmpty()){
+                gameOver = true;
+            }
+            return;
+        }
+        
+        //Death Condition
         boolean anyOtherPlayerAlive = false;
         for(Player b : OtherPlayers.values()){
             anyOtherPlayerAlive = anyOtherPlayerAlive || !b.isDead();
         }
-        
         if(!anyOtherPlayerAlive && player.isDead() && !endGame){
             endGame = true;
             gm.AddMessage("All Party Members have Died");
-            Player p = player;
-            for(Player b : OtherPlayers.values()){
-                if(b.getPoints() > p.getPoints()){
-                    p = b;
-                }
-            }
-            gm.AddMessage("HighestScore was " + p.UserName +": " + p.getPoints());
             return;
         }
+        
+        
+        for(Player b : OtherPlayers.values()){
+            if(b.inventoryContains(BossKey.class) && !player.inventoryContains(BossKey.class)){
+                player.addToBackpack(new BossKey());
+                points.setText("You Have a Boss Key!");
+            }
+        }
+        if(player.inventoryContains(BossKey.class)){
+            for(Player b : OtherPlayers.values()){
+                if(!b.inventoryContains(BossKey.class)){
+                    b.addToBackpack(new BossKey());
+                }
+            }
+        }
+        if(gameObjectsToSpawnQueue.size() > 0){
+            gameObjectsToSpawn.addAll(gameObjectsToSpawnQueue);
+            gameObjectsToSpawnQueue.clear();
+        }
+        
+        if(gameObjectsToSpawn.size() > 0){
+            for(JSONObject spawn : gameObjectsToSpawn){
+                BaseActor b = Spawner.spawnItemMultiplayer(spawn);
+                gameObjects.put(b.network_id, b);
+            }
+            gameObjectsToSpawn.clear();
+        }
+        
+        
+        
+        
+        
         if(endGame && gm.isEmpty()){
             gameOver = true;
         }
-        
-        for(String id : gameObjectToRemove){
-            gameObjects.remove(id).remove();
-        }
-        gameObjectToRemove.clear();
-        
-        for(String id : PlayerPointLabels.keySet()){
-            if(Multiplayer.myID.equals(id)){
-                PlayerPointLabels.get(id).setText(Integer.toString(player.getPoints()));
-            }else{
-                if(OtherPlayers.get(id) != null)
-                PlayerPointLabels.get(id).setText(Integer.toString(OtherPlayers.get(id).getPoints()));
-            }
-        }
-        
         for(String id: OtherPlayers.keySet()){
             Player p = OtherPlayers.get(id);
             Vector2 mv = OtherPlayersMoveTo.get(id);
@@ -295,8 +414,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                 f += dt;
                 f = MathUtils.clamp(f, 0, 1);
                 float delta = MathUtils.clamp(f / updatePlayerTimer, 0, 1);
-                 p.updatePos(MathUtils.lerp(op.x * Options.aspectRatio, mv.x * Options.aspectRatio,  delta),
-                         MathUtils.lerp(op.y * Options.aspectRatio, mv.y * Options.aspectRatio,  delta));
+                p.updatePos(MathUtils.lerp(op.x, mv.x * Options.aspectRatio,  delta),
+                         MathUtils.lerp(op.y, mv.y * Options.aspectRatio,  delta));
                  
                 f = MathUtils.clamp(f, 0, 1);
                 OtherPlayersTimer.put(id, f);
@@ -319,29 +438,35 @@ public class MultiplayerSurvivalGameMode extends GameMode{
         }
         heroCast.clear();
         
-        for(enemyInfo enemy : enemiesToSpawn){
-            BaseEnemy e = BaseEnemy.getNewEnemy(BaseEnemy.type.values()[enemy.type], enemy.X * Options.aspectRatio, enemy.Y * Options.aspectRatio);
-            e.network_id = enemy.id;
-            if(e instanceof BlueGolem){
-                gm.AddMessage("Blue Golem Appeared");
+        if(!addingEnemy){
+            if(healthPotsToSpawnQueue.size() > 1){
+                enemiesToSpawn.addAll(healthPotsToSpawnQueue);
+                healthPotsToSpawnQueue.clear();
             }
-            if(e instanceof SkeletonArmored){
-                gm.AddMessage("An Armored Skeleton has Risen");
+            spawningEnemies=true;
+            for(enemyInfo enemy : enemiesToSpawn){
+                BaseEnemy e = BaseEnemy.getNewEnemy(BaseEnemy.type.values()[enemy.type], enemy.X * Options.aspectRatio, enemy.Y * Options.aspectRatio);
+                e.network_id = enemy.id;
+                gameObjects.put(enemy.id, e);
             }
-            if(e instanceof GoblinAssassin){
-                gm.AddMessage("Goblin Assassin has Scurried in");
-            }
-            gameObjects.put(enemy.id, e);
+            enemiesToSpawn.clear();
+            spawningEnemies = false;
         }
-        enemiesToSpawn.clear();
         
-        
-        for(enemyInfo enemy : healthPotsToSpawn){
-            BaseActor e = new HealthPotion(enemy.X * Options.aspectRatio, enemy.Y * Options.aspectRatio, mainStage);
-            e.network_id = enemy.id;
-            gameObjects.put(enemy.id, e);
+        for(enemyAttack enemy : bossAttack){
+            if(Multiplayer.myID.equals(enemy.player_id)){
+                ((BaseBoss)gameObjects.get(enemy.id)).setSkillToCast(enemy.attackType);
+                ((BaseBoss)gameObjects.get(enemy.id)).collectTargets();
+                ((BaseBoss)gameObjects.get(enemy.id)).attack(player);
+            }
+            else{
+                BaseActor b = OtherPlayers.get(enemy.player_id);
+                ((BaseBoss)gameObjects.get(enemy.id)).setSkillToCast(enemy.attackType);
+                ((BaseBoss)gameObjects.get(enemy.id)).collectTargets();
+                ((BaseBoss)gameObjects.get(enemy.id)).attack(OtherPlayers.get(enemy.player_id));
+            }
         }
-        healthPotsToSpawn.clear();
+        bossAttack.clear();
         
         for(enemyAttack enemy : enemiesAttack){
             if(Multiplayer.myID.equals(enemy.player_id)){
@@ -350,9 +475,10 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             else{
                 BaseActor b = OtherPlayers.get(enemy.player_id);
                 //((BaseEnemy)gameObjects.get(enemy.id)).target = OtherPlayers.get(enemy.player_id);
-                if(gameObjects.get(enemy.id) != null)
+                if(gameObjects.get(enemy.id) != null){
                     ((BaseEnemy)gameObjects.get(enemy.id)).attack(OtherPlayers.get(enemy.player_id));
-            }   
+                }
+            }
         }
         enemiesAttack.clear();
         
@@ -369,10 +495,31 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                  System.out.println("Failed to push player data " + e.getMessage());
             }
         }
+        
+        List<String> objRemoved = new ArrayList();
+        for(String id : gameObjectToRemove){
+            BaseActor b = gameObjects.remove(id);
+            System.out.println("Trying to remove id: " + id);
+            System.out.println("Trying to remove Object: " + b);
+            if(b != null && b instanceof BaseEnemy && b.isAnimationFinished()){
+                b.remove();
+                objRemoved.add(id);
+            }else if(b!= null && !(b instanceof BaseEnemy)){
+                 b.remove();
+                 objRemoved.add(id);
+            }
+        }
+        for(String id: objRemoved){
+            gameObjectToRemove.remove(id);
+        }
         //----------------------------------------------------------------------------------------------------------------------------------------------
        
         if(!Multiplayer.host)
             return;
+        
+        for(BaseActor b : Spawner.getNewlySpawnedItems()){
+            gameObjects.put(b.network_id, b);
+        }
         
         SyncEnemyTime += dt;
         if(SyncEnemyTime > SyncEnemyTimer){
@@ -396,90 +543,9 @@ public class MultiplayerSurvivalGameMode extends GameMode{
             try{
                 Multiplayer.socket.emit("syncEnemies", enemies);
             }catch(Exception e){
-                 System.err.println("Failed to push player data " + e.getMessage());
+                 System.err.println("Failed to push Enemy data " + e.getMessage());
             }  
         }
-        
-        potionRespawnTimer += dt;
-        List<BaseActor> hPots = BaseActor.getList(mainStage, "com.dslayer.content.Objects.Potions.HealthPotion2");
-        
-        if(potionRespawnTimer > potionRespawnInterval){
-            potionRespawnTimer = 0;
-            if(hPots.size() < maxPotionsOnFeild && MathUtils.randomBoolean(.8f)){
-                BaseActor a =new HealthPotion(MathUtils.random(Difficulty.worldWidth - (RoomPanels.defaultSize * 2)) + RoomPanels.defaultSize, 
-                        MathUtils.random(Difficulty.worldHeight - (RoomPanels.defaultSize * 2))+ RoomPanels.defaultSize, 
-                        mainStage);
-                        ((HealthPotion)a).enableDespawnTimer(30);
-                gameObjects.put(a.network_id, a);
-            }
-        }
-        
-        List<BaseActor> enemies = BaseActor.getList(mainStage, "com.dslayer.content.Enemy.BaseEnemy");
-        
-        spawnTime += dt;
-        if(spawnTime > spawnTimer && enemies.size() < maxNumOfEnemies ){
-            BaseActor b;
-            if(MathUtils.randomBoolean(.4f)){
-                b = new SkeletonMage(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
-           }
-            else if(MathUtils.randomBoolean(.95f)){
-                b = new SkeletonWarrior(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                        MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
-            }
-            else{
-                 b = new SkeletonArmored(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                        MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
-                 gm.AddMessage("An Armored Skeleton has Risen");
-            }
-            spawnTime= 0;
-            while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
-                   b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
-            }
-            gameObjects.put(b.network_id, b);
-        }
-        
-        GolemSpawnTime += dt;
-        if(GolemSpawnTime > GolemSpawnTimer ){
-            BaseActor b = null;
-            if(MathUtils.randomBoolean(.8f)){
-                b = new BlueGolem(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight), mainStage);
-                if(b != null){
-                    gm.AddMessage("Blue Golem Appeared");
-                    while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
-                            b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                         b.centerAtPosition(MathUtils.random(Difficulty.worldWidth), MathUtils.random(Difficulty.worldHeight));
-                    }
-                }
-                gameObjects.put(b.network_id, b);
-            }
-            GolemSpawnTime = 0;
-        }
-        
-        GoblinSpawnTimer += dt;
-        if(GoblinSpawnTimer > GoblinSpawn){
-            GoblinSpawnTimer = 0;
-            BaseActor b = null;
-            if(MathUtils.randomBoolean(.1f)){
-                b = new GoblinAssassin(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                            MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize), mainStage);
-            }
-            if(b != null){
-                    gm.AddMessage("Goblin Assassin has Scurried in");
-                    while(b.getX() > Difficulty.worldWidth || b.getX() < 0 ||
-                        b.getY() > Difficulty.worldHeight || b.getY() < 0 ){
-                        b.setPosition(MathUtils.random(RoomPanels.defaultSize,Difficulty.worldWidth - RoomPanels.defaultSize), 
-                            MathUtils.random(RoomPanels.defaultSize,Difficulty.worldHeight - RoomPanels.defaultSize));
-                    }
-                }
-        }
-        
-        increaseEnemyTime += dt;
-        if(increaseEnemyTime > increaseEnemyTimer){
-            maxNumOfEnemies += 2;
-            increaseEnemyTime= 0;
-        }
-        
     }
 
     private void setupSocketListeners() {
@@ -499,16 +565,118 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                         System.out.println("Failed Health Pot Creation");
                                     }
                                 }
+                            }).on("GameItemSpawned", new Emitter.Listener() {
+                                @Override
+                                public void call(Object... os) {
+                                    JSONObject data = (JSONObject) os[0];
+                                    try{
+                                        
+                                    }catch(Exception e){
+                                        System.out.println("Failed to Spawn Item");
+                                    }
+                                    gameObjectsToSpawnQueue.add(data);
+                                }
                             }).on("healthPotionPickUp", new Emitter.Listener() {
                                 @Override
                                 public void call(Object... os) {
                                     JSONObject data = (JSONObject) os[0];
                                     try{
+                                        System.out.println("Health Pot Picked up");
                                         String id = data.getString("id");
+                                        System.out.println(id);
                                         gameObjectToRemove.add(id);
                                     }catch(Exception e){
                                         System.out.println("Failed Health Pot Pick Up " + e.getMessage());
                                     }
+                                }
+                            }).on("pingHostForLoadData", new Emitter.Listener() {
+                                @Override
+                                public void call(Object... os) {
+                                    if(!Multiplayer.host){
+                                        return;
+                                    }
+                                    if(spawnGathered){
+                                        JSONObject dataSpawn = new JSONObject();
+                                        try{
+                                            dataSpawn.put("spawnDataX", spawnPos.x / Options.aspectRatio);
+                                            dataSpawn.put("spawnDataY", spawnPos.y / Options.aspectRatio);
+                                            Multiplayer.socket.emit("spawnData", dataSpawn);
+                                        }catch(Exception e){
+                                            System.out.println("Problem Sending Spawn Data After Ping for it");
+                                        }
+                                    }
+                                    if(mapLoaded){
+                                        Integer[][] ml = lg.getMapLayout();
+                                        JSONArray map = new JSONArray();
+                                        JSONArray mapRow;
+                                        for(int row = 0; row < ml.length; row ++){
+                                            mapRow = new JSONArray();
+                                            for(int col = 0; col < ml[row].length; col ++){
+                                                mapRow.put(ml[row][col]);
+                                            }
+                                            map.put(mapRow);
+                                        }
+                                        JSONObject dataMap = new JSONObject();
+                                        try{
+                                            dataMap.put("mapData", map);
+                                            Multiplayer.socket.emit("mapData", dataMap);
+                                        }catch(Exception e){
+                                            System.out.println("Problem Sending Map Data After Pinged for it");
+                                        }
+                                    }
+                                }
+                            }).on("mapData", new Emitter.Listener() {
+                                @Override
+                                public void call(Object... os) {
+                                    JSONObject data = (JSONObject) os[0];
+                                    Integer[][] ml = new Integer[dungeonWidth][dungeonHeight];
+                                    try{
+                                        JSONArray map = (JSONArray)data.getJSONArray("mapData");
+                                        for(int row = 0; row < map.length(); row ++){
+                                            JSONArray mapRow = map.getJSONArray(row);
+                                            for(int col = 0; col < mapRow.length(); col ++){
+                                                ml[row][col] = mapRow.getInt(col);
+                                            }
+                                        }
+                                        lg = new LevelGenerator(dungeonWidth, dungeonHeight);
+                                        lg.setDefaultSize(100);
+                                        if(Difficulty.RoomType == Difficulty.RoomTypes.Dungeon){
+                                            lg.setRoom(new DungeonRoom());
+                                        }else if(Difficulty.RoomType == Difficulty.RoomTypes.Forest){
+                                            lg.setRoom(new ForestRoom());
+                                        }
+                                        lg.setMapLayout(ml);
+                                        Difficulty.worldHeight = lg.getPixelHeight();
+                                        Difficulty.worldWidth = lg.getPixelWidth();
+                                        Difficulty.newGame();
+                                        mapLoaded = true;
+                                        loading = !mapLoaded && !spawnGathered;
+                                    }catch(Exception e){
+                                        System.out.println("Failed to get Map data " + e.getMessage());
+                                    }
+                                }
+                            }).on("spawnData", new Emitter.Listener() {
+                                @Override
+                                public void call(Object... os) {
+                                    JSONObject data = (JSONObject) os[0];
+                                    try{
+                                        spawnPos =new Vector2(data.getInt("spawnDataX") * Options.aspectRatio,data.getInt("spawnDataY")  * Options.aspectRatio);
+                                        player.setPosition(spawnPos.x,spawnPos.y);
+                                        JSONObject dataSend = new JSONObject();
+                                        try{
+                                            dataSend.put("targetX", player.getX() / Options.aspectRatio);
+                                            dataSend.put("targetY", player.getY() / Options.aspectRatio);
+                                            dataSend.put("dir", player.dir.ordinal());
+                                            //Multiplayer.socket.emit("updateHeroPosition", dataSend);
+                                        }catch(Exception e){
+                                             System.out.println("Failed to push player data after spawn " + e.getMessage());
+                                        }
+                                    }catch(Exception e){
+                                        System.out.println("Failed to get spawn " + e.getMessage());
+                                    }
+                                    reloadPlayers = true;
+                                    spawnGathered = true;
+                                    loading = !mapLoaded && !spawnGathered;
                                 }
                             }).on("enemyCreated", new Emitter.Listener() {
                                 @Override
@@ -516,16 +684,20 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                     JSONObject data = (JSONObject) os[0];
                                     try{
                                         if(!Multiplayer.host){
+                                            //while(spawningEnemies);
+                                            
+                                            addingEnemy = true;
                                             enemyInfo en = new enemyInfo();
                                             en.id = data.getString("id");
                                             en.X = data.getInt("x");
                                             en.Y = data.getInt("y");
                                             en.type = data.getInt("type");
-                                            enemiesToSpawn.add(en);
+                                            healthPotsToSpawnQueue.add(en);
                                         }
                                     }catch(Exception e){
                                         System.out.println("Failed Enemy Creation");
                                     }
+                                    addingEnemy = false;
                                 }
                             }).on("enemyTargetChange", new Emitter.Listener() {
                                 @Override
@@ -555,6 +727,27 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                         System.out.println("enemy Attack Failed" + e.getMessage());
                                     }
                                 }
+                            }).on("bossAttack", new Emitter.Listener() {
+                                @Override
+                                public void call(Object... os) {
+                                    JSONObject data = (JSONObject) os[0];
+                                    try{
+                                        enemyAttack ea = new enemyAttack();
+                                        System.out.println(data.toString());
+                                        ea.id = data.getString("id");
+                                        ea.player_id = data.getString("target");
+                                        ea.attackType = data.getInt("skillCast");
+                                        JSONArray d = data.getJSONArray("degrees");
+                                        List<Float> degrees = new ArrayList();
+                                        for(int i = 0; i < d.length(); i ++){
+                                            degrees.add((float)d.getDouble(i));
+                                        }
+                                        ((BaseBoss)gameObjects.get(ea.id)).setDegreesToCastAt(degrees);
+                                        bossAttack.add(ea);
+                                    }catch(Exception e){
+                                        System.out.println("boss Attack Failed: " + e.getMessage() + ": " + e.getStackTrace()[0].getLineNumber());
+                                    }
+                                }
                             }).on("enemyDamageTaken", new Emitter.Listener() {
                                 @Override
                                 public void call(Object... os) {
@@ -573,7 +766,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                     JSONObject data = (JSONObject) os[0];
                                     try{
                                         String id = data.getString("id");
-                                        gameObjects.remove(id);
+                                        gameObjectToRemove.add(id);
                                     }catch(Exception e){
                                         System.out.println("Enemy failed to Die" + e.getMessage());
                                     }
@@ -592,8 +785,8 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                            int curY = data.getInt("curY");
                                            int tarX = data.getInt("tarX");
                                            int tarY = data.getInt("tarY");
-                                           gameObjects.get(id).setPosition(curX, curY);
-                                           ((BaseEnemy)gameObjects.get(id)).moveTo = new Vector2(tarX, tarY);
+                                           gameObjects.get(id).setPosition(curX * Options.aspectRatio, curY* Options.aspectRatio);
+                                           ((BaseEnemy)gameObjects.get(id)).moveTo = new Vector2(tarX* Options.aspectRatio, tarY* Options.aspectRatio);
                                         }
                                     }catch(Exception e){
                                         System.out.println("Failed to Sync Enemies" + e.getMessage());
@@ -608,11 +801,16 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                         int tarX = data.getInt("targetX");
                                         int tarY = data.getInt("targetY");
                                         int dir = data.getInt("dir");
-                                        OtherPlayers.get(netID).dir = Player.direction.values()[dir];
-                                        OtherPlayersOldPos.put(netID,new Vector2(OtherPlayers.get(netID).getX(), 
-                                                OtherPlayers.get(netID).getY()) );
-                                        OtherPlayersMoveTo.put(netID, new Vector2(tarX, tarY));
-                                        OtherPlayersTimer.put(netID, 0f);
+                                        if(OtherPlayers.get(netID) == null){
+                                            System.out.println("updateHeroPosition " + netID);
+                                           // Multiplayer.socket.emit("getRoomPlayersGame");
+                                        }else{
+                                            OtherPlayers.get(netID).dir = Player.direction.values()[dir];
+                                            OtherPlayersOldPos.put(netID,new Vector2(OtherPlayers.get(netID).getX(), 
+                                                    OtherPlayers.get(netID).getY()) );
+                                            OtherPlayersMoveTo.put(netID, new Vector2(tarX, tarY));
+                                            OtherPlayersTimer.put(netID, 0f);
+                                        }
                                     }catch(Exception e){
                                         System.out.println("Failed to update Hero Position" + e.getMessage());
                                     }
@@ -685,6 +883,7 @@ public class MultiplayerSurvivalGameMode extends GameMode{
                                            String id = data.getString("id");
                                            String userName = data.getString("userName");
                                            int heroid = data.getInt("hero");
+                                           System.out.println("getRoomPlayersGame " +id);
                                            if(id != Multiplayer.myID){
                                                OtherPlayersHero.put(id,heroid);
                                                OtherPlayersUserNames.put(id,userName);

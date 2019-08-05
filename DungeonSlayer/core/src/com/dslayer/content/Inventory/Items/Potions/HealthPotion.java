@@ -47,8 +47,32 @@ public class HealthPotion extends Potion{
         }
     }
     
+    public HealthPotion(float x, float y, Stage s, boolean handleMultiplayer) {
+        super(x, y, s);
+        recoverAmount = 50;
+        loadTexture(potionSprites[0][9]);
+        setSize(20* Options.aspectRatio,20* Options.aspectRatio);
+        //enableDespawnTimer(30);
+        if(handleMultiplayer && Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
+            this.network_id = Integer.toString(Multiplayer.getNextID());
+            JSONObject data = new JSONObject();
+            try{
+                data.put("id",this.network_id);
+                data.put("x", x);
+                data.put("y", y);
+                Multiplayer.socket.emit("healthPotionCreated", data);
+            }
+            catch(Exception e){
+                System.out.println("Failed to Push Health Potion Creation");
+            }
+        }
+    }
+    
     public HealthPotion(){
-        
+        super();
+        recoverAmount = 50;
+        loadTexture(potionSprites[0][9]);
+        setSize(20* Options.aspectRatio,20* Options.aspectRatio);
     }
     
     @Override
@@ -64,15 +88,15 @@ public class HealthPotion extends Potion{
                     ((Player)player).recover((int)recoverAmount);
                     remove();
                     if(Multiplayer.socket != null && Multiplayer.socket.connected()){
-                    JSONObject data = new JSONObject();
-                    try{
-                        data.put("id",this.network_id);
-                        Multiplayer.socket.emit("healthPotionPickUp", data);
+                        JSONObject data = new JSONObject();
+                        try{
+                            data.put("id",this.network_id);
+                            Multiplayer.socket.emit("healthPotionPickUp", data);
+                        }
+                        catch(Exception e){
+                            System.out.println("Failed to Push Health Potion Pick Up");
+                        }
                     }
-                    catch(Exception e){
-                        System.out.println("Failed to Push Health Potion Pick Up");
-                    }
-                }
                 }
             }
         }

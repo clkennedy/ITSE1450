@@ -63,6 +63,9 @@ public abstract class Hero extends Avatar{
                 throw new AssertionError();
         }
     }
+    public static Hero getNewHero(int heroIndex){
+        return getNewHero(heros.values()[heroIndex]);
+    }
     
     public Hero(Animation<TextureRegion> animation) {
         super(animation);

@@ -177,10 +177,10 @@ public class MultiplayerHeroSelectionScreen extends BaseScreen {
             
         }
         
-        BaseGame.setActiveScreen( Multiplayer.lobbyScreen);
+        BaseGame.setActiveScreen( new MutliplayerLobbyScreen());
     }
     public void cancelGame(){
-        BaseGame.setActiveScreen( Multiplayer.lobbyScreen);
+        BaseGame.setActiveScreen( new MutliplayerLobbyScreen());
     }
     
     

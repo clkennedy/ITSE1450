@@ -26,6 +26,14 @@ public class BossKey extends Items{
         
     }
     
+    public BossKey(float x, float y, Stage s, boolean handleMultiplayer){
+        super(x, y, s);
+        loadTexture(resource);
+        getBoundaryPolygon();
+        setScale(.5f);
+        
+    }
+    
     public BossKey(){
         
     }
