@@ -22,6 +22,7 @@ import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.Font.FontLoader;
 import com.dslayer.content.GameMessage.GameMessage;
+import com.dslayer.content.Hero.Hero;
 import com.dslayer.content.Inventory.Items.BossKey;
 import com.dslayer.content.LevelGenerator.LevelGenerator;
 import com.dslayer.content.Inventory.Items.Potions.HealthPotion;
@@ -35,7 +36,7 @@ import com.dslayer.content.Spawner.Spawner;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
-import com.dslayer.content.screens.HeroSelectionScreenDungeon;
+import com.dslayer.content.screens.HeroSelectionScreen;
 import com.dslayer.content.screens.MainMenuScreen;
 import java.util.List;
 
@@ -114,10 +115,10 @@ public class DungeonCrawlGameMode extends GameMode{
         nonBossRooms = lg.getNonBossRooms();
         bossRoom = lg.getBossRooms();
         
-        Vector2 pSpawn = Spawner.getSpawnLocation(spawnRoom);
+        Vector2 pSpawn = Spawner.getSpawnLocation(bossRoom);
         
         player = new Player(pSpawn.x,pSpawn.y, mainStage);
-        player.setHero(HeroSelectionScreenDungeon.currentSelection);
+        player.setHero(Hero.getNewHero(HeroSelectionScreen.HeroSelectionIndex));
         points = new Label("", FontLoader.pointStyle);
         points.setAlignment(Align.left);
         

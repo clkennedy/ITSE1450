@@ -43,7 +43,7 @@ public class VikingHero extends Hero{
         
         heroName = "Björn";
         
-        walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
+        walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk, .08f);
         castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.slash, .05f);
         dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);
         setAnimation(playRight());

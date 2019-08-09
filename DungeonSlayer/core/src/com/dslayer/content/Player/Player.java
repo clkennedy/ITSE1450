@@ -154,7 +154,7 @@ public class Player extends BaseActor{
         setBoundaryPolygonLong(10);
         
         setMaxSpeed(playerSpeed);
-        setDeceleration(250 * Options.aspectRatio);
+        setDeceleration(500 * Options.aspectRatio);
         
         healthBar = new Rectangle(this.getStage().getCamera().viewportWidth - maxHealth - 20, 10, maxHealth, 20);
         
@@ -519,10 +519,10 @@ public class Player extends BaseActor{
             directionChanged = dir != direction.down;
             dir = direction.down;
        }
-       if((getY()) < MouseWorldY &&
-               (Math.abs((MouseWorldX - getX())) < Math.abs(MouseWorldY - getY())))
-               {
-                   if(hero.isAttacking()){
+        if((getY()) < MouseWorldY &&
+                (Math.abs((MouseWorldX - getX())) < Math.abs(MouseWorldY - getY())))
+                {
+                    if(hero.isAttacking()){
                         setAnimationWithReset(hero.playUp());
                     }
                     if(canMove)
@@ -531,8 +531,7 @@ public class Player extends BaseActor{
            setSize(hero.getDSize(), hero.getDSize());
            directionChanged = dir != direction.up;
             dir = direction.up;
-       }
-       
+        }
        //movement control
        if(canMove){
             if(_playerControls.isPressed("Fire") && hero.canBasicAttack()){
@@ -563,9 +562,9 @@ public class Player extends BaseActor{
                         }
                 }
             }
-            float speedModifier = (_playerControls.isPressed("Sprint")) ? sprintSpeedModifier : 1f;
+            float speedModifier = (_playerControls.isPressed("Sprint")) ? sprintSpeedModifier : sprintSpeedModifier;
             if(canMove){
-                setAcceleration(accel * speedModifier * Options.aspectRatio);
+                setAcceleration(accel * speedModifier * Options.aspectRatio * 2);
                 setMaxSpeed(playerSpeed * speedModifier);
                 if(_playerControls.isPressed("Right")){
                     //setSpeed(accel * speedModifier * Options.aspectRatio);

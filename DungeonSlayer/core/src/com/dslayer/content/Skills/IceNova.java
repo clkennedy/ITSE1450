@@ -111,7 +111,8 @@ public class IceNova extends Skill{
         }
         durationTimer += dt;
         if(durationTimer > duration){
-            skillSound.stop();
+            if(skillSound != null)
+                skillSound.stop();
             EscapeMenu.removeSoundToPause(skillSound);
             remove();
         }

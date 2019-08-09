@@ -39,7 +39,7 @@ public class ArcherHero extends Hero{
         
         heroName = "Ayra";
         
-        walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
+        walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk, .08f);
         castAltAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.slash, .1f);
         castBasicAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.shoot, .03f);
         dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);

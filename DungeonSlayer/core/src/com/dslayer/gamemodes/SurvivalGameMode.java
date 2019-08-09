@@ -75,6 +75,9 @@ public class SurvivalGameMode extends GameMode{
         
         Multiplayer.host = true;
         Room dr = new DungeonRoom();
+        if(Difficulty.RoomType == Difficulty.RoomTypes.Forest){
+            dr = new ForestRoom();
+        }
         
         dr.generateRoom(30,40);
         dr.fillRoomWithObjects(14);

@@ -52,7 +52,7 @@ public abstract class Skill extends BaseActor{
     protected Sound skillHit;
     
     protected boolean showIndicator = false;
-    protected float indCooldown = 1.5f;
+    protected float indCooldown = .5f;
     protected float indCooldownTime = 0f;
     
     protected boolean skillDone = false;
@@ -82,6 +82,9 @@ public abstract class Skill extends BaseActor{
         return this;
     }
     
+    public void setIndicatorTime(float indTime){
+        indCooldown = indTime;
+    }
     
     public Skill setProjectileAcceleration(float speed){
         setAcceleration(speed);

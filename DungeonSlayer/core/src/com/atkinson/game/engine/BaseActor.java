@@ -513,6 +513,10 @@ public class BaseActor extends Group {
         return elapsedTime >= (totalDuration / 2);
     }
     
+    public float getAnimationDuration(){
+        return this.animation.getAnimationDuration();
+    }
+    
     /**
     * Resets the elapsed time of the animation
     * 

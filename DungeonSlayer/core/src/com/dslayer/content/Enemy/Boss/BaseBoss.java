@@ -43,6 +43,7 @@ public class BaseBoss extends BaseEnemy{
     protected float damageMitigation = 2.3f;
     
     protected List<Float> degreesToCastSkillAt;
+    protected float degreeVariation;
     protected List<BaseActor> targets;
     
     protected boolean targetInRange = false;
@@ -70,6 +71,7 @@ public class BaseBoss extends BaseEnemy{
         moveTo.y = MathUtils.random(Difficulty.worldHeight);
         
         moveToRange = new Circle(moveTo.x, moveTo.y, 30);
+        isBoss = true;
         
     }
     
@@ -78,15 +80,27 @@ public class BaseBoss extends BaseEnemy{
     }
     
     public void collectTargets(){
+        targets.clear();
         ArrayList<BaseActor> players = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
         for(BaseActor player: players){
-                if(_room != null && !_room.isActorInRoom(player)){
+                if((_room != null && !_room.isActorInRoom(player)) || ((Player)player).isDead()){
                     continue;
                 }
+                System.out.println(((Player)player).network_id);
                 targetInRange = true;
                 targets.add(player);
                 chaseTarget = false;
         }
+    }
+    
+    public void setTargets(List<BaseActor> t){
+        for(BaseActor b : t){
+            targets.add(b);
+        }
+    }
+    
+    public void setVariation(float d){
+        this.degreeVariation = d;
     }
     
     public void setDegreesToCastAt(List<Float> degreesCasted){

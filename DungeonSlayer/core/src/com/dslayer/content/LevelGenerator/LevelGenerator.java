@@ -55,6 +55,8 @@ public class LevelGenerator {
     protected float mapHeightPixels;
     protected int bossRoomRegion = -1;
     
+    protected Vector2 spawnPos;
+    
     Room _room;
     
     
@@ -301,6 +303,10 @@ public class LevelGenerator {
            }
        }
    }
+    
+    public Vector2 getSpawnPosition(){
+        return spawnPos;
+    }
    
    private void drawMapRegions(){
        for(int i = 0; i < this.mapLayout.length; i++){
@@ -328,6 +334,19 @@ public class LevelGenerator {
             }
         }
         return false;
+   }
+   
+   private boolean checkIfRegionIsRoom(float x, float y){
+       return checkIfRegionIsRoom(new Vector2(x,y));
+   }
+   
+   private boolean checkIfRegionIsRoom(Vector2 pos){
+       for(Room r: getNonBossRooms() ){
+           if((mapRegions[(int)pos.x][(int)pos.y]) == r.getRoomRegion()){
+               return true;
+           }
+       }
+       return false;
    }
    
    private void connectRegions(){
@@ -569,8 +588,50 @@ public class LevelGenerator {
                    break;
                }
            }
-           //drawMapLayout();
-       
+           
+            boolean foundSpawn = false;
+            //Top-Bottom
+            if(MathUtils.randomBoolean(.5f)){
+                while(!foundSpawn){
+                    int pos = (int)MathUtils.random(1 ,mapWidth - 1);
+                    if(MathUtils.randomBoolean(.5f)){//Top
+                        if(mapLayout[1][pos] == 0 && mapRegions[1][pos] != bossRoomRegion && !checkIfRegionIsRoom(1, pos)){
+                            mapLayout[0][pos] = 0;
+                            spawnPos = new Vector2((pos + .5f) * RoomPanels.defaultSize, (mapHeightPixels) - (RoomPanels.defaultSize/2) );
+                            foundSpawn = true;
+                            System.out.println("0 : " + pos );
+                        }
+                    }else{//Bottom
+                        if(mapLayout[mapHeight - 2][pos] == 0 && mapRegions[mapHeight - 2][pos] != bossRoomRegion && !checkIfRegionIsRoom(mapHeight - 2, pos)){
+                            mapLayout[mapHeight - 1][pos] = 0;
+                            spawnPos = new Vector2((pos + .5f) * RoomPanels.defaultSize, (mapHeightPixels) - ((mapHeight - .5f) * RoomPanels.defaultSize));
+                            foundSpawn = true;
+                            System.out.println((mapHeight - 1) + " : " + pos );
+                        }
+                    }
+                }
+               
+            }else{//Left -Right
+                while(!foundSpawn){
+                    int pos = (int)MathUtils.random(1 ,mapHeight - 1);
+                    if(MathUtils.randomBoolean(.5f)){//Left
+                        if(mapLayout[pos][1] == 0 && mapRegions[pos][1] != bossRoomRegion && !checkIfRegionIsRoom(pos, 1)){
+                            mapLayout[pos][0] = 0;
+                            spawnPos = new Vector2((RoomPanels.defaultSize / 2), (mapHeightPixels) - ((pos + .5f) * (RoomPanels.defaultSize)));
+                            foundSpawn = true;
+                            System.out.println(pos + " : 0" );
+                        }
+                    }else{//Right
+                            if(mapLayout[pos][mapWidth - 2] == 0 && mapRegions[pos][mapWidth - 2] != bossRoomRegion && !checkIfRegionIsRoom(pos, mapWidth - 2)){
+                            mapLayout[pos][mapWidth - 1] = 0;
+                            spawnPos = new Vector2(((mapWidth - .5f) * RoomPanels.defaultSize), (mapHeightPixels) - ((pos + .5f) * RoomPanels.defaultSize));
+                            foundSpawn = true;
+                            System.out.println(pos + " : " + (mapWidth - 1));
+                        }
+                    }
+                }
+            }
+            //drawMapLayout();
    }
 
     private Stage getStage() {

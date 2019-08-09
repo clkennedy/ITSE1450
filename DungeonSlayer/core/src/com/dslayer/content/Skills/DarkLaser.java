@@ -40,7 +40,7 @@ public class DarkLaser extends Skill{
     
     private int pierce = 3;
     
-    private float stayArroundDuration = 2;
+    private float stayArroundDuration = 1.4f;
     private float stayTimer=0;
     
     List<BaseActor> alreadyHit;
@@ -88,7 +88,7 @@ public class DarkLaser extends Skill{
             if(indCooldownTime > indCooldown){
                 showIndicator = false;
                 loadAnimationFromSheet(DarkLaser, 11, 1, .02f, true);
-                setOrigin(0,0);
+                setOrigin(0,(getHeight() / 2));
                 setBoundaryPolygonWide(12);
                 //setRotation(0);
                 
@@ -161,11 +161,12 @@ public class DarkLaser extends Skill{
         }
                 ((DarkLaser)b).isProjectile()
                 .setFrom(from);
-                b.setOrigin(0,0);
-                b.setPosition(target.x, target.y);
+                b.setOrigin(0,b.getHeight() / 2);
+                b.setPosition(target.x, target.y - (b.getHeight() / 2));
                 b.setRotation(degrees);
                 b.setZIndex(1000);
                 ((DarkLaser)b).degrees = degrees;
+                ((DarkLaser)b).indCooldown = this.indCooldown;
                 canCast = false;
         if(from == Skill.From.Player){
             ((Skill)b).player = ((Player)caster);

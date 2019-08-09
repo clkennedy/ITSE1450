@@ -87,6 +87,7 @@ public class PhantomBoss extends BaseBoss{
         
         skill2 = new DarkLaser();
         skill2.setDamage(750);
+        skill2.setIndicatorTime(1.3f);
         skill2.isEnemy(true);
         
         moveTo = new Vector2();
@@ -119,8 +120,6 @@ public class PhantomBoss extends BaseBoss{
         }
     }
     
-    
-    
     @Override
     public void act(float dt){
         super.act(dt);
@@ -138,11 +137,20 @@ public class PhantomBoss extends BaseBoss{
                 }
                 if(skillToCast == 2){
                     doneAttacking = true;
+                    for(BaseActor b : targets){
+                        float d = (float)(MathUtils.atan2(((b.getY() + (b.getHeight() / 2)) - (this.getY() + this.getHeight()) )
+                        , (b.getX() + (b.getWidth() / 2)) - (this.getX() + this.getWidth())) * 180.0d / Math.PI);
+                        degreesToCastSkillAt.add(d);
+                        degreesToCastSkillAt.add(d + degreeVariation);
+                        degreesToCastSkillAt.add(d - degreeVariation);
+                    }
+                    targets.clear();
                     for(float degrees : degreesToCastSkillAt){
                         channeledSkill = skill2.cast(this, new Vector2(this.getX() + (getWidth() / 2), this.getY() + (getHeight() / 2)),degrees, Skill.From.Enemy);
                     }
                     loadAnimationFromSheet(phantomChannel, 1, 6, .15f, true);
                     channeling = true;
+                    degreesToCastSkillAt.clear();
                 }
                 canAttack = false;
             }
@@ -193,22 +201,26 @@ public class PhantomBoss extends BaseBoss{
         
         ArrayList<BaseActor> players = BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player");
         for(BaseActor player: players){
-                if(_room != null && !_room.isActorInRoom(player)){
+                if((_room != null && !_room.isActorInRoom(player)) || ((Player)player).isDead()){
                     continue;
                 }
                 targetInRange = true;
                 targets.add(player);
                 chaseTarget = false;
         }
-        if(!canAttack || !targetInRange)
+        if(!canAttack || !targetInRange){
+            targets.clear();
             return;
-        skillToCast = MathUtils.random(1, 2);
+        }
+        skillToCast = MathUtils.random(2, 2);
         attack(null);
+        degreeVariation = MathUtils.random(25, 35);
         if(skillToCast == 2){
             degreesToCastSkillAt.clear();
-            for(int i = 0; i < 5; i++){
-                degreesToCastSkillAt.add((float)MathUtils.random(360));
-            }
+        }
+        JSONArray tars = new JSONArray();
+        for(BaseActor b : targets){
+            tars.put(b.network_id);
         }
         if(Multiplayer.socket != null && Multiplayer.socket.connected() && Multiplayer.host){
             JSONObject data = new JSONObject();
@@ -217,7 +229,8 @@ public class PhantomBoss extends BaseBoss{
             data.put("id", this.network_id);
             data.put("target", Multiplayer.myID);
             data.put("skillCast", skillToCast);
-            data.put("degrees", degreesToCastSkillAt);
+            data.put("degreeV", degreeVariation);
+            data.put("targets", tars);
             Multiplayer.socket.emit("bossAttack", data);
             }
             catch(Exception e){

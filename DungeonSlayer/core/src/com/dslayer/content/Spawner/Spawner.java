@@ -15,6 +15,7 @@ import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
 import com.dslayer.content.Enemy.Skeleton.SkeletonMage;
 import com.dslayer.content.Enemy.Skeleton.SkeletonWarrior;
 import com.dslayer.content.Inventory.Items.Items;
+import com.dslayer.content.LevelGenerator.LevelGenerator;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.options.Difficulty;
@@ -34,6 +35,10 @@ public class Spawner {
     public static enum Bosses{};
     
     private static List<BaseActor> spawnedItems = new ArrayList();
+    
+    private static LevelGenerator _levelGen;
+    
+    private static Integer[][] mapLayout;
     
     private Spawner(){}
     
@@ -69,6 +74,16 @@ public class Spawner {
         return spawnRandomSkeleton(room);
     }
     
+    public static List<Vector2> getPath(Vector2 to, Vector2 from){
+        
+        return null;
+    }
+    
+    public static List<Vector2> getMoveTo(Vector2 from, int spaces){
+        
+        return null;
+    }
+    
     public static Vector2 getSpawnLocation(Room room){
         Vector2 spawnPos = new Vector2(0,0);
         float x = 0;
@@ -86,6 +101,26 @@ public class Spawner {
                     Difficulty.worldHeight - RoomPanels.defaultSize);
         }
         spawnPos = new Vector2(x, y);
+        return spawnPos;
+    }
+    
+    public static Vector2 getSpawnLocation(LevelGenerator lg){
+        //_levelGen = lg;
+        mapLayout = new Integer[lg.getMapLayout().length][lg.getMapLayout()[0].length];
+        for(int row = 0; row < lg.getMapLayout().length; row ++){
+            for(int col = 0; col < lg.getMapLayout()[row].length; col ++){
+                mapLayout[row][col] = lg.getMapLayout()[row][col];
+            }
+        }
+        Vector2 spawnPos = new Vector2(0,0);
+        float x = 0;
+        float y = 0;
+        Vector2 sp = _levelGen.getSpawnPosition();
+        if(sp != null){
+            return sp;
+        }else{
+            spawnPos = getSpawnLocation(lg.getRandomNonBossRoom());
+        }
         return spawnPos;
     }
     
@@ -167,7 +202,7 @@ public class Spawner {
          catch(Exception e){
              String st = "";
              for(StackTraceElement se : e.getStackTrace()){
-                 st += se.getLineNumber() + ": " + se.getMethodName() + ": " + se.getClassLoaderName() + "\r\n";
+                 st += se.getLineNumber() + ": " + se.getMethodName() + ": " + "\r\n";
              }
              System.out.println("Failed to create Game Item from Spawner Class: "  + classString + ": "+ e.toString() + "\r\n " + st);
          }

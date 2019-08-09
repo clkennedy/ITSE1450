@@ -41,6 +41,7 @@ public class ShadowGrab extends Skill{
     Vector2 targetPos;
     BaseActor targetActor;
     boolean followTarget = false;
+    boolean followRight = false;
     
     float trackingTime = 1.3f;
     float trackingTimeTimer = 0f;
@@ -79,18 +80,23 @@ public class ShadowGrab extends Skill{
         //accelerateAtAngle(direction);
         applyPhysics(dt);
         
-        if(trackingTimeTimer < trackingTime && followTarget){
+        if(trackingTimeTimer < (trackingTime+ (getAnimationDuration() / 3)) && followTarget){
             trackingTimeTimer += dt;
-            this.setX(targetActor.getX());
-            this.setY(targetActor.getY() - (targetActor.getHeight() / 2));
-            setZIndex(900);
+            if(followRight){
+                this.setX(targetActor.getX() + (targetActor.getWidth() / 6));
+                this.setY(targetActor.getY() - (targetActor.getHeight() / 2));
+            }else{
+                this.setX(targetActor.getX() - (this.getWidth() - targetActor.getWidth()) - (targetActor.getWidth() / 6) );
+                this.setY(targetActor.getY() - (targetActor.getHeight() / 2));
+            }
+            
+            setZIndex(targetActor.getZIndex() - 1);
             return;
-        }else if(trackingTimeTimer < trackingTime){
+        }else if(trackingTimeTimer < (trackingTime )){
             trackingTimeTimer += dt;
             this.setX(targetPos.x);
             this.setY(targetPos.y);
-            setZIndex(900);
-            return;
+            setZIndex(700);
         }
         
         setAnimationPaused(false);
@@ -98,7 +104,7 @@ public class ShadowGrab extends Skill{
             remove();
             return;
         }
-        setZIndex(15000);
+        setZIndex(targetActor.getZIndex() + 1);
         if(isAnimationPastHalfway()){
             if(from == Skill.From.Enemy){
                 for(BaseActor player: BaseActor.getList(this.getStage(), "com.dslayer.content.Player.Player")){
@@ -154,6 +160,7 @@ public class ShadowGrab extends Skill{
                 canCast = false;
                 ((ShadowGrab)b).targetActor = target;
                 ((ShadowGrab)b).followTarget = true;
+                ((ShadowGrab)b).damage = this.damage;
         if(from == Skill.From.Player){
             ((Skill)b).player = ((Player)caster);
         }  
@@ -162,7 +169,7 @@ public class ShadowGrab extends Skill{
     
     public ShadowGrab isProjectile(){
         isAction = true;
-        loadAnimationFromSheet(ShadowHand,1,8,.15f, false);
+        loadAnimationFromSheet(ShadowHand,1,8,.06f, false);
         setAnimationPaused(true);
         setScale(.9f * Options.aspectRatio);
         alreadyHit = new ArrayList<BaseActor>();
@@ -171,7 +178,12 @@ public class ShadowGrab extends Skill{
         setOriginY(getHeight() / 2);
         setPosition(getX() - (getWidth() /2) , getY() - (getHeight() / 2));
         setBoundaryPolygon(12);
-        damage = 50;
+        float time = MathUtils.random(.8f, 1.7f);
+        trackingTime = time;
+        if(MathUtils.randomBoolean(.5f)){
+            followRight = true;
+        }
+        
         return this;
     }
     

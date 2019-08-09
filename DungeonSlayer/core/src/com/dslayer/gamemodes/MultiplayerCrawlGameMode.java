@@ -40,7 +40,6 @@ import com.dslayer.content.Spawner.Spawner;
 import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
-import com.dslayer.content.screens.HeroSelectionScreenDungeon;
 import com.dslayer.content.screens.MainMenuScreen;
 import com.dslayer.content.screens.MultiplayerHeroSelectionScreen;
 import com.dslayer.content.screens.MutliplayerLobbyScreen;
@@ -129,6 +128,7 @@ public class MultiplayerCrawlGameMode extends GameMode{
     private List<enemyInfo> healthPotsToSpawnQueue;
     
     private List<String> gameObjectToRemove;
+    private List<String> gameObjectToRemoveQueue;
     
     private float moveTimeElepased = 0;
     
@@ -183,6 +183,7 @@ public class MultiplayerCrawlGameMode extends GameMode{
         healthPotsToSpawn = new ArrayList<enemyInfo>();
         heroCast = new ArrayList<skillInfo>();
         gameObjectToRemove = new ArrayList<String>();
+        gameObjectToRemoveQueue = new ArrayList<String>();
         
         setupSocketListeners();
         player = new Player(-100,-100, mainStage);
@@ -229,7 +230,7 @@ public class MultiplayerCrawlGameMode extends GameMode{
                 System.out.println("Problem Sending Map Data");
             }
         
-        spawnPos = Spawner.getSpawnLocation(spawnRoom);
+        spawnPos = Spawner.getSpawnLocation(lg);
         
         data = new JSONObject();
             try{
@@ -373,10 +374,10 @@ public class MultiplayerCrawlGameMode extends GameMode{
         for(Player b : OtherPlayers.values()){
             if(b.inventoryContains(BossKey.class) && !player.inventoryContains(BossKey.class)){
                 player.addToBackpack(new BossKey());
-                points.setText("You Have a Boss Key!");
             }
         }
         if(player.inventoryContains(BossKey.class)){
+            points.setText("You Have a Boss Key!");
             for(Player b : OtherPlayers.values()){
                 if(!b.inventoryContains(BossKey.class)){
                     b.addToBackpack(new BossKey());
@@ -456,13 +457,13 @@ public class MultiplayerCrawlGameMode extends GameMode{
         for(enemyAttack enemy : bossAttack){
             if(Multiplayer.myID.equals(enemy.player_id)){
                 ((BaseBoss)gameObjects.get(enemy.id)).setSkillToCast(enemy.attackType);
-                ((BaseBoss)gameObjects.get(enemy.id)).collectTargets();
+                //((BaseBoss)gameObjects.get(enemy.id)).collectTargets();
                 ((BaseBoss)gameObjects.get(enemy.id)).attack(player);
             }
             else{
                 BaseActor b = OtherPlayers.get(enemy.player_id);
                 ((BaseBoss)gameObjects.get(enemy.id)).setSkillToCast(enemy.attackType);
-                ((BaseBoss)gameObjects.get(enemy.id)).collectTargets();
+                //((BaseBoss)gameObjects.get(enemy.id)).collectTargets();
                 ((BaseBoss)gameObjects.get(enemy.id)).attack(OtherPlayers.get(enemy.player_id));
             }
         }
@@ -496,11 +497,14 @@ public class MultiplayerCrawlGameMode extends GameMode{
             }
         }
         
+        gameObjectToRemove.addAll(gameObjectToRemoveQueue);
+        gameObjectToRemoveQueue.clear();
+        
         List<String> objRemoved = new ArrayList();
         for(String id : gameObjectToRemove){
             BaseActor b = gameObjects.remove(id);
-            System.out.println("Trying to remove id: " + id);
-            System.out.println("Trying to remove Object: " + b);
+            //System.out.println("Trying to remove id: " + id);
+            //System.out.println("Trying to remove Object: " + b);
             if(b != null && b instanceof BaseEnemy && b.isAnimationFinished()){
                 b.remove();
                 objRemoved.add(id);
@@ -509,9 +513,7 @@ public class MultiplayerCrawlGameMode extends GameMode{
                  objRemoved.add(id);
             }
         }
-        for(String id: objRemoved){
-            gameObjectToRemove.remove(id);
-        }
+        gameObjectToRemove.clear();
         //----------------------------------------------------------------------------------------------------------------------------------------------
        
         if(!Multiplayer.host)
@@ -584,7 +586,7 @@ public class MultiplayerCrawlGameMode extends GameMode{
                                         System.out.println("Health Pot Picked up");
                                         String id = data.getString("id");
                                         System.out.println(id);
-                                        gameObjectToRemove.add(id);
+                                        gameObjectToRemoveQueue.add(id);
                                     }catch(Exception e){
                                         System.out.println("Failed Health Pot Pick Up " + e.getMessage());
                                     }
@@ -667,7 +669,7 @@ public class MultiplayerCrawlGameMode extends GameMode{
                                             dataSend.put("targetX", player.getX() / Options.aspectRatio);
                                             dataSend.put("targetY", player.getY() / Options.aspectRatio);
                                             dataSend.put("dir", player.dir.ordinal());
-                                            //Multiplayer.socket.emit("updateHeroPosition", dataSend);
+                                            Multiplayer.socket.emit("updateHeroPosition", dataSend);
                                         }catch(Exception e){
                                              System.out.println("Failed to push player data after spawn " + e.getMessage());
                                         }
@@ -732,17 +734,25 @@ public class MultiplayerCrawlGameMode extends GameMode{
                                 public void call(Object... os) {
                                     JSONObject data = (JSONObject) os[0];
                                     try{
+                                        System.out.println("BossAttack");
                                         enemyAttack ea = new enemyAttack();
                                         System.out.println(data.toString());
                                         ea.id = data.getString("id");
                                         ea.player_id = data.getString("target");
                                         ea.attackType = data.getInt("skillCast");
-                                        JSONArray d = data.getJSONArray("degrees");
-                                        List<Float> degrees = new ArrayList();
-                                        for(int i = 0; i < d.length(); i ++){
-                                            degrees.add((float)d.getDouble(i));
+                                        float d = (float)data.getDouble("degreeV");
+                                        JSONArray t = data.getJSONArray("targets");
+                                        List<BaseActor> targets = new ArrayList();
+                                        for(int i = 0; i < t.length(); i ++){
+                                            String id = (String)t.get(i);
+                                            if(Multiplayer.myID.equals(id)){
+                                                targets.add(player);
+                                            }else{
+                                                targets.add(OtherPlayers.get(id));
+                                            }
                                         }
-                                        ((BaseBoss)gameObjects.get(ea.id)).setDegreesToCastAt(degrees);
+                                        ((BaseBoss)gameObjects.get(ea.id)).setTargets(targets);
+                                        ((BaseBoss)gameObjects.get(ea.id)).setVariation(d);
                                         bossAttack.add(ea);
                                     }catch(Exception e){
                                         System.out.println("boss Attack Failed: " + e.getMessage() + ": " + e.getStackTrace()[0].getLineNumber());
@@ -766,7 +776,7 @@ public class MultiplayerCrawlGameMode extends GameMode{
                                     JSONObject data = (JSONObject) os[0];
                                     try{
                                         String id = data.getString("id");
-                                        gameObjectToRemove.add(id);
+                                        gameObjectToRemoveQueue.add(id);
                                     }catch(Exception e){
                                         System.out.println("Enemy failed to Die" + e.getMessage());
                                     }
@@ -802,7 +812,7 @@ public class MultiplayerCrawlGameMode extends GameMode{
                                         int tarY = data.getInt("targetY");
                                         int dir = data.getInt("dir");
                                         if(OtherPlayers.get(netID) == null){
-                                            System.out.println("updateHeroPosition " + netID);
+                                           System.out.println("updateHeroPosition " + netID);
                                            // Multiplayer.socket.emit("getRoomPlayersGame");
                                         }else{
                                             OtherPlayers.get(netID).dir = Player.direction.values()[dir];

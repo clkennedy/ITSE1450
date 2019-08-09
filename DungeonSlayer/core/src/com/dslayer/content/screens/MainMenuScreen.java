@@ -129,7 +129,7 @@ public class MainMenuScreen extends BaseScreen {
 
         //TextButton tb = new TextButton("Play", );
         
-        Label playDungeon = new Label("Dungeon", FontLoader.menuStyle);
+        Label playDungeon = new Label("Solo", FontLoader.menuStyle);
         playDungeon.setSize((playDungeon.getWidth() * 1.2f) * Options.aspectRatio, (playDungeon.getHeight() *1.2f) * Options.aspectRatio);
         playDungeon.setOriginX(playDungeon.getWidth() / 2);
         playDungeon.setOriginY(playDungeon.getHeight()/ 2);
@@ -145,7 +145,7 @@ public class MainMenuScreen extends BaseScreen {
         });
         mainStage.addActor(playDungeon);
         
-        Label play = new Label("Survival", FontLoader.menuStyle);
+        Label play = new Label("Heros", FontLoader.menuStyle);
         play.setSize((play.getWidth() * 1.2f) * Options.aspectRatio, (play.getHeight() *1.2f) * Options.aspectRatio);
         play.setOriginX(play.getWidth() / 2);
         play.setOriginY(play.getHeight()/ 2);
@@ -156,7 +156,7 @@ public class MainMenuScreen extends BaseScreen {
             
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                startGame();
+                heroScreen();
             }
         
         });
@@ -260,17 +260,17 @@ public class MainMenuScreen extends BaseScreen {
         //Multiplayer.lobbyScreen = new MutliplayerLobbyScreen();
         BaseGame.setActiveScreen(new multiplayerRoomScreen());   
     }
-    public void startGame(){
+    public void heroScreen(){
         removeButtons();
         //backgroundMusic.stop();
         //musicPlaying = false;
-        BaseGame.setActiveScreen(new HeroSelectionScreen());   
+        //BaseGame.setActiveScreen(new HeroSelectionScreen());   
     }
     public void startGameDungeon(){
         removeButtons();
         //backgroundMusic.stop();
         //musicPlaying = false;
-        BaseGame.setActiveScreen(new HeroSelectionScreenDungeon());   
+        BaseGame.setActiveScreen(new HeroSelectionScreen());   
     }
     public void quitGame(){
         removeButtons();
@@ -323,7 +323,7 @@ public class MainMenuScreen extends BaseScreen {
     private void selectOption(){
         switch(currentMenuIndex){
             case 0:
-                startGame();
+                heroScreen();
             break;
             case 1:
                 optionScreen();

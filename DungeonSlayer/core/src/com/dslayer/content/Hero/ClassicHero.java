@@ -47,7 +47,7 @@ public class ClassicHero extends Hero{
         setBoundaryRectangle();
         heroName = "Keridwen";
         
-        walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
+        walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk, .08f);
         castBasicAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.thrust, .05f);
         castAltAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.cast, .15f);
         dieAnim = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.die).get(0);

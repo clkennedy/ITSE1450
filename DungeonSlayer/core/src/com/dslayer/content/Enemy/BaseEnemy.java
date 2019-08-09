@@ -103,6 +103,8 @@ public abstract class BaseEnemy extends BaseActor{
     
     protected Room _room;
     
+    protected boolean isBoss = false;
+    
     public static BaseEnemy getNewEnemy(type en,float x,float y){
         switch (en) {
             case SkeletionWarrior:
@@ -239,7 +241,6 @@ public abstract class BaseEnemy extends BaseActor{
             moveTo.y = target.getY() + (target.getHeight()/2);
             moveToChanged();
         }
-        
     }
     
     public void die(){

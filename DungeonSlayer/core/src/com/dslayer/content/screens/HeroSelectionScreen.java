@@ -32,15 +32,18 @@ import com.dslayer.content.Rooms.Dungeon.DungeonRoom;
 import com.dslayer.content.Rooms.Room;
 import com.dslayer.content.options.Avatar;
 import com.dslayer.content.options.Difficulty;
+import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
 import com.dslayer.content.options.Unlocks;
 import static com.dslayer.content.options.Unlocks.currentAvatar;
 import static com.dslayer.content.screens.MainMenuScreen.backgroundMusic;
 import static com.dslayer.content.screens.MainMenuScreen.musicPlaying;
+import com.dslayer.gamemodes.DungeonCrawlGameMode;
 import com.dslayer.gamemodes.GameMode;
 import com.dslayer.gamemodes.SurvivalGameMode;
 import java.util.List;
 import java.util.ArrayList;
+import org.json.JSONObject;
 
 public class HeroSelectionScreen extends BaseScreen {
     
@@ -55,6 +58,9 @@ public class HeroSelectionScreen extends BaseScreen {
     public static int HeroSelectionIndex = 0;
     
     private BaseActor selectionBox;
+    
+    Label displayText;
+    Label displayGMText;
 
     public ArrayList<BaseActor> heroSelections;
     public void initialize() {
@@ -137,8 +143,179 @@ public class HeroSelectionScreen extends BaseScreen {
                     }
                 });
         mainStage.addActor(cancel);
+        
+        
+        //------------------------------------------------------------------------------------------------------------------------------
+        Label lastDisplay = new Label("<", FontLoader.buttonStyle);
+        lastDisplay.setSize(lastDisplay.getWidth() * Options.aspectRatio, lastDisplay.getHeight() * Options.aspectRatio);
+        lastDisplay.setOriginX(lastDisplay.getWidth() / 2);
+        lastDisplay.setOriginY(lastDisplay.getHeight()/ 2);
+        lastDisplay.setAlignment(Align.left);
+        lastDisplay.setPosition(50,  50);
+        lastDisplay.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                previousDungeon();
+            }
+        
+        });
+        
+        displayText = new Label("", FontLoader.buttonStyle);
+        displayText.setText((Difficulty.RoomType == Difficulty.RoomTypes.Dungeon)? "Dungeon" :
+                "Forest");
+        displayText.setSize(displayText.getWidth(), displayText.getHeight());
+        displayText.setOriginX(displayText.getWidth() / 2);
+        displayText.setOriginY(displayText.getHeight()/ 2);
+        displayText.setAlignment(Align.left);
+        displayText.setPosition((lastDisplay.getX() + lastDisplay.getWidth() + 20),50);
+        
+        Label nextDisplay = new Label(">", FontLoader.buttonStyle);
+        nextDisplay.setSize(nextDisplay.getWidth() * Options.aspectRatio, nextDisplay.getHeight() * Options.aspectRatio);
+        nextDisplay.setOriginX(nextDisplay.getWidth() / 2);
+        nextDisplay.setOriginY(nextDisplay.getHeight()/ 2);
+        nextDisplay.setAlignment(Align.left);
+        nextDisplay.setPosition((displayText.getX() + displayText.getWidth() + 20), 50);
+        nextDisplay.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                nextDungeon();
+            }
+        
+        });
+        mainStage.addActor(displayText);
+        mainStage.addActor(lastDisplay);
+        mainStage.addActor(nextDisplay);
+        
+        
+        
+        //------------------------------------------------------------------------------------------------------------------------------
+        
+        //------------------------------------------------------------------------------------------------------------------------------
+        Label lastGMDisplay = new Label("<", FontLoader.buttonStyle);
+        lastGMDisplay.setSize(lastDisplay.getWidth() * Options.aspectRatio, lastGMDisplay.getHeight() * Options.aspectRatio);
+        lastGMDisplay.setOriginX(lastGMDisplay.getWidth() / 2);
+        lastGMDisplay.setOriginY(lastGMDisplay.getHeight()/ 2);
+        lastGMDisplay.setAlignment(Align.left);
+        lastGMDisplay.setPosition(50,  150);
+        lastGMDisplay.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                previousGMMode();
+            }
+        
+        });
+        
+        displayGMText = new Label("", FontLoader.buttonStyle);
+        displayGMText.setText((Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival)? "Survial" :
+                "Crawl");
+        displayGMText.setSize(displayGMText.getWidth(), displayGMText.getHeight());
+        displayGMText.setOriginX(displayGMText.getWidth() / 2);
+        displayGMText.setOriginY(displayGMText.getHeight()/ 2);
+        displayGMText.setAlignment(Align.left);
+        displayGMText.setPosition((lastGMDisplay.getX() + lastGMDisplay.getWidth() + 20),150);
+        
+        
+        Label nextGMDisplay = new Label(">", FontLoader.buttonStyle);
+        nextGMDisplay.setSize(nextGMDisplay.getWidth() * Options.aspectRatio, nextGMDisplay.getHeight() * Options.aspectRatio);
+        nextGMDisplay.setOriginX(nextGMDisplay.getWidth() / 2);
+        nextGMDisplay.setOriginY(nextGMDisplay.getHeight()/ 2);
+        nextGMDisplay.setAlignment(Align.left);
+        nextGMDisplay.setPosition((displayText.getX() + displayGMText.getWidth() + 20),  150);
+        nextGMDisplay.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                nextGMMode();
+            }
+        
+        });
+        
+        mainStage.addActor(displayGMText);
+        
+        mainStage.addActor(lastGMDisplay);
+        mainStage.addActor(nextGMDisplay);
+        
+        
     }
-    
+    public void nextDungeon(){
+        int d = Difficulty.RoomType.ordinal();
+        d++;
+        if(d >= Difficulty.RoomTypes.values().length){
+            d = 0;
+        }
+        Difficulty.RoomType = Difficulty.RoomTypes.values()[d];
+        displayText.setText((Difficulty.RoomType == Difficulty.RoomTypes.Dungeon)? "Dungeon" :
+                "Forest");
+        if(Multiplayer.host){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("mapType", d);
+                Multiplayer.socket.emit("hostChangedMapType", data);
+            }catch(Exception e){
+
+            }
+        } 
+    }
+    public void previousDungeon(){
+        int d = Difficulty.RoomType.ordinal();
+        d--;
+        if(d < 0){
+            d = Difficulty.RoomTypes.values().length - 1;
+        }
+        Difficulty.RoomType = Difficulty.RoomTypes.values()[d];
+        displayText.setText((Difficulty.RoomType == Difficulty.RoomTypes.Dungeon)? "Dungeon" :
+                "Forest");
+        if(Multiplayer.host){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("mapType", d);
+                Multiplayer.socket.emit("hostChangedMapType", data);
+            }catch(Exception e){
+
+            }
+        }       
+    }
+    public void nextGMMode(){
+        int d = Multiplayer.GameModeType.ordinal();
+        d++;
+        if(d >= Multiplayer.GameModeTypes.values().length){
+            d = 0;
+        }
+        Multiplayer.GameModeType = Multiplayer.GameModeTypes.values()[d];
+        displayGMText.setText((Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival)? "Survial" :
+                "Crawl");
+        if(Multiplayer.host){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("gameMode", d);
+                Multiplayer.socket.emit("hostChangedGameMode", data);
+            }catch(Exception e){
+
+            }
+        }
+    }
+    public void previousGMMode(){
+        int d = Multiplayer.GameModeType.ordinal();;
+        d--;
+        if(d < 0){
+            d = Multiplayer.GameModeTypes.values().length - 1;
+        }
+        Multiplayer.GameModeType = Multiplayer.GameModeTypes.values()[d];
+        displayGMText.setText((Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival)? "Survial" :
+                "Crawl");
+        if(Multiplayer.host){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("gameMode", d);
+                Multiplayer.socket.emit("hostChangedGameMode", data);
+            }catch(Exception e){
+
+            }
+        }
+    }
     public void updateSelected(InputEvent event, float x, float y){
         for(int i = 0; i < heroSelections.size(); i++){
             if(heroSelections.get(i) == event.getListenerActor()){
@@ -150,14 +327,18 @@ public class HeroSelectionScreen extends BaseScreen {
     }
 	
     public void startGame(){
-        LevelScreen l = new LevelScreen();
+        LevelScreen ls = new LevelScreen();
         if(MainMenuScreen.musicPlaying){
             MainMenuScreen.backgroundMusic.stop();
             MainMenuScreen.musicPlaying = false;
         }
-        l.setGameMode(new SurvivalGameMode());
+        if(Multiplayer.GameModeType == Multiplayer.GameModeTypes.Survival){
+                ls.setGameMode(new SurvivalGameMode());
+            }else if(Multiplayer.GameModeType == Multiplayer.GameModeTypes.Crawl){
+                ls.setGameMode(new DungeonCrawlGameMode());
+            }
         cleanUpResources();
-        BaseGame.setActiveScreen(l);
+        BaseGame.setActiveScreen(ls);
     }
     public void cancelGame(){
         cleanUpResources();
