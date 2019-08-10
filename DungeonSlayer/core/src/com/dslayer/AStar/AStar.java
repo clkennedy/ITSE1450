@@ -10,10 +10,12 @@ package com.dslayer.AStar;
  * @author ARustedKnight
  */
 //http://www.codebytes.in/2015/02/a-shortest-path-finding-algorithm.html
+import com.atkinson.game.engine.BaseActor;
+import com.badlogic.gdx.math.Vector2;
 import java.util.*;
 
 public class AStar {
-    public static final int DIAGONAL_COST = 14;
+    public static final int DIAGONAL_COST = 99;
     public static final int V_H_COST = 10;
     
     static class Cell{  
@@ -71,6 +73,9 @@ public class AStar {
     public static void AStar(){ 
         
         //add the start location to open list.
+        if(grid[startI][startJ] == null){
+            int u = 0;
+        }
         open.add(grid[startI][startJ]);
         
         Cell current;
@@ -127,11 +132,14 @@ public class AStar {
         } 
     }
     
-    public static void test(int tCase, int x, int y, int si, int sj, int ei, int ej, int[][] blocked){
-           System.out.println("\n\nTest Case #"+tCase);
+    public static List<Vector2> getPath(Vector2 from, Vector2 to, Integer[][] map){
+        return getPath((int)from.x, (int)from.y, (int)to.x, (int)to.y, map);
+    }
+    
+    public static List<Vector2> getPath(int si, int sj, int ei, int ej, Integer[][] map){
             //Reset
-           grid = new Cell[x][y];
-           closed = new boolean[x][y];
+           grid = new Cell[map.length][map[0].length];
+           closed = new boolean[map.length][map[0].length];
            open = new PriorityQueue<>((Object o1, Object o2) -> {
                 Cell c1 = (Cell)o1;
                 Cell c2 = (Cell)o2;
@@ -140,13 +148,17 @@ public class AStar {
                         c1.finalCost>c2.finalCost?1:0;
             });
            //Set start position
-           setStartCell(si, sj);  //Setting to 0,0 by default. Will be useful for the UI part
+            setStartCell(si, sj);  //Setting to 0,0 by default. Will be useful for the UI part
            
            //Set End Location
-           setEndCell(ei, ej); 
+            setEndCell(ei, ej); 
+            if(BaseActor.debug){
+                System.out.println(new Vector2(si, sj));
+                System.out.println(new Vector2(ei, ej));
+            }
            
-           for(int i=0;i<x;++i){
-              for(int j=0;j<y;++j){
+           for(int i=0;i<map.length;++i){
+              for(int j=0;j<map[0].length;++j){
                   grid[i][j] = new Cell(i, j);
                   grid[i][j].heuristicCost = Math.abs(i-endI)+Math.abs(j-endJ);
 //                  System.out.print(grid[i][j].heuristicCost+" ");
@@ -159,45 +171,48 @@ public class AStar {
              Set blocked cells. Simply set the cell values to null
              for blocked cells.
            */
-           for(int i=0;i<blocked.length;++i){
-               setBlocked(blocked[i][0], blocked[i][1]);
+           for(int row=0;row<map.length;row ++){
+               for(int col = 0; col < map[0].length; col++){
+                   if(map[row][col] != 0){
+                       setBlocked(row, col);
+                   }
+               }
            }
            
-           //Display initial map
-           System.out.println("Grid: ");
-            for(int i=0;i<x;++i){
-                for(int j=0;j<y;++j){
-                   if(i==si&&j==sj)System.out.print("SO  "); //Source
-                   else if(i==ei && j==ej)System.out.print("DE  ");  //Destination
-                   else if(grid[i][j]!=null)System.out.printf("%-3d ", 0);
-                   else System.out.print("BL  "); 
+            AStar(); 
+            if(BaseActor.debug){
+                System.out.println("\nScores for cells: ");
+                for(int i=0;i<map.length;i++){
+                    for(int j=0;j<map[0].length;j++){
+                        if(grid[i][j]!=null)System.out.printf("%-5d ", grid[i][j].finalCost);
+                        else System.out.printf("%-5s", "BL");
+                    }
+                    System.out.println();
                 }
                 System.out.println();
-            } 
-            System.out.println();
-           
-           AStar(); 
-           System.out.println("\nScores for cells: ");
-           for(int i=0;i<x;++i){
-               for(int j=0;j<x;++j){
-                   if(grid[i][j]!=null)System.out.printf("%-3d ", grid[i][j].finalCost);
-                   else System.out.print("BL  ");
-               }
-               System.out.println();
-           }
-           System.out.println();
             
+            }
+           List<Vector2> moveTos = new ArrayList();
            if(closed[endI][endJ]){
                //Trace back the path 
-                System.out.println("Path: ");
+                //System.out.println("Path: ");
                 Cell current = grid[endI][endJ];
-                System.out.print(current);
+                moveTos.add(new Vector2(current.j, current.i));
+                if(BaseActor.debug){
+                    System.out.print(current);
+                }
                 while(current.parent!=null){
-                    System.out.print(" -> "+current.parent);
+                    if(BaseActor.debug){
+                        System.out.print(" -> "+current.parent);
+                    }
                     current = current.parent;
+                    if(current.parent != null){
+                        moveTos.add(0, new Vector2(current.j, current.i));
+                    }
                 } 
-                System.out.println();
-           }else System.out.println("No possible path");
+               // System.out.println();
+           }//else System.out.println("No possible path");
+           return moveTos;
     }
 
 }

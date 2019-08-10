@@ -9,6 +9,7 @@ import com.atkinson.game.engine.BaseActor;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.dslayer.AStar.AStar;
 import com.dslayer.content.Enemy.BaseEnemy;
 import com.dslayer.content.Enemy.Boss.Phantom.PhantomBoss;
 import com.dslayer.content.Enemy.Skeleton.SkeletonArmored;
@@ -74,12 +75,14 @@ public class Spawner {
         return spawnRandomSkeleton(room);
     }
     
-    public static List<Vector2> getPath(Vector2 to, Vector2 from){
+    public static List<Vector2> getPath(Vector2 from, Vector2 to){
+        if(mapLayout == null)
+            return new ArrayList<Vector2>();
         
-        return null;
+        return AStar.getPath(from, to, mapLayout);
     }
     
-    public static List<Vector2> getMoveTo(Vector2 from, int spaces){
+    public static Vector2 getMoveTo(Vector2 from, int spaces){
         
         return null;
     }
@@ -105,7 +108,7 @@ public class Spawner {
     }
     
     public static Vector2 getSpawnLocation(LevelGenerator lg){
-        //_levelGen = lg;
+        _levelGen = lg;
         mapLayout = new Integer[lg.getMapLayout().length][lg.getMapLayout()[0].length];
         for(int row = 0; row < lg.getMapLayout().length; row ++){
             for(int col = 0; col < lg.getMapLayout()[row].length; col ++){

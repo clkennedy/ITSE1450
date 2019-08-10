@@ -118,7 +118,7 @@ public class MultiplayerCrawlGameMode extends GameMode{
     private float updatePlayerTimer = .2f;
     
     private float SyncEnemyTime = 0;
-    private float SyncEnemyTimer = 3f;
+    private float SyncEnemyTimer = .6f;
     
     private List<skillInfo> heroCast;
     private List<enemyInfo> enemiesToSpawn;
@@ -711,6 +711,14 @@ public class MultiplayerCrawlGameMode extends GameMode{
                                         String netID = data.getString("id");
                                         int tarX = data.getInt("x");
                                         int tarY = data.getInt("y");
+                                        String targetId = data.getString("target");
+                                        if(targetId.equals("0")){
+                                           ((BaseEnemy)gameObjects.get(netID)).setTarget(null); 
+                                        }else if(targetId.equals(player.network_id)){
+                                            ((BaseEnemy)gameObjects.get(netID)).setTarget(player); 
+                                        }else{
+                                            ((BaseEnemy)gameObjects.get(netID)).setTarget(OtherPlayers.get(targetId));
+                                        }
                                         ((BaseEnemy)gameObjects.get(netID)).moveTo = new Vector2(tarX, tarY);
                                     }catch(Exception e){
                                         System.out.println("Failed to Update Enemy Target: " + e.getMessage());

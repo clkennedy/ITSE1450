@@ -19,6 +19,8 @@ public class RoomPanels extends BaseActor{
     private static final float originalDefaultSize = 50;
     public static float defaultSize = 50 * Options.aspectRatio;
     
+    protected boolean canSeeThrough = false;
+    
     protected BaseActor DefaultSize(){
         setScale(1f);
         setSize(defaultSize, defaultSize);
@@ -32,6 +34,11 @@ public class RoomPanels extends BaseActor{
     public static float getDefaultSize(){
         return defaultSize;
     }
+    
+    public boolean cabSeeThrough(){
+        return canSeeThrough;
+    }
+    
      public static void resetDefaultSize(){
         defaultSize = originalDefaultSize * Options.aspectRatio;
     }

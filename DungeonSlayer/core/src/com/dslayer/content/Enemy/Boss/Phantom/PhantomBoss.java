@@ -212,7 +212,7 @@ public class PhantomBoss extends BaseBoss{
             targets.clear();
             return;
         }
-        skillToCast = MathUtils.random(2, 2);
+        skillToCast = MathUtils.random(1, 2);
         attack(null);
         degreeVariation = MathUtils.random(25, 35);
         if(skillToCast == 2){

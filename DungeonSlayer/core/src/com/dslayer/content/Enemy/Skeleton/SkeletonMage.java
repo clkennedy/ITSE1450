@@ -54,7 +54,8 @@ public class SkeletonMage extends BaseSkeleton{
         attackDamage = 30;
 
         AttackRange = new Circle(x, y, 300* Options.aspectRatio);
-        TargetRange = new Circle(x, y, 500* Options.aspectRatio);
+        searchTargetRange = 500* Options.aspectRatio;
+        TargetRange = new Circle(x, y, searchTargetRange);
         
         skill = new FireBall();
         skill.setDamage(40);
@@ -126,7 +127,7 @@ public class SkeletonMage extends BaseSkeleton{
                 }
                 anyPlayerInAttackRange = true;
                 chaseTarget = false;
-                if(!canAttack)
+                if(!canAttack || !canSee(player))
                     return;
                 attacking = true;
                 setSpeed(0);

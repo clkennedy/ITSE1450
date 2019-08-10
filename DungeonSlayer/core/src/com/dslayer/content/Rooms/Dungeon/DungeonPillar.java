@@ -18,13 +18,13 @@ import com.dslayer.content.options.Options;
 public class DungeonPillar extends RoomWall{
     
     private static String dPillar = "Rooms/Dungeon/DungeonPillar.png";
-    private static float tSize = 80;
+    public static float tSize = 80 * Options.aspectRatio;
     
     public DungeonPillar(){
         super();
         //texture = new Texture(Gdx.files.internal(dHole));
         loadTexture(dPillar);
-        //setSize(80,80);
+        setSize(tSize,tSize);
         DefaultSize();
         setOrigin(getWidth() / 2, getHeight() / 2);
         setBoundaryRectangle();

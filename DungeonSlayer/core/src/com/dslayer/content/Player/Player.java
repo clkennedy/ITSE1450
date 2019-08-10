@@ -47,7 +47,7 @@ import org.json.JSONObject;
  */
 public class Player extends BaseActor{
     
-    private boolean ignoreRoomObjects = true;
+    private boolean ignoreRoomObjects = false;
     
     public boolean isLocalPlayer = true;
     
@@ -567,31 +567,54 @@ public class Player extends BaseActor{
                 setAcceleration(accel * speedModifier * Options.aspectRatio * 2);
                 setMaxSpeed(playerSpeed * speedModifier);
                 if(_playerControls.isPressed("Right")){
-                    //setSpeed(accel * speedModifier * Options.aspectRatio);
+                    setMotionAngle(0);
+                    if(_playerControls.isPressed("Down")){
+                        setMotionAngle(315);
+                    }else if(_playerControls.isPressed("Up")){
+                        setMotionAngle(45);
+                    }
                     //setAcceleration(accel * speedModifier * Options.aspectRatio);
                     isMoving = true;
-                    accelerateAtAngle(0);
+                    
                 }
                 if(_playerControls.isPressed("Left")){
-                    //setSpeed(accel * speedModifier * Options.aspectRatio);
-                    //setAcceleration(accel * speedModifier * Options.aspectRatio);
+                    setMotionAngle(180);
+                    if(_playerControls.isPressed("Down")){
+                        setMotionAngle(225);
+                    }else if(_playerControls.isPressed("Up")){
+                        setMotionAngle(135);
+                    }
                     isMoving = true;
-                    accelerateAtAngle(180);
+                    //accelerateAtAngle(180);
                 }
                 if(_playerControls.isPressed("Down")){
                     //setSpeed(accel * speedModifier * Options.aspectRatio);
                     //setAcceleration(accel * speedModifier * Options.aspectRatio);
+                    setMotionAngle(270);
+                    if(_playerControls.isPressed("Right")){
+                        setMotionAngle(315);
+                    }else if(_playerControls.isPressed("Left")){
+                        setMotionAngle(225);
+                    }
                     isMoving = true;
-                    accelerateAtAngle(270);
+                    //accelerateAtAngle(270);
                 }
                 if(_playerControls.isPressed("Up")){
                     //setSpeed(accel * speedModifier * Options.aspectRatio);
-
+                    setMotionAngle(90);
+                    if(_playerControls.isPressed("Right")){
+                        setMotionAngle(45);
+                    }else if(_playerControls.isPressed("Left")){
+                        setMotionAngle(135);
+                    }
                     isMoving = true;
-                    accelerateAtAngle(90);
+                    //accelerateAtAngle(90);
                 }
             }
-            
+            if(isMoving){
+                accelerateForward2();
+                //setSpeed(accel * speedModifier * Options.aspectRatio);
+            }
        }
        
        applyPhysics(dt);

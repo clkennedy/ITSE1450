@@ -51,9 +51,10 @@ public class SkeletonArmored extends BaseSkeleton{
         setMaxSpeed(40);
         setOrigin(getWidth() /2, getHeight() / 2);
         attackDamage = 30;
-
+        canGetAngry = true;
         AttackRange = new Circle(x, y, 40* Options.aspectRatio);
-        TargetRange = new Circle(x, y, 300* Options.aspectRatio);
+        searchTargetRange = 300* Options.aspectRatio;
+        TargetRange = new Circle(x, y, searchTargetRange);
         
         castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.slash);
         walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);

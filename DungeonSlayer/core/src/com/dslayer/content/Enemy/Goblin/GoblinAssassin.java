@@ -49,7 +49,8 @@ public class GoblinAssassin extends BaseGoblin{
         healthBar = new Rectangle(x, y, maxHealth , 5);
         
         AttackRange = new Circle(x, y, 30* Options.aspectRatio);
-        TargetRange = new Circle(x, y, 500* Options.aspectRatio);
+        searchTargetRange = 500* Options.aspectRatio;
+        TargetRange = new Circle(x, y, searchTargetRange);
         
         castAnimList = LPC.loadMulti(attack , 4, 4, .1f, false);
         walkAnimList = LPC.loadMulti(walk , 4, 7, .1f, true);

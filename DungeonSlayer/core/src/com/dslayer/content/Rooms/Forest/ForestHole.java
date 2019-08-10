@@ -26,7 +26,7 @@ public class ForestHole extends ForestObject{
         setSize(getWidth() * Options.aspectRatio, getHeight() * Options.aspectRatio);
         setOrigin(getWidth() / 2, getHeight() / 2);
         setBoundaryPolygon(8);
-        
+        canSeeThrough = true;
     }
     
     public ForestHole(float x, float y, Stage stage){

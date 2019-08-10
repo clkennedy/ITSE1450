@@ -39,6 +39,8 @@ import com.dslayer.content.options.Difficulty;
 import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
 import java.util.ArrayList;
+import java.util.List;
+//import javafx.scene.shape.Line;
 import org.json.JSONObject;
 
 /**
@@ -48,6 +50,11 @@ import org.json.JSONObject;
 public abstract class BaseEnemy extends BaseActor{
 
     protected boolean chaseTarget = true;
+    
+    private String exlaimPoint = "particles/ExclaimPointMark.png";
+    private String questionMark = "particles/QuestionMarkEmote.png";
+    private boolean multiplayerPlayAngry = false;
+    private boolean multiplayerPlayQuestionMark= false;
     
     public static enum type{SkeletionWarrior, SkeletonMage, ArmoredSkeleton, BlueGolem, GoblinAssassin, Phantom};
     
@@ -68,6 +75,10 @@ public abstract class BaseEnemy extends BaseActor{
     public BaseActor target = null;
     protected Circle AttackRange;
     protected Circle TargetRange;
+    protected float searchTargetRange;
+    
+    protected float maxSpeed = 50 * Options.aspectRatio;
+    protected float Acceleration = 600f;
     
     protected float attackDamage;
     
@@ -89,10 +100,20 @@ public abstract class BaseEnemy extends BaseActor{
     
     protected boolean ignoreTracking = false;
     
+    protected BaseActor emote;
+    
+    protected List<Vector2> listOfMoveTOs;
+    //protected Line lineOfSight;
+    protected boolean canGetAngry = false;
+    protected boolean isAngry = false;
+    
+    protected float angryCD = 4f;
+    protected float angryCDTimer = 0f;
+    
     protected boolean canMove = true;
     
     protected boolean canSendMoveChangedEvent = true;
-    protected float movedChangedEventTimer = 1f;
+    protected float movedChangedEventTimer = .3f;
     protected float movedChangedEventTimerCount = 0f;
     
     protected Backpack backpack = new Backpack();;
@@ -125,10 +146,19 @@ public abstract class BaseEnemy extends BaseActor{
     }
     
     public BaseEnemy() {
+        emote = new BaseActor();
+        listOfMoveTOs = new ArrayList<Vector2>();
     }
     public boolean inventoryContains(Class<? extends Items> cls){
         return backpack.containsItem(cls);
     }
+    
+    @Override
+    public void setMaxSpeed(float speed){
+        this.maxSpeed = speed;
+        super.setMaxSpeed(speed);
+    }
+    
     public boolean addToBackpack(Items item){
         return backpack.addItem(item);
     }
@@ -140,8 +170,10 @@ public abstract class BaseEnemy extends BaseActor{
     public BaseEnemy(float x, float y, Stage s){
         super(x,y,s);
         size = 50 * Options.aspectRatio;
-        moveTo = new Vector2();
+        moveTo = new Vector2(x,y);
         healthBar = new Rectangle(x, y, maxHealth , 5);
+        emote = new BaseActor((getX()) + ((getWidth()/2)), getY() + getHeight() + 5, this.getStage());
+        listOfMoveTOs = new ArrayList<Vector2>();
         
         footSteps = Gdx.audio.newSound(Gdx.files.internal("Sounds/footsteps_concrete_.mp3"));
         footSteps.loop(Options.soundVolume * .3f);
@@ -163,6 +195,10 @@ public abstract class BaseEnemy extends BaseActor{
         }
         else if(health - damageTaken - damage > 0){
             this.damageTaken += damage;
+        }
+        if(canGetAngry && !isAngry && !isDead()){
+            playExclaimPoint();
+            isAngry = true;
         }
         if(Multiplayer.socket != null && Multiplayer.socket.connected()){
             JSONObject data = new JSONObject();
@@ -196,6 +232,10 @@ public abstract class BaseEnemy extends BaseActor{
         else if(health - damageTaken - damage > 0){
             this.damageTaken += damage;
         }
+        if(this.canGetAngry && !this.isAngry && !this.isDead()){
+            this.isAngry = true;
+            multiplayerPlayAngry = true;
+        }
     }
     
     protected void lookForTarget(){
@@ -206,41 +246,96 @@ public abstract class BaseEnemy extends BaseActor{
             if(player.boundaryPolygon == null)
                 continue;
             if(Intersector.overlaps(TargetRange,player.getBoundaryPolygon().getBoundingRectangle()) && !((Player)player).isDead()){
-                if(_room != null && !_room.isActorInRoom(player)){
+                if(_room != null && !_room.isActorInRoom(player) && !isAngry){
+                    if(target == player){
+                        target = null;
+                        break;
+                    }
                     continue;
                 }
-                if(target == null){
-                    target = player;
-                    break;
-                } 
                 if(target == player){
                     break;
                 }
+                if(target != null && !canSee(target) && !isAngry){
+                    target = null;
+                    break;
+                }
+                if(target == null && canSee(player)){
+                    target = player;
+                    break;
+                } 
             }
             else{
                 target = null;
             }
         }
         
+        if(target != null && _room != null && !_room.isActorInRoom(target) && listOfMoveTOs.isEmpty() && isAngry && !canSee(target)){
+            moveTo.x = getX() + (getWidth() / 2);
+            moveTo.y = getY() + (getHeight() / 2);
+            int relativeX = (int)Math.floor((this.moveTo.x) / RoomPanels.getDefaultSize());
+            int toRelX = (int)Math.floor((target.getX() + (target.getWidth() / 2)) / RoomPanels.getDefaultSize());
+            int relativeY = (int)Math.floor((Difficulty.worldHeight - (this.moveTo.y)) / RoomPanels.getDefaultSize());
+            int toRelY = (int)Math.floor((Difficulty.worldHeight - (target.getY() + (target.getHeight() / 2))) / RoomPanels.getDefaultSize());
+              listOfMoveTOs = Spawner.getPath(new Vector2(relativeY, relativeX), new Vector2(toRelY,toRelX));
+        }else if( target != null && canSee(target)){
+            listOfMoveTOs.clear();
+            moveTo.x = target.getX() + (target.getWidth()/2);
+            moveTo.y = target.getY() + (target.getHeight()/2);
+            moveToChanged();
+        }else if(target != null && !canSee(target) && !isAngry){
+            moveTo.x = getX() + (getWidth() / 2);
+            moveTo.y = getY() + (getHeight() / 2);
+        }
+        
         if(((target == null || ignoreTracking) && (hitWall || Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle())))){
-            if(_room != null){
-                moveTo.x = MathUtils.random(_room.getRoomX() * RoomPanels.defaultSize,(_room.getRoomX() + _room.getRoomWidth()) * RoomPanels.defaultSize);
-                moveTo.y = MathUtils.random(Difficulty.worldHeight - (_room.getRoomY() * RoomPanels.defaultSize),
-                        Difficulty.worldHeight - ((_room.getRoomY() + _room.getRoomHeight()) * RoomPanels.defaultSize)); 
-            }else{
+            if(_room != null && _room.isActorInRoom(this)){
+                listOfMoveTOs.clear();
+                moveTo.x = MathUtils.random((_room.getRoomX() + 1) * RoomPanels.defaultSize,(_room.getRoomX() + _room.getRoomWidth() - 1) * RoomPanels.defaultSize);
+                moveTo.y = MathUtils.random(Difficulty.worldHeight - ((_room.getRoomY() + 1) * RoomPanels.defaultSize),
+                        Difficulty.worldHeight - ((_room.getRoomY() + _room.getRoomHeight() -1 ) * RoomPanels.defaultSize)); 
+            }else if(_room != null && !_room.isActorInRoom(this) && listOfMoveTOs.isEmpty()){
+                int relativeX = (int)Math.floor((this.getX() + (this.getWidth() / 2)) / RoomPanels.getDefaultSize());
+                int toRelX = (int)MathUtils.random(_room.getRoomX() + 1.5f,(_room.getRoomX() + _room.getRoomWidth() -1.5f));;
+                int relativeY = (int)Math.floor((Difficulty.worldHeight - (this.getY() + (this.getHeight()/ 2))) / RoomPanels.getDefaultSize());
+                int toRelY = (int)(MathUtils.random(((_room.getRoomY() + 1.5f)),
+                        ((_room.getRoomY() + _room.getRoomHeight() - 1.5f))));
+                System.out.println(new Vector2(toRelX, toRelY));
+                listOfMoveTOs = Spawner.getPath(new Vector2(relativeY, relativeX), new Vector2(toRelY,toRelX));
+            }
+            else if(!listOfMoveTOs.isEmpty() && Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle())){
+                moveTo = listOfMoveTOs.remove(0);
+                //System.out.println(moveTo);
+                moveTo.x = ((moveTo.x + .5f) *RoomPanels.defaultSize);
+                moveTo.y = Difficulty.worldHeight - ((moveTo.y + .5f) *RoomPanels.defaultSize);
+                //System.out.println(moveTo);
+                moveToChanged();
+            }
+            else if(listOfMoveTOs.isEmpty()){
                 moveTo.x = MathUtils.random(Difficulty.worldWidth);
                 moveTo.y = MathUtils.random(Difficulty.worldHeight); 
             }
-            if(hitWall)
-                setSpeed(0);
+            //if(hitWall)
+                //setSpeed(0);
             hitWall = false;
             moveToChanged();
         }
         else if(target != null && chaseTarget){
-            moveTo.x = target.getX() + (target.getWidth()/2);
-            moveTo.y = target.getY() + (target.getHeight()/2);
-            moveToChanged();
+            if(Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle()) && !listOfMoveTOs.isEmpty()){
+                moveTo = listOfMoveTOs.remove(0);
+                //System.out.println(moveTo);
+                moveTo.x = ((moveTo.x + .5f) *RoomPanels.defaultSize);
+                moveTo.y = Difficulty.worldHeight - ((moveTo.y + .5f) *RoomPanels.defaultSize);
+                //System.out.println(moveTo);
+                moveToChanged();
+                return;
+            }else if(canSee(target)){
+                moveTo.x = target.getX() + (target.getWidth()/2);
+                moveTo.y = target.getY() + (target.getHeight()/2);
+                
+            }
         }
+        moveToChanged();
     }
     
     public void die(){
@@ -281,6 +376,10 @@ public abstract class BaseEnemy extends BaseActor{
         }
     }
     
+    public void setTarget(BaseActor b){
+        target = b;
+    }
+    
     public abstract void attack(BaseActor player);
     
     protected void moveToChanged(){
@@ -293,6 +392,8 @@ public abstract class BaseEnemy extends BaseActor{
                 data.put("id", this.network_id);
                 data.put("x", moveTo.x  / Options.aspectRatio);
                 data.put("y", moveTo.y  / Options.aspectRatio);
+                String targetId = (target != null) ? target.network_id : "0";
+                data.put("target", targetId);
                 Multiplayer.socket.emit("enemyTargetChange", data);
             }catch(Exception e){
                 System.out.println("Failed to push target change" + e.getMessage());
@@ -323,6 +424,22 @@ public abstract class BaseEnemy extends BaseActor{
         }
     }
     
+    public void playExclaimPoint(){
+        if(emote.hasTexture())
+            return;
+        emote.loadAnimationFromSheet(exlaimPoint, 1, 8, .05f, false);
+        emote.resetAnim();
+        emote.setPosition(((getX()) + ((getWidth()/2)) ) - (emote.getWidth() / 2) , getY() + getHeight() + 5);
+    }
+    
+    public void playQuestionMark(){
+        if(emote.hasTexture() && isAngry)
+            return;
+        emote.loadAnimationFromSheet(questionMark, 1, 8, .05f, false);
+        emote.resetAnim();
+        emote.setPosition(((getX()) + ((getWidth()/2)) ) - (emote.getWidth() / 2) , getY() + getHeight() + 5);
+    }
+    
     public void cast(BaseActor actor, Vector2 v2, Skill.From from){
         
     }
@@ -337,6 +454,21 @@ public abstract class BaseEnemy extends BaseActor{
         calculateHealth(dt);
         if(isMoving() && this.getStage().getCamera().frustum.pointInFrustum(this.getX(), this.getY(), 0)){
             footSteps.resume();
+        }
+        
+        if(emote != null && emote.hasTexture() && emote.isAnimationFinished()){
+            emote.removeTexture();
+        }else if(emote.hasTexture()){
+            emote.setPosition(((getX()) + ((getWidth()/2)) ) - (emote.getWidth() / 2) , getY() + getHeight() + 5);
+        }
+        
+        if(multiplayerPlayAngry){
+            playExclaimPoint();
+            multiplayerPlayAngry = false;
+        }
+        else if(multiplayerPlayQuestionMark){
+            playQuestionMark();
+            multiplayerPlayQuestionMark = false;
         }
         
         if(!canSendMoveChangedEvent){
@@ -358,8 +490,31 @@ public abstract class BaseEnemy extends BaseActor{
         }
         if(isDying)
             return;
+        
+        if(isAngry){
+            if(TargetRange != null){
+                TargetRange.radius = searchTargetRange * 1.5f;
+            }
+            super.setMaxSpeed(maxSpeed * 2);
+            if(target == null || !canSee(target)){
+                angryCDTimer += dt;
+            }else{
+                angryCDTimer = 0;
+            }
+            if(angryCDTimer > angryCD){
+                playQuestionMark();
+                isAngry = false;
+                angryCDTimer = 0;
+            }
+        }else{
+            if(TargetRange != null){
+                TargetRange.radius = searchTargetRange;
+                super.setMaxSpeed(maxSpeed);
+            }
+        }
+        
         healthBar.x = (getX()) + ((getWidth()/2) - (healthBar.width /2));
-        healthBar.y = getY() + getHeight();
+        healthBar.y = getY() + getHeight() + 5;
         //wall Collison
         ArrayList<BaseActor> allRoomObjects = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels");
         for(BaseActor wall: allRoomObjects){

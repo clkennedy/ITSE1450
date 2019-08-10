@@ -43,6 +43,8 @@ public class SkeletonWarrior extends BaseSkeleton{
         health = maxHealth;
         healthBar = new Rectangle(x, y, maxHealth , 5);
         
+        canGetAngry = true;
+        
         setSize(size,size);
         setBoundaryPolygonLong(10);
         setMaxSpeed(50* Options.aspectRatio);
@@ -50,7 +52,8 @@ public class SkeletonWarrior extends BaseSkeleton{
         attackDamage = 30;
 
         AttackRange = new Circle(x, y, 40* Options.aspectRatio);
-        TargetRange = new Circle(x, y, 300* Options.aspectRatio);
+        searchTargetRange = 300* Options.aspectRatio;
+        TargetRange = new Circle(x, y, searchTargetRange);
         
         castAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.slash);
         walkAnimList = LPC.LoadGroupFromFullSheet(texture, LPC.LPCGroupAnims.walk);
@@ -135,30 +138,6 @@ public class SkeletonWarrior extends BaseSkeleton{
         setSize(size, size);
         if(player != null)
             target = player;
-    }
-    
-    private void moveTowardTarget(){
-        
-        setAcceleration(100);
-        if(moveTo.x < getX()){
-            accelerateAtAngle(180);
-            currentDirection = WalkDirection.left;
-        }
-        if(moveTo.x > getX()){
-            accelerateAtAngle(0);
-            currentDirection = WalkDirection.right;
-        }
-        if(moveTo.y > getY()){
-            accelerateAtAngle(90);
-            currentDirection = WalkDirection.up;
-        }
-        if(moveTo.y < getY()){
-            accelerateAtAngle(270);
-            currentDirection = WalkDirection.down;
-        }
-        
-        setAnimation(walkAnimList.get(currentDirection.ordinal()));
-        setSize(size, size);
     }
     
 }

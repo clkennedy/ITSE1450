@@ -25,7 +25,7 @@ public class DungeonHole extends DungeonObject{
         setSize(getWidth() * Options.aspectRatio, getHeight() * Options.aspectRatio);
         setOrigin(getWidth() / 2, getHeight() / 2);
         setBoundaryPolygon(8);
-        
+        canSeeThrough = true;
     }
     
     public DungeonHole(float x, float y, Stage stage){

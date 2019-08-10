@@ -59,7 +59,8 @@ public class BlueGolem extends BaseGolem{
         attackDamage = 60;
 
         AttackRange = new Circle(x, y, 100* Options.aspectRatio);
-        TargetRange = new Circle(x, y, 500* Options.aspectRatio);
+        searchTargetRange = 500* Options.aspectRatio;
+        TargetRange = new Circle(x, y, searchTargetRange);
         
         castAnimList = LPC.loadMulti(attack, 4, 7, .2f, false);
         walkAnimList = LPC.loadMulti(walk, 4, 7, .5f, true);

@@ -125,7 +125,7 @@ public class DungeonRoom extends Room{
                     b = new DungeonHole();
                     break;
                 case 1:
-                    b = new DungeonPillar();
+                    b = new DungeonPillar(DungeonPillar.tSize);
                     break;
                 default:
                     b = new DungeonHole();

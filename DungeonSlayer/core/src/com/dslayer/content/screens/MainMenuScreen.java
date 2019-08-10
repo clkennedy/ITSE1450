@@ -215,6 +215,24 @@ public class MainMenuScreen extends BaseScreen {
         
         });
         mainStage.addActor(quit);
+        
+        Label Credits = new Label("Credits", FontLoader.buttonStyle);
+        Credits.setSize((Credits.getWidth() * 1.2f) * Options.aspectRatio, (Credits.getHeight() *1.2f) * Options.aspectRatio);
+        Credits.setOriginX(quit.getWidth() / 2);
+        Credits.setOriginY(quit.getHeight()/ 2);
+        Credits.setPosition((Gdx.graphics.getWidth() - Credits.getRight() - 50), 50);
+        Credits.setAlignment(Align.right);
+        Credits.addListener(new Hover(){
+            
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                event.getListenerActor().remove();
+                Progress.Save();
+                BaseGame.setActiveScreen( new CreditScreen());
+            }
+        
+        });
+        mainStage.addActor(Credits);
        
        currentMenuIndex = -1;
        this.show();

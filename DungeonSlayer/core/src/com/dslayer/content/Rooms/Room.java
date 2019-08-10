@@ -162,10 +162,10 @@ public abstract class Room {
     }
     
     public boolean isActorInRoom(BaseActor actor){
-       float bottom = (Difficulty.worldHeight - ((roomY + roomHeight -1) * RoomPanels.defaultSize));
-       float top = (Difficulty.worldHeight - ((roomY +1) * RoomPanels.defaultSize));
-       float leftWall = (roomX + 1) * (RoomPanels.defaultSize);
-       float rightWall = (roomX + roomWidth - 1) * (RoomPanels.defaultSize);
+       float bottom = (Difficulty.worldHeight - ((roomY + roomHeight) * RoomPanels.defaultSize));
+       float top = (Difficulty.worldHeight - ((roomY) * RoomPanels.defaultSize));
+       float leftWall = (roomX) * (RoomPanels.defaultSize);
+       float rightWall = (roomX + roomWidth) * (RoomPanels.defaultSize);
         /*System.out.println("Top: " + top + "\r\n" +
                                 "Bottom: " + bottom + "\r\n"+
                                 "Right: " +  rightWall + "\r\n"+

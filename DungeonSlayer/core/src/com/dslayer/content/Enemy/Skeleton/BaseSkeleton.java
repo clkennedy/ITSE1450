@@ -55,11 +55,7 @@ public class BaseSkeleton extends BaseEnemy{
         AttackRange = new Circle(x, y, 100* Options.aspectRatio);
         TargetRange = new Circle(x, y, 100* Options.aspectRatio);
         
-        moveTo = new Vector2();
-        moveTo.x = MathUtils.random(Difficulty.worldWidth);
-        moveTo.y = MathUtils.random(Difficulty.worldHeight);
-        
-        moveToRange = new Circle(moveTo.x, moveTo.y, 30);
+        moveToRange = new Circle(moveTo.x, moveTo.y, 10);
         
     }
     
@@ -118,10 +114,11 @@ public class BaseSkeleton extends BaseEnemy{
             return;
         setAcceleration(100 * Options.aspectRatio);
         if(Intersector.overlaps(moveToRange, getBoundaryPolygon().getBoundingRectangle())){
-            return;
+            //setSpeed(20 * Options.aspectRatio);
         }
-        float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - getY()), moveTo.x - getX()));
-        accelerateAtAngle(degrees);
+        float degrees = (float)Math.toDegrees( MathUtils.atan2((moveTo.y - (getY() + (getHeight() / 2))), moveTo.x - (getX() + (getWidth() / 2))));
+        setMotionAngle(degrees);
+        setSpeed(getMaxSpeed());
         
         if(degrees > -45 && degrees <= 45)
             currentDirection = WalkDirection.right;

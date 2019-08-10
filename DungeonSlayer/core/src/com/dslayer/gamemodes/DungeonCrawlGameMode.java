@@ -115,7 +115,7 @@ public class DungeonCrawlGameMode extends GameMode{
         nonBossRooms = lg.getNonBossRooms();
         bossRoom = lg.getBossRooms();
         
-        Vector2 pSpawn = Spawner.getSpawnLocation(bossRoom);
+        Vector2 pSpawn = Spawner.getSpawnLocation(lg);
         
         player = new Player(pSpawn.x,pSpawn.y, mainStage);
         player.setHero(Hero.getNewHero(HeroSelectionScreen.HeroSelectionIndex));

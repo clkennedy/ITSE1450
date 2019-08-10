@@ -26,6 +26,9 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
+import com.dslayer.content.Rooms.RoomFloor;
+import com.dslayer.content.Rooms.RoomPanels;
 import com.dslayer.content.Skills.Skill;
 import com.dslayer.content.options.Multiplayer;
 import com.dslayer.content.options.Options;
@@ -42,7 +45,7 @@ public class BaseActor extends Group {
     public String network_id;
     
     //debugging stuff (custom)
-    protected static boolean debug = false;
+    public static boolean debug = false;
     protected ShapeRenderer sRend;
     // Animation support
     protected Animation<TextureRegion> animation;
@@ -62,6 +65,8 @@ public class BaseActor extends Group {
     private float acceleration;
     private float maxSpeed;
     private float deceleration;
+    Circle visionCircle;
+    Circle targetVisionCircle;
     
     // Collision support
     public Polygon boundaryPolygon;
@@ -212,6 +217,44 @@ public class BaseActor extends Group {
         worldBounds = new Rectangle(0, 0, width, height);
     }
     
+    private float getDistance(Vector2 target){
+        Vector2 currentPos = new Vector2(getX() + (getWidth() / 2), getY() + (getHeight() / 2));
+        
+        return (float)Math.sqrt(Math.pow(target.x - currentPos.x, 2) + Math.pow(target.y - currentPos.y, 2)); 
+    }
+    
+    public boolean canSee(BaseActor b){
+        return canSee(new Vector2(b.getX() + (b.getWidth()/2), b.getY() + (b.getHeight() / 2)));
+    }
+    
+    public boolean canSee(Vector2 point){
+        Vector2 currentPos = new Vector2(getX() + (getWidth() / 2), getY() + (getHeight() / 2));
+        visionCircle = new Circle(currentPos.x, currentPos.y, 3);
+        targetVisionCircle = new Circle(point.x, point.y, RoomPanels.defaultSize /4 +1);
+        float totalDistance = getDistance(point);
+        float currentDistance = 0;
+        Vector2 distanceVector = new Vector2 (RoomPanels.defaultSize /2, 0);
+        float degrees = (float)(MathUtils.atan2((point.y - (this.getY() + (this.getHeight() / 2)) )
+                , point.x - (this.getX() + (this.getWidth()/2))) * 180.0d / Math.PI);
+        distanceVector.setAngle(degrees);
+        ArrayList<BaseActor> allRoomWalls = BaseActor.getList(this.getStage(), "com.dslayer.content.Rooms.RoomPanels");
+        while(!Intersector.overlaps(visionCircle, targetVisionCircle) && currentDistance < totalDistance){
+            for(BaseActor wall: allRoomWalls){
+                if(wall.boundaryPolygon == null || (wall instanceof RoomFloor))
+                    continue;
+                if(Intersector.overlaps(visionCircle, wall.getBoundaryPolygon().getBoundingRectangle())){
+                    return false;
+                }
+            }
+            
+            currentPos.add(distanceVector);
+            currentDistance += distanceVector.x;
+            visionCircle.x = currentPos.x;
+            visionCircle.y = currentPos.y;
+        }
+        return true;
+    }
+    
     
     /**
     * Static methods that sets the world bounds for the stage using a BaseActor
@@ -315,6 +358,14 @@ public class BaseActor extends Group {
                 sRend.begin(ShapeRenderer.ShapeType.Line);
                 //this.getBoundaryPolygon();
                 sRend.polygon(boundaryPolygon.getTransformedVertices());
+                if(visionCircle != null){
+                    sRend.setColor(Color.GREEN);
+                    sRend.circle(visionCircle.x, visionCircle.y, visionCircle.radius);
+                }
+                if(targetVisionCircle != null){
+                    sRend.setColor(Color.PINK);
+                    sRend.circle(targetVisionCircle.x, targetVisionCircle.y, targetVisionCircle.radius);
+                }
                 sRend.end();
                 batch.begin();
             }
@@ -383,6 +434,15 @@ public class BaseActor extends Group {
         
         return anim;
     }
+    
+    public boolean hasTexture(){
+        return animation != null;
+    }
+    
+    public void removeTexture(){
+        animation = null;
+    }
+    
     /**
     * Converts a sprite sheet to an animation that the base actor can use.
     * 
@@ -609,7 +669,9 @@ public class BaseActor extends Group {
     public void accelerateForward() {
         accelerateAtAngle(getRotation());
     }
-    
+    public void accelerateForward2() {
+        accelerateAtAngle(getMotionAngle());
+    }
     /**
     * sets the Max Speed the BaseActor can move
     * 
