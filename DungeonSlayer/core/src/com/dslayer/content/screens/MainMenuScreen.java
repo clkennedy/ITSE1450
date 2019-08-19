@@ -70,6 +70,13 @@ public class MainMenuScreen extends BaseScreen {
     
     static int currentMenuIndex = -1;
     
+    static float bgFrameRate = .03f;
+    static float bgFrameTime = 0;
+    static int gifOffset = 0;
+    static int currentFrame = 0;
+    static String[] bgFrames = new String[450];
+    static BaseActor backGround;
+    
     public static Music backgroundMusic;
     
     public static boolean loaded = false;
@@ -93,22 +100,24 @@ public class MainMenuScreen extends BaseScreen {
         
         BaseActor.setMainStage(mainStage);
         
-        BaseActor b = new BaseActor(0,0,mainStage);
-        String[] bgFrames = new String[500];
-        int gifOffset = 0;
+        
+        
+        gifOffset = 0;
         if(MathUtils.randomBoolean(.4f)){
             gifOffset = 0 + 455;
         }else if(MathUtils.randomBoolean(.4f)){
             gifOffset = 0 + 1137;
         }
+        currentFrame = 0;
         for(int i = 0; i < bgFrames.length; i ++){
             bgFrames[i] = "Background/Frames/b " + (i + gifOffset) + ".png";
         }
-        b.loadAnimationFromFiles(bgFrames,.05f, true);
-        b.setOrigin(0,0);
-        b.setScale(Options.aspectRatio);
+        backGround = new BaseActor(0,0,mainStage);
+        backGround.loadTexture(bgFrames[currentFrame]);
+        backGround.setOrigin(0,0);
+        backGround.setScale(Options.aspectRatio);
         if(Options.displayType != Options.DisplayType.WINDOWED ){
-            b.setPosition((Gdx.graphics.getWidth()/ 2) - (b.getWidth()), 0);
+            backGround.setPosition((Gdx.graphics.getWidth()/ 2) - (backGround.getWidth()), 0);
         }
         
         if(!musicPlaying){
@@ -246,6 +255,18 @@ public class MainMenuScreen extends BaseScreen {
     public void update(float dt) {
         //mainStage.act(dt);
         if (Gdx.input.isKeyPressed(Keys.S));
+        
+        bgFrameTime += dt;
+        if(bgFrameTime > bgFrameRate){
+            bgFrameTime = 0;
+            if(currentFrame >= bgFrames.length - 1){
+                currentFrame = 0;
+            }else{
+                currentFrame ++;
+            }
+        }
+        backGround.loadTexture(bgFrames[currentFrame]);
+        
             //BaseGame.setActiveScreen( new LevelScreen() );
     }
     
